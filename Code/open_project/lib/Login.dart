@@ -24,6 +24,7 @@ class Login extends State<LoginScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: email,
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.email),
                 labelText: "Enter Email",
@@ -39,6 +40,7 @@ class Login extends State<LoginScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: password,
+              keyboardType: TextInputType.visiblePassword,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.password),
                 labelText: "Enter Password",
