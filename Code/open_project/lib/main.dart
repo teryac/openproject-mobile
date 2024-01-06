@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:open_project/Tasks.dart';
 
 import 'Detail.dart';
-import 'Login.dart';
 import 'Project.dart';
 
 void main() {
   runApp(const MyApp());
   /*runApp(MaterialApp(
-    title: "List",
+    title: "List2",
     home: Scaffold(
       appBar: AppBar(
         title: const Text("First"),
@@ -94,7 +93,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primaryColorLight: Colors.blueAccent),
+      theme: ThemeData(primarySwatch: Colors.purple),
       home: MyHomePage(),
     );
   }
@@ -178,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //val.clear();
               //subVal.clear();
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
+                  MaterialPageRoute(builder: (context) => TasksScreen()));
               setState(() {});
             },
             style: button(),
