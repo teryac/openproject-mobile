@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:open_project/Tasks.dart';
 
 import 'Detail.dart';
 import 'Project.dart';
@@ -93,7 +92,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.purple),
+      theme: ThemeData(primaryColorDark: Colors.blue),
       home: MyHomePage(),
     );
   }
@@ -170,14 +169,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ),*/
           ElevatedButton(
             onPressed: () {
-              //getData();
+              getData();
               //item.add(val.text);
               //subItem.add(subVal.text);
               //Fluttertoast.showToast(msg: val.text);
               //val.clear();
               //subVal.clear();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TasksScreen()));
+
               setState(() {});
             },
             style: button(),
