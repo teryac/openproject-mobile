@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:open_project/Tasks.dart';
 
 import 'Subjects.dart';
 
@@ -63,7 +64,14 @@ class Detail extends State<StateDetail> {
                     color: Colors.red,
                     onPressed: () {},
                   ),
-                  onTap: () {});
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TasksScreen(
+                                dataOfSubject[index].id,
+                                dataOfSubject[index].subject)));
+                  });
             },
           )),
         ],
