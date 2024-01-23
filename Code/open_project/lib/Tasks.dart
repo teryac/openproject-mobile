@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:open_project/Task.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:http/http.dart' as http;
@@ -10,30 +9,51 @@ import 'package:http/http.dart' as http;
 // ignore: must_be_immutable
 class TasksScreen extends StatefulWidget {
   int id;
-  String name;
-  TasksScreen(this.id, this.name);
+  String nameOfTask;
+  TasksScreen(this.id, this.nameOfTask);
 
   @override
-  State<TasksScreen> createState() => Tasks(id, name);
+  State<TasksScreen> createState() => Tasks(id, nameOfTask);
 }
 
 class Tasks extends State<TasksScreen> {
-  String name;
+  String nameOfTask;
   int id;
   String dropdwonvalue = 'In Progress';
   String personvalue = 'Shaaban Shaheen';
-  String category = 'Not found';
-  String version = 'V1.0';
-  String priority = 'High';
-  String percent = '0.0';
+  //String category = 'Not found';
+  //String version = 'V1.0';
+  //String priority = 'High';
+  // String percent = '0.0';
   TextEditingController desc = TextEditingController();
   DateTime startdate = DateTime.now();
   DateTime endtdate = DateTime.now();
   DateTime hours = DateTime.now();
   TextEditingController newpercent = TextEditingController();
-  List<Task> dataOfTask = [];
-
-  Tasks(this.id, this.name);
+  var embedded,
+      subject = 'Not found',
+      startDate = 'Not found',
+      dueDate = 'Not found',
+      estimatedTime,
+      percentageDone = 0,
+      updatedAt = 'Not found';
+  var priority,
+      type,
+      status,
+      author,
+      assignee,
+      accountable,
+      version,
+      category,
+      description = 'Not found',
+      nameOfType = 'Not type',
+      nameOfPriority = 'Not found',
+      nameOfStatus = 'Not found',
+      nameOfAuthor = 'No person',
+      nameOfAssignee = 'No person',
+      nameOfVersion = 'No version',
+      color = '#000000';
+  Tasks(this.id, this.nameOfTask);
 
   @override
   Widget build(BuildContext context) {
@@ -41,28 +61,51 @@ class Tasks extends State<TasksScreen> {
 
     http.get(uri).then((response) {
       var jsonResponse = jsonDecode(response.body);
-      var embedded = jsonResponse['_embedded'];
-      //var elements = embedded['elements'] as List;
+      subject = jsonResponse['subject'];
+      startDate = jsonResponse['startDate'];
+      dueDate = jsonResponse['dueDate'];
+      estimatedTime = jsonResponse['estimatedTime'];
+      percentageDone = jsonResponse['percentageDone'];
+      updatedAt = jsonResponse['updatedAt'];
+      embedded = jsonResponse['_embedded'];
+      //Type
+      type = embedded['type'];
+      nameOfType = type['name'];
+      color = type['color'];
+      //priority
+      embedded = jsonResponse['_embedded'];
+      priority = embedded['priority'];
+      nameOfPriority = priority['name'];
+      //Status
+      status = embedded['status'];
+      nameOfStatus = status['name'];
+      //CreatedBy
+      author = embedded['author'];
+      nameOfAuthor = author['name'];
+      //Assignee
+      assignee = embedded['assignee'];
+      nameOfAssignee = assignee['name'];
+      //Version
+      version = embedded['version'];
+      nameOfVersion = version['name'];
 
       if (mounted) {
-        setState(() {
-          /*Iterable<Task> subjects = elements
-              .map((data) => Task(id: data['id'], task: data['subject']));
-          dataOfTask = subjects.toList();*/
-        });
+        setState(() {});
       }
     });
 
     return Scaffold(
         appBar: AppBar(
-            title: const Row(
+            title: Row(
           children: [
             Text(
-              "Type",
-              style: TextStyle(fontSize: 15.0),
+              nameOfType.toString(),
+              style: TextStyle(
+                  fontSize:
+                      13.0), /*selectionColor: Color(int.parse(color.toString())),*/
             ),
-            SizedBox(width: 15, height: 3),
-            Text("Name of Task", style: TextStyle(fontSize: 19.0))
+            SizedBox(width: 15),
+            Text(subject.toString(), style: TextStyle(fontSize: 13.0))
           ],
         )),
         body: SingleChildScrollView(
@@ -72,7 +115,7 @@ class Tasks extends State<TasksScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButton<String>(
-                  value: dropdwonvalue,
+                  value: nameOfStatus.toString(),
                   icon: const Icon(Icons.arrow_drop_down),
                   style: const TextStyle(color: Colors.black),
                   underline: Container(
@@ -81,38 +124,28 @@ class Tasks extends State<TasksScreen> {
                   ),
                   onChanged: (String? newValue) {
                     setState(() {
-                      dropdwonvalue = newValue!;
+                      nameOfStatus = newValue!;
                     });
                   },
-                  items: const [
+                  items: [
                     DropdownMenuItem<String>(
-                      value: 'In Progress',
-                      child: Text('In Progress'),
+                      value: nameOfStatus.toString(),
+                      child: Text(nameOfStatus.toString()),
                     ),
-                    DropdownMenuItem<String>(
-                      value: 'Two',
-                      child: Text('Two'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Three',
-                      child: Text('Three'),
-                    )
                   ],
                 ),
               ),
-              const SizedBox(width: 33, height: 3),
+              const SizedBox(width: 20, height: 3),
               Column(children: [
-                const Row(children: [
+                Row(children: [
                   Text("Create by:"),
                   SizedBox(width: 8, height: 3),
-                  Text("Shaaban Shaheen"),
+                  Text(nameOfAuthor.toString()),
                 ]),
                 Row(children: [
                   const Text("Last updates:"),
                   const SizedBox(width: 8, height: 3),
-                  Text(
-                      "${DateTime.now().year}/${DateTime.now().month}/${DateTime.now().day} "),
-                  Text("${DateTime.now().hour}:${DateTime.now().minute} ")
+                  Text(updatedAt.toString()),
                 ]),
               ]),
             ]),
@@ -147,7 +180,7 @@ class Tasks extends State<TasksScreen> {
                       const Text("Assignee:"),
                       const SizedBox(width: 28, height: 0),
                       DropdownButton<String>(
-                        value: personvalue,
+                        value: nameOfAssignee.toString(),
                         icon: const Icon(Icons.arrow_drop_down),
                         style: const TextStyle(color: Colors.black),
                         underline: Container(
@@ -156,18 +189,14 @@ class Tasks extends State<TasksScreen> {
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            personvalue = newValue!;
+                            nameOfAssignee = newValue!;
                           });
                         },
-                        items: const [
+                        items: [
                           DropdownMenuItem<String>(
-                            value: 'Shaaban Shaheen',
-                            child: Text('Shaaban Shaheen'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Yaman Kalaji',
-                            child: Text('Yaman Kalaji'),
-                          ),
+                            value: nameOfAssignee.toString(),
+                            child: Text(nameOfAssignee.toString()),
+                          )
                         ],
                       ),
                     ]),
@@ -214,7 +243,7 @@ class Tasks extends State<TasksScreen> {
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                          child: Text('${hours.hour}'),
+                          child: Text(estimatedTime.toString()),
                           onPressed: () {
                             showCupertinoModalPopup(
                                 context: context,
@@ -227,7 +256,7 @@ class Tasks extends State<TasksScreen> {
                                         mode: CupertinoDatePickerMode.time,
                                         onDateTimeChanged: (DateTime value) {
                                           setState(() {
-                                            hours = value;
+                                            estimatedTime = value;
                                           });
                                         },
                                       ),
@@ -243,15 +272,14 @@ class Tasks extends State<TasksScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: [
                     const Text('Detail:',
                         style: TextStyle(
                             fontSize: 20.0, fontStyle: FontStyle.italic)),
                     Row(children: [
                       const Text('Date:'),
                       TextButton(
-                        child: Text(
-                            '${startdate.year} / ${startdate.month} / ${startdate.day}'),
+                        child: Text(startDate.toString()),
                         onPressed: () {
                           showDatePicker(
                                   context: context,
@@ -259,7 +287,8 @@ class Tasks extends State<TasksScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2030))
                               .then((value) {
-                            if (value != null && startdate.isBefore(value)) {
+                            if (value !=
+                                null /*&& startdate.isBefore(value)*/) {
                               setState(() {
                                 startdate = value;
                               });
@@ -268,8 +297,7 @@ class Tasks extends State<TasksScreen> {
                         },
                       ),
                       TextButton(
-                        child: Text(
-                            '${endtdate.year} / ${endtdate.month} / ${endtdate.day}'),
+                        child: Text(dueDate.toString()),
                         onPressed: () {
                           showDatePicker(
                                   context: context,
@@ -277,7 +305,7 @@ class Tasks extends State<TasksScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2030))
                               .then((value) {
-                            if (value != null && endtdate.isBefore(value)) {
+                            if (value != null /*&& endtdate.isBefore(value)*/) {
                               setState(() {
                                 endtdate = value;
                               });
@@ -296,8 +324,10 @@ class Tasks extends State<TasksScreen> {
                           animationDuration: 1000,
                           animateFromLastPercent: true,
                           lineHeight: 20.0,
-                          percent: double.parse(percent) / 100.0,
-                          center: Text('${double.parse(percent)}%'),
+                          percent:
+                              double.parse(percentageDone.toString()) / 100.0,
+                          center: Text(
+                              '${double.parse(percentageDone.toString())}'),
                           barRadius: const Radius.circular(16),
                           progressColor: Colors.blue,
                         ),
@@ -323,7 +353,7 @@ class Tasks extends State<TasksScreen> {
                                               if (newpercent.text.isNotEmpty) {
                                                 Navigator.of(context)
                                                     .pop(newpercent.text);
-                                                percent = newpercent.text;
+                                                //percent = newpercent.text;
                                                 newpercent.clear();
                                               } else {
                                                 return;
@@ -365,7 +395,7 @@ class Tasks extends State<TasksScreen> {
                       const Text("Version:"),
                       const SizedBox(width: 5.0),
                       DropdownButton<String>(
-                        value: version,
+                        value: nameOfVersion.toString(),
                         icon: const Icon(Icons.arrow_drop_down),
                         style: const TextStyle(color: Colors.black),
                         underline: Container(
@@ -374,13 +404,13 @@ class Tasks extends State<TasksScreen> {
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            version = newValue!;
+                            nameOfVersion = newValue!;
                           });
                         },
-                        items: const [
+                        items: [
                           DropdownMenuItem<String>(
-                            value: 'V1.0',
-                            child: Text('V1.0'),
+                            value: nameOfVersion.toString(),
+                            child: Text(nameOfVersion.toString()),
                           )
                         ],
                       ),
@@ -389,7 +419,7 @@ class Tasks extends State<TasksScreen> {
                       const Text("Priority:"),
                       const SizedBox(width: 5.0),
                       DropdownButton<String>(
-                        value: priority,
+                        value: nameOfPriority.toString(),
                         icon: const Icon(Icons.arrow_drop_down),
                         style: const TextStyle(color: Colors.black),
                         underline: Container(
@@ -398,22 +428,14 @@ class Tasks extends State<TasksScreen> {
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            priority = newValue!;
+                            nameOfPriority = newValue!;
                           });
                         },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'High',
-                            child: Text('High'),
+                        items: [
+                          DropdownMenuItem(
+                            value: nameOfPriority.toString(),
+                            child: Text(nameOfPriority.toString()),
                           ),
-                          DropdownMenuItem<String>(
-                            value: 'Medium',
-                            child: Text('Medium'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Low',
-                            child: Text('Low'),
-                          )
                         ],
                       ),
                     ]),
