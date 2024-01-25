@@ -21,7 +21,7 @@ class Tasks extends State<TasksScreen> {
   int id;
   String dropdwonvalue = 'In Progress';
   String personvalue = 'Shaaban Shaheen';
-  //String category = 'Not found';
+  String category = 'Not found';
   //String version = 'V1.0';
   //String priority = 'High';
   // String percent = '0.0';
@@ -34,18 +34,10 @@ class Tasks extends State<TasksScreen> {
       subject = 'Not found',
       startDate = 'Not found',
       dueDate = 'Not found',
-      estimatedTime,
+      estimatedTime = 'Not found',
       percentageDone = 0,
-      updatedAt = 'Not found';
-  var priority,
-      type,
-      status,
-      author,
-      assignee,
-      accountable,
-      version,
-      category,
-      description = 'Not found',
+      updatedAt = 'Not changed';
+  var rawOfdescription = 'Not found',
       nameOfType = 'Not type',
       nameOfPriority = 'Not found',
       nameOfStatus = 'Not found',
@@ -55,57 +47,88 @@ class Tasks extends State<TasksScreen> {
       color = '#000000';
   Tasks(this.id, this.nameOfTask);
 
-  @override
-  Widget build(BuildContext context) {
+  void getTask() async {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id");
+    await http.get(uri).then((response) {
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        subject = jsonResponse['subject'];
+        if (jsonResponse['estimatedTime'] != null) {
+          estimatedTime = jsonResponse['estimatedTime'];
+        }
+        if (jsonResponse['startDate'] != null) {
+          startDate = jsonResponse['startDate'];
+        }
+        if (jsonResponse['dueDate'] != null) {
+          dueDate = jsonResponse['dueDate'];
+        }
+        if (jsonResponse['updatedAt'] != null) {
+          updatedAt = jsonResponse['updatedAt'];
+        }
+        if (jsonResponse['percentageDone'] != 0) {
+          percentageDone = jsonResponse['percentageDone'];
+        }
 
-    http.get(uri).then((response) {
-      var jsonResponse = jsonDecode(response.body);
-      subject = jsonResponse['subject'];
-      startDate = jsonResponse['startDate'];
-      dueDate = jsonResponse['dueDate'];
-      estimatedTime = jsonResponse['estimatedTime'];
-      percentageDone = jsonResponse['percentageDone'];
-      updatedAt = jsonResponse['updatedAt'];
-      embedded = jsonResponse['_embedded'];
-      //Type
-      type = embedded['type'];
-      nameOfType = type['name'];
-      color = type['color'];
-      //priority
-      embedded = jsonResponse['_embedded'];
-      priority = embedded['priority'];
-      nameOfPriority = priority['name'];
-      //Status
-      status = embedded['status'];
-      nameOfStatus = status['name'];
-      //CreatedBy
-      author = embedded['author'];
-      nameOfAuthor = author['name'];
-      //Assignee
-      assignee = embedded['assignee'];
-      nameOfAssignee = assignee['name'];
-      //Version
-      version = embedded['version'];
-      nameOfVersion = version['name'];
+        embedded = jsonResponse['_embedded'];
+        //Type
+        var type = embedded['type'];
+        nameOfType = type['name'];
+        color = type['color'];
+        //Priority
+        embedded = jsonResponse['_embedded'];
+        var priority = embedded['priority'];
+        nameOfPriority = priority['name'];
+        //Status
+        var status = embedded['status'];
+        nameOfStatus = status['name'];
+        //CreatedBy
+        var author = embedded['author'];
+        nameOfAuthor = author['name'];
+        //Assignee
+        var assignee = embedded['assignee'];
+        nameOfAssignee = assignee['name'];
+        //Version
+        if (embedded['version'] != null) {
+          var version = embedded['version'];
 
-      if (mounted) {
-        setState(() {});
+          nameOfVersion = version['name'];
+        }
+        //Decription
+        var description = embedded['project'];
+        var desc = description['description'];
+        if (desc['raw'] != null) {
+          rawOfdescription = desc['raw'];
+        }
+
+        if (mounted) {
+          setState(() {});
+        }
+      } else {
+        print('Failed');
       }
     });
+  }
 
+  @override
+  void initState() {
+    super.initState();
+    getTask();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
             title: Row(
           children: [
             Text(
               nameOfType.toString(),
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize:
                       13.0), /*selectionColor: Color(int.parse(color.toString())),*/
             ),
-            SizedBox(width: 15),
-            Text(subject.toString(), style: TextStyle(fontSize: 13.0))
+            const SizedBox(width: 15),
+            Text(subject.toString(), style: const TextStyle(fontSize: 13.0))
           ],
         )),
         body: SingleChildScrollView(
@@ -135,16 +158,16 @@ class Tasks extends State<TasksScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 20, height: 3),
+              const SizedBox(width: 8, height: 3),
               Column(children: [
                 Row(children: [
                   Text("Create by:"),
-                  SizedBox(width: 8, height: 3),
+                  SizedBox(width: 5, height: 3),
                   Text(nameOfAuthor.toString()),
                 ]),
                 Row(children: [
                   const Text("Last updates:"),
-                  const SizedBox(width: 8, height: 3),
+                  const SizedBox(width: 5, height: 3),
                   Text(updatedAt.toString()),
                 ]),
               ]),
@@ -156,13 +179,19 @@ class Tasks extends State<TasksScreen> {
                 controller: desc,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
-                decoration: const InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                    Radius.circular(15),
-                  )),
+                decoration: InputDecoration(
+                  labelText: rawOfdescription,
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    value = rawOfdescription.toString();
+                  });
+                },
               ),
             ),
             //Start part 3
@@ -241,8 +270,9 @@ class Tasks extends State<TasksScreen> {
                         style: TextStyle(
                             fontSize: 20.0, fontStyle: FontStyle.italic)),
                     Row(children: [
-                      const Text('Estimated time:'),
-                      CupertinoButton(
+                      const Text('Estimated time:  '),
+                      Text(estimatedTime.toString()),
+                      /*CupertinoButton(
                           child: Text(estimatedTime.toString()),
                           onPressed: () {
                             showCupertinoModalPopup(
@@ -256,13 +286,13 @@ class Tasks extends State<TasksScreen> {
                                         mode: CupertinoDatePickerMode.time,
                                         onDateTimeChanged: (DateTime value) {
                                           setState(() {
-                                            estimatedTime = value;
+                                            estimatedTime = value.toString();
                                           });
                                         },
                                       ),
                                     ));
-                          }),
-                      const Text('h')
+                          }),*/
+                      const Text('  h')
                     ]),
                   ]),
             ),
