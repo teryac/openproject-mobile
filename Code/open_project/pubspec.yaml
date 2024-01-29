@@ -39,6 +39,7 @@ dependencies:
   fluttertoast: ^8.2.4
   percent_indicator: ^4.0.1
   fluttericon: ^2.0.0
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

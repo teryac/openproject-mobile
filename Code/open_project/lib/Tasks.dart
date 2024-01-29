@@ -74,6 +74,7 @@ class Tasks extends State<TasksScreen> {
         var type = embedded['type'];
         nameOfType = type['name'];
         color = type['color'];
+        //Color typeColor = Color.fromHex('#aabbcc');
         //Priority
         embedded = jsonResponse['_embedded'];
         var priority = embedded['priority'];
@@ -123,9 +124,8 @@ class Tasks extends State<TasksScreen> {
           children: [
             Text(
               nameOfType.toString(),
-              style: const TextStyle(
-                  fontSize:
-                      13.0), /*selectionColor: Color(int.parse(color.toString())),*/
+              style: const TextStyle(fontSize: 13.0),
+              /*selectionColor: Color(int.parse(color.toString())),*/
             ),
             const SizedBox(width: 15),
             Text(subject.toString(), style: const TextStyle(fontSize: 13.0))
@@ -189,7 +189,9 @@ class Tasks extends State<TasksScreen> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    value = rawOfdescription.toString();
+                    //value = rawOfdescription.toString();
+                    desc.text = rawOfdescription.toString();
+                    value = desc.text;
                   });
                 },
               ),
