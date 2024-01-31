@@ -45,7 +45,8 @@ class Detail extends State<StateDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        backgroundColor: Colors.blueAccent,
+        title: Text(name, style: TextStyle(color: Colors.white)),
       ),
       body: Column(
         children: [
@@ -76,20 +77,6 @@ class Detail extends State<StateDetail> {
           )),
         ],
       ),
-
-      /* Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(
-                context, MaterialPageRoute(builder: (context) => MyHomePage()));
-          },
-          style: button(),
-          child: Text(
-            'Back...' + id.toString(),
-            style: TextStyle(fontSize: 25),
-          ),
-        ),
-      ),*/
     );
   }
 
