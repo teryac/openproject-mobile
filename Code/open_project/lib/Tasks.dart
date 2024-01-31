@@ -120,17 +120,18 @@ class Tasks extends State<TasksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            backgroundColor: Colors.blueAccent,
             title: Row(
-          children: [
-            Text(
-              nameOfType.toString(),
-              style: const TextStyle(fontSize: 13.0),
-              /*selectionColor: Color(int.parse(color.toString())),*/
-            ),
-            const SizedBox(width: 15),
-            Text(subject.toString(), style: const TextStyle(fontSize: 13.0))
-          ],
-        )),
+              children: [
+                Text(
+                  nameOfType.toString(),
+                  style: const TextStyle(fontSize: 13.0),
+                  /*selectionColor: Color(int.parse(color.toString())),*/
+                ),
+                const SizedBox(width: 15),
+                Text(subject.toString(), style: const TextStyle(fontSize: 13.0))
+              ],
+            )),
         body: SingleChildScrollView(
           child: Column(children: [
             //Start part 1
