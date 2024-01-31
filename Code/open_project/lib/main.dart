@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,14 +32,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primaryColorLight: Colors.blue),
-      home: MyHomePage(),
+      //debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          primaryColor: Colors.blue,
+          useMaterial3: true),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -64,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     apikey = prefs.getString('apikey');
     token = prefs.getString('password');
-    String basicAuth = 'Basic ' + base64.encode(utf8.encode('$apikey:$token'));
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
 
     Response r = await get(Uri.parse('https://op.yaman-ka.com/api/v3/projects'),
         headers: <String, String>{'authorization': basicAuth});
@@ -81,10 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getProjects();
+    //getData();
   }
 
-  /*void getData() {
+  void getData() {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
 
     http.get(uri).then((response) {
@@ -98,14 +103,16 @@ class _MyHomePageState extends State<MyHomePage> {
         data = projects.toList();
       });
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Open project")),
+        backgroundColor: Colors.blueAccent,
+        title: const Center(
+            child: Text("Open project",
+                style: TextStyle(fontSize: 25, color: Colors.white))),
       ),
       body: Column(
         children: [
@@ -140,10 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ElevatedButton(
             onPressed: () {
               if (apiKey.text == username && enteredToken.text == password) {
-                Navigator.push(
+                getProjects();
+                /*Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => StateDetail(id, name)));
+                        builder: (context) => StateDetail(id, name)));*/
                 apiKey.text = '';
                 enteredToken.text = '';
               } else {
@@ -154,6 +162,25 @@ class _MyHomePageState extends State<MyHomePage> {
             style: button(),
             child: const Text(
               'Login now...',
+              style: TextStyle(fontSize: 25, color: Colors.white),
+            ),
+          ),
+          const SizedBox(
+            height: 10.0,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              getData();
+              /*Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => StateDetail(id, name)));*/
+
+              setState(() {});
+            },
+            style: button(),
+            child: const Text(
+              'Show projects',
               style: TextStyle(fontSize: 25, color: Colors.white),
             ),
           ),
@@ -171,7 +198,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   subtitle: Text(id.toString()),
                   //tileColor: Color.fromARGB(255, 146, 105, 105),
                   trailing: IconButton(
-                    isSelected: false,
                     icon: const Icon(Icons.delete),
                     color: Colors.red,
                     onPressed: () {
@@ -192,6 +218,6 @@ class _MyHomePageState extends State<MyHomePage> {
           )),
         ],
       ),
-    ));
+    );
   }
 }
