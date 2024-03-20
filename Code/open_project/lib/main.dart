@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Detail.dart';
+import 'DetailOfProject.dart';
 import 'Project.dart';
 
 void main() {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           //colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           primaryColor: Colors.blue,
@@ -73,20 +74,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Response r = await get(Uri.parse('https://op.yaman-ka.com/api/v3/projects'),
         headers: <String, String>{'authorization': basicAuth});
-    var jsonResponse = jsonDecode(r.body);
-    var embedded = jsonResponse['_embedded'];
-    var elements = embedded['elements'] as List;
-    setState(() {
-      Iterable<Project> projects =
-          elements.map((data) => Project(id: data['id'], name: data['name']));
-      data = projects.toList();
-    });
+    if (r.statusCode == 200) {
+      var jsonResponse = jsonDecode(r.body);
+      var embedded = jsonResponse['_embedded'];
+      var elements = embedded['elements'] as List;
+      setState(() {
+        Iterable<Project> projects =
+            elements.map((data) => Project(id: data['id'], name: data['name']));
+        data = projects.toList();
+      });
+    } else {
+      Fluttertoast.showToast(msg: 'You dont sign up');
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    //getData();
+    getData();
   }
 
   void getData() {
@@ -116,6 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
+          const Image(
+            image: AssetImage('images/openproject.png'),
+            width: 125,
+            height: 125,
+          ),
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: TextField(
@@ -134,15 +144,24 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.all(20.0),
             child: TextField(
               controller: enteredToken,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.token),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.token),
+                suffixIcon: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.remove_red_eye_sharp),
+                ),
                 labelText: "Enter token",
-                border: OutlineInputBorder(
+                border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                   Radius.circular(15),
                 )),
               ),
             ),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+                onPressed: () {}, child: const Text('Forgetpassword?')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -162,25 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
             style: button(),
             child: const Text(
               'Login now...',
-              style: TextStyle(fontSize: 25, color: Colors.white),
-            ),
-          ),
-          const SizedBox(
-            height: 10.0,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              getData();
-              /*Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => StateDetail(id, name)));*/
-
-              setState(() {});
-            },
-            style: button(),
-            child: const Text(
-              'Show projects',
               style: TextStyle(fontSize: 25, color: Colors.white),
             ),
           ),
