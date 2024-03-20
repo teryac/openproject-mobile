@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:http/http.dart' as http;
@@ -20,11 +22,9 @@ class Tasks extends State<TasksScreen> {
   String nameOfTask;
   int id;
   String dropdwonvalue = 'In Progress';
-  String personvalue = 'Shaaban Shaheen';
+  String personvalue = 'Shaaban Shahin';
   String category = 'Not found';
-  //String version = 'V1.0';
-  //String priority = 'High';
-  // String percent = '0.0';
+
   TextEditingController desc = TextEditingController();
   DateTime startdate = DateTime.now();
   DateTime endtdate = DateTime.now();
@@ -44,7 +44,31 @@ class Tasks extends State<TasksScreen> {
       nameOfAuthor = 'No person',
       nameOfAssignee = 'No person',
       nameOfVersion = 'No version',
-      color = '#000000';
+      color = '#000000',
+      lockVersion = 0;
+
+  String taskBody = """{
+  "_type": "WorkPackage",
+    "id": 38,
+    "lockVersion": 5,
+    "subject": "Final wireframe 4",
+    "description": {
+        "format": "markdown",
+        "raw": "",
+        "html": ""
+    },
+    "scheduleManually": false,
+    "startDate": null,
+    "dueDate": null,
+    "estimatedTime": null,
+    "derivedEstimatedTime": null,
+    "duration": null,
+    "ignoreNonWorkingDays": false,
+    "percentageDone": 0,
+    "remainingTime": null,
+    "derivedRemainingTime": null
+  
+}""";
   Tasks(this.id, this.nameOfTask);
 
   void getTask() async {
@@ -53,6 +77,7 @@ class Tasks extends State<TasksScreen> {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         subject = jsonResponse['subject'];
+        lockVersion = jsonResponse['lockVersion'];
         if (jsonResponse['estimatedTime'] != null) {
           estimatedTime = jsonResponse['estimatedTime'];
         }
@@ -91,7 +116,6 @@ class Tasks extends State<TasksScreen> {
         //Version
         if (embedded['version'] != null) {
           var version = embedded['version'];
-
           nameOfVersion = version['name'];
         }
         //Decription
@@ -474,8 +498,19 @@ class Tasks extends State<TasksScreen> {
                     ]),
                   ]),
             ),
-
             //End part5
+            ElevatedButton(
+              onPressed: () {
+                Fluttertoast.showToast(msg: lockVersion.toString());
+
+                setState(() {});
+              },
+              style: button(),
+              child: const Text(
+                'Save',
+                style: TextStyle(fontSize: 25, color: Colors.white),
+              ),
+            ),
           ]),
         ));
   }
