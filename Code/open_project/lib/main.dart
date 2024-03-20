@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:open_project/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'DetailOfProject.dart';
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (apiKey.text == username && enteredToken.text == password) {
+              /*if (apiKey.text == username && enteredToken.text == password) {
                 getProjects();
                 /*Navigator.push(
                     context,
@@ -175,7 +175,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 enteredToken.text = '';
               } else {
                 Fluttertoast.showToast(msg: 'Enter values correctly please');
-              }
+              }*/
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
               setState(() {});
             },
             style: button(),
