@@ -103,6 +103,7 @@ class Detail extends State<StateDetail> {
             itemBuilder: (BuildContext ctx, int index) {
               return ListTile(
                   title: Text(dataOfSubject[index].subject),
+                  
                   subtitle: Text(dataOfSubject[index].id.toString()),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
