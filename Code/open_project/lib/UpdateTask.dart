@@ -9,6 +9,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class UpdateScreen extends StatefulWidget {
   int id;
@@ -17,21 +19,23 @@ class UpdateScreen extends StatefulWidget {
   UpdateScreen(this.id, this.name);
 
   @override
-  State<UpdateScreen> createState() => UpdateTask(id, name);
+  State<UpdateScreen> createState() => UpdateTasks(id, name);
 }
 
-class UpdateTask extends State<UpdateScreen> {
+class UpdateTasks extends State<UpdateScreen> {
   int id;
-  //String percentageDone = '0.0';
+  String? durationDay;
   String name;
   String progressValue = 'In progress';
   String personvalue = 'Shaaban Shahin';
   String assignee = 'Shaaban Shahin';
   String accountable = 'Shaaban Shahin';
   String category = 'Not found';
-  String version = 'V 1.0';
+  String version = 'v 1.0';
   String priority = 'High';
   String type = 'Task';
+  String? apikey;
+  String? token;
 
   TextEditingController desc = TextEditingController();
   TextEditingController percent = TextEditingController();
@@ -40,6 +44,7 @@ class UpdateTask extends State<UpdateScreen> {
   DateTime enddate = DateTime.now();
   DateTime hours = DateTime.now();
   DateTime updateTime = DateTime.now();
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
 
   var embedded,
       subject = 'Not found',
@@ -57,29 +62,35 @@ class UpdateTask extends State<UpdateScreen> {
       nameOfVersion = 'No version',
       color = '#000000',
       lockVersion = 0;
+  String taskBody = "No body";
 
-  String taskBody = """{
-  "_type": "WorkPackage",
-    "id": 38,
-    "lockVersion": 5,
-    "subject": "Final wireframe 4",
-    "description": {
-        "format": "markdown",
-        "raw": "",
-        "html": ""
-    },
-    "scheduleManually": false,
-    "startDate": null,
-    "dueDate": null,
-    "estimatedTime": null,
-    "derivedEstimatedTime": null,
-    "duration": null,
-    "ignoreNonWorkingDays": false,
-    "percentageDone": 0,
-    "remainingTime": null,
-    "derivedRemainingTime": null
-  
-}""";
+  void updateTask(String id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+
+    taskBody =
+        "{\n  \"_type\": \"WorkPackage\",\n    \"id\": $id,\n    \"lockVersion\": $lockVersion,\n    \"subject\": \"$subject\",\n    \"description\": {\n        \"format\": \"markdown\",\n        \"raw\": \"$rawOfdescription\",\n        \"html\": \"\"\n    },\n    \"scheduleManually\": false,\n    \"startDate\": \"$startDate\",\n    \"dueDate\": \"$dueDate\",\n    \"estimatedTime\": \"$estimatedTime\",\n    \"derivedEstimatedTime\": null,\n    \"duration\": \"$durationDay\",\n    \"ignoreNonWorkingDays\": true,\n    \"percentageDone\": $percentageDone,\n    \"remainingTime\": null,\n    \"derivedRemainingTime\": null\n  \n}";
+    print(taskBody);
+    await http.patch(
+      Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id"),
+      body: taskBody,
+      headers: <String, String>{
+        'content-type': 'application/json; charset=UTF-8',
+        'authorization': basicAuth
+      },
+    ).then((response) {
+      print(response.body);
+      if (response.statusCode == 200) {
+        getTask();
+        Fluttertoast.showToast(msg: 'Task of $id has been updated');
+      } else {
+        Fluttertoast.showToast(msg: 'You cannot update task of $id');
+      }
+    });
+  }
 
   void getTask() async {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id");
@@ -129,10 +140,10 @@ class UpdateTask extends State<UpdateScreen> {
           nameOfVersion = version['name'];
         }
         //Decription
-        var description = embedded['project'];
-        var desc = description['description'];
-        if (desc['raw'] != null) {
-          rawOfdescription = desc['raw'];
+        var description = jsonResponse['description'];
+        var raw = description['raw'];
+        if (raw != "") {
+          rawOfdescription = raw;
         }
 
         if (mounted) {
@@ -144,7 +155,17 @@ class UpdateTask extends State<UpdateScreen> {
     });
   }
 
-  UpdateTask(this.id, this.name);
+  void getUsers() async {
+    Uri uri = Uri.parse(
+        "https://op.yaman-ka.com/api/v3/projects/$id/available_assignees");
+    await http.get(uri).then((response) {
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+      }
+    });
+  }
+
+  UpdateTasks(this.id, this.name);
 
   @override
   void initState() {
@@ -181,9 +202,7 @@ class UpdateTask extends State<UpdateScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        //task.text = subject.toString();
-                        value = task.text;
-                        print(value);
+                        subject = task.text;
                       });
                     },
                   ),
@@ -202,7 +221,6 @@ class UpdateTask extends State<UpdateScreen> {
                       type = nameOfType;
                       setState(() {
                         nameOfType = newValue!;
-                        print(newValue);
                       });
                     },
                     items: const [
@@ -250,7 +268,6 @@ class UpdateTask extends State<UpdateScreen> {
                     progressValue = nameOfStatus;
                     setState(() {
                       nameOfStatus = newValue!;
-                      print(newValue);
                     });
                   },
                   items: const [
@@ -303,8 +320,8 @@ class UpdateTask extends State<UpdateScreen> {
               ),
               Column(children: [
                 Row(children: [
-                  Text("Create by:"),
-                  SizedBox(width: 5, height: 3),
+                  const Text("Create by:"),
+                  const SizedBox(width: 5, height: 3),
                   DropdownButton<String>(
                     value: personvalue,
                     icon: const Icon(Icons.arrow_drop_down),
@@ -317,7 +334,7 @@ class UpdateTask extends State<UpdateScreen> {
                       personvalue = nameOfAssignee;
                       setState(() {
                         nameOfAssignee = newValue!;
-                        print(newValue);
+                        print(nameOfAssignee);
                       });
                     },
                     items: const [
@@ -356,8 +373,8 @@ class UpdateTask extends State<UpdateScreen> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    value = desc.text;
-                    print(value);
+                    rawOfdescription = desc.text;
+                    print(rawOfdescription);
                   });
                 },
               ),
@@ -387,7 +404,7 @@ class UpdateTask extends State<UpdateScreen> {
                           assignee = nameOfAssignee;
                           setState(() {
                             nameOfAssignee = newValue!;
-                            print(newValue);
+                            print(nameOfAssignee);
                           });
                         },
                         items: const [
@@ -416,7 +433,7 @@ class UpdateTask extends State<UpdateScreen> {
                         onChanged: (String? newValue) {
                           setState(() {
                             accountable = newValue!;
-                            print(newValue);
+                            print(accountable);
                           });
                         },
                         items: const [
@@ -458,8 +475,7 @@ class UpdateTask extends State<UpdateScreen> {
                                         onDateTimeChanged: (DateTime value) {
                                           setState(() {
                                             estimatedTime =
-                                                value.hour.toString();
-                                            print(estimatedTime);
+                                                "PT${value.hour}H${value.minute}M";
                                           });
                                         },
                                       ),
@@ -490,9 +506,9 @@ class UpdateTask extends State<UpdateScreen> {
                               .then((value) {
                             if (value != null) {
                               setState(() {
-                                startDate =
-                                    '${value.year} / ${value.month} / ${value.day}';
-                                print(startDate);
+                                /*startDate =
+                                    '${value.year}-${value.month}-${value.day}';*/
+                                startDate = formatter.format(value);
                               });
                             }
                           });
@@ -507,11 +523,14 @@ class UpdateTask extends State<UpdateScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2030))
                               .then((value) {
-                            if (value != null) {
+                            if (value != null &&
+                                value.isAfter(DateTime.parse(startDate))) {
                               setState(() {
-                                dueDate =
-                                    '${value.year} / ${value.month} / ${value.day}';
-                                print(dueDate);
+                                dueDate = formatter.format(value);
+                                Duration duration = DateTime.parse(dueDate)
+                                    .difference(DateTime.parse(startDate));
+                                durationDay = "P${duration.inDays + 1}D";
+                                print("$durationDay days");
                               });
                             }
                           });
@@ -612,13 +631,13 @@ class UpdateTask extends State<UpdateScreen> {
                           version = nameOfVersion;
                           setState(() {
                             nameOfVersion = newValue!;
-                            print(newValue);
+                            print(nameOfVersion);
                           });
                         },
                         items: const [
                           DropdownMenuItem<String>(
-                            value: 'V 1.0',
-                            child: Text('V 1.0'),
+                            value: 'v 1.0',
+                            child: Text('v 1.0'),
                           ),
                           DropdownMenuItem<String>(
                             value: 'Bug Backlog',
@@ -654,7 +673,7 @@ class UpdateTask extends State<UpdateScreen> {
                           priority = nameOfPriority;
                           setState(() {
                             nameOfPriority = newValue!;
-                            print(newValue);
+                            print(nameOfPriority);
                           });
                         },
                         items: const [
@@ -685,8 +704,9 @@ class UpdateTask extends State<UpdateScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Fluttertoast.showToast(msg: lockVersion.toString());
-
+                updateTask(id.toString());
+                print(lockVersion);
+                //print(taskBody);
                 setState(() {});
               },
               style: button(),
