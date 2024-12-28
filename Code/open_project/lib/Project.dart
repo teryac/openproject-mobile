@@ -21,12 +21,16 @@ class Embedded {
 } */
 
 class Project {
-  int id;
+  var description;
   String name;
+  int id;
 
-  Project({required this.id, required this.name});
+  Project({required this.description, required this.name, required this.id});
 
   static fromJson(Map<String, dynamic> parsedJson) {
-    return Project(id: parsedJson['id'], name: parsedJson['name']);
+    var description = parsedJson['description'];
+    var raw = description['raw'];
+    return Project(
+        description: raw, name: parsedJson['name'], id: parsedJson['id']);
   }
 }
