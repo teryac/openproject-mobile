@@ -105,6 +105,7 @@ class Login extends State<LoginScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
