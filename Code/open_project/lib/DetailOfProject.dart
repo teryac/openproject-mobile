@@ -23,6 +23,7 @@ class StateDetail extends StatefulWidget {
 class Detail extends State<StateDetail> {
   String name;
   int id;
+  late var description;
   List<Subjects> dataOfSubject = [];
   String? apikey;
   String? token;
@@ -60,12 +61,19 @@ class Detail extends State<StateDetail> {
       var jsonResponse = jsonDecode(response.body);
       var embedded = jsonResponse['_embedded'];
       var elements = embedded['elements'] as List;
+      List<Subjects> subjects = elements.map((data) {
+        // Safely access the raw field
+        String rawDescription =
+            data['description']?['raw'] ?? 'No description available';
+        String subject = data['subject'];
+        id = data['id'];
+
+        return Subjects(id: id, subject: subject, description: rawDescription);
+      }).toList();
 
       if (mounted) {
         setState(() {
-          Iterable<Subjects> subjects = elements.map(
-              (data) => Subjects(id: data['id'], subject: data['subject']));
-          dataOfSubject = subjects.toList();
+          dataOfSubject = subjects;
         });
       }
     });
@@ -81,6 +89,7 @@ class Detail extends State<StateDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         title: Text(name, style: const TextStyle(color: Colors.white)),
@@ -96,31 +105,41 @@ class Detail extends State<StateDetail> {
         children: [
           Expanded(
               child: ListView.builder(
-            shrinkWrap: true,
+            //shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(12.0),
             itemCount: dataOfSubject.length,
             itemBuilder: (BuildContext ctx, int index) {
-              return ListTile(
-                  title: Text(dataOfSubject[index].subject),
-                  
-                  subtitle: Text(dataOfSubject[index].id.toString()),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    color: Colors.red,
-                    onPressed: () {
-                      setState(() {
-                        deleteTask(dataOfSubject[index].id.toString());
-                      });
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                UpdateScreen(dataOfSubject[index].id, name)));
-                  });
+              return Card(
+                borderOnForeground: true,
+                elevation: 3.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(dataOfSubject[index].subject),
+                      subtitle: Text(dataOfSubject[index].description),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        color: Colors.red,
+                        onPressed: () {
+                          setState(() {
+                            deleteTask(dataOfSubject[index].id.toString());
+                          });
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  UpdateScreen(dataOfSubject[index].id, name)),
+                        );
+                      },
+                    )
+                  ],
+                ),
+              );
             },
           )),
         ],
@@ -132,7 +151,7 @@ class Detail extends State<StateDetail> {
     ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
       backgroundColor: const Color.fromARGB(255, 89, 142, 167),
       elevation: 0,
-      minimumSize: Size(327, 50),
+      minimumSize: const Size(327, 50),
       padding: const EdgeInsets.symmetric(horizontal: 35),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(50)),
