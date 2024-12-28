@@ -7,9 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/Project.dart';
+import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'main.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -17,18 +16,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class Login extends State<LoginScreen> {
-  TextEditingController email = TextEditingController();
+  TextEditingController apiKey = TextEditingController();
   TextEditingController enteredToken = TextEditingController();
   List<Project> data = [];
   late String name;
   late int id;
+  late var description;
   String? apikey;
   String? token;
   String username = 'apikey';
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
 
-  void getData() {
+  /* void getData() {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
 
     http.get(uri).then((response) {
@@ -42,7 +42,7 @@ class Login extends State<LoginScreen> {
         data = projects.toList();
       });
     });
-  }
+  }*/
 
   void getProjects() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -57,13 +57,37 @@ class Login extends State<LoginScreen> {
     Response r = await get(Uri.parse('https://op.yaman-ka.com/api/v3/projects'),
         headers: <String, String>{'authorization': basicAuth});
     if (r.statusCode == 200) {
-      var jsonResponse = jsonDecode(r.body);
+      /*var jsonResponse = jsonDecode(r.body);
       var embedded = jsonResponse['_embedded'];
       var elements = embedded['elements'] as List;
       setState(() {
-        Iterable<Project> projects =
-            elements.map((data) => Project(id: data['id'], name: data['name']));
+        //var des = elements['description'];
+        Iterable<Project> projects = elements.map((data) =>
+            Project(description: data['description'], name: data['name']));
         data = projects.toList();
+
+      });*/
+      var jsonResponse = jsonDecode(r.body);
+
+      // Access the '_embedded' object
+      var embedded = jsonResponse['_embedded'];
+
+      // Access the 'elements' list
+      var elements = embedded['elements'] as List;
+
+      // Loop through the elements to extract 'description' -> 'raw'
+      List<Project> projects = elements.map((data) {
+        // Safely access the raw field
+        String rawDescription =
+            data['description']?['raw'] ?? 'No description available';
+        String name = data['name'];
+        id = data['id'];
+
+        return Project(description: rawDescription, name: name, id: id);
+      }).toList();
+
+      setState(() {
+        data = projects;
       });
     } else {
       Fluttertoast.showToast(msg: 'You dont sign up');
@@ -74,7 +98,7 @@ class Login extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData();
+    getProjects();
   }
 
   @override
@@ -82,21 +106,32 @@ class Login extends State<LoginScreen> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.blueAccent,
-        title: const Text("Login",
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()));
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+        title: const Text("List of projects",
             style: TextStyle(fontSize: 25, color: Colors.white)),
       ),
       body: Column(
         children: [
-          const Image(
-            image: AssetImage('images/openproject.png'),
-            width: 125,
-            height: 125,
+          /*const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Image(
+              image: AssetImage('images/openproject.png'),
+              width: 175,
+              height: 175,
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            margin: const EdgeInsets.only(left: 15.0, right: 15.0),
             child: TextField(
-              controller: email,
+              controller: apiKey,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.email),
@@ -105,13 +140,14 @@ class Login extends State<LoginScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
             child: TextField(
               controller: enteredToken,
               keyboardType: TextInputType.visiblePassword,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.token),
                 suffixIcon: IconButton(
+                  color: Colors.grey,
                   onPressed: () {},
                   icon: const Icon(Icons.remove_red_eye_sharp),
                 ),
@@ -122,21 +158,29 @@ class Login extends State<LoginScreen> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-                onPressed: () {}, child: const Text('Forgetpassword?')),
+                onPressed: () {},
+                child: const Text('Forgot password?',
+                    style: TextStyle(fontSize: 15))),
           ),
           GradientButton(
             increaseWidthBy: 250,
             increaseHeightBy: 10,
-            child: Text('Login',
-                style: TextStyle(fontSize: 25, color: Colors.white)),
+            child: const Text('Login',
+                style: TextStyle(fontSize: 20, color: Colors.white)),
             callback: () {
-              Fluttertoast.showToast(msg: 'Done');
+              if (apiKey.text == username && enteredToken.text == password) {
+                getProjects();
+                apiKey.text = '';
+                enteredToken.text = '';
+              } else {
+                Fluttertoast.showToast(msg: 'Enter values correctly please');
+              }
             },
-            gradient:
-                LinearGradient(colors: [Colors.blue, Colors.purpleAccent]),
-            shadowColor: Gradients.backToFuture.colors.last.withOpacity(0.25),
+            gradient: const LinearGradient(
+                colors: [Colors.blueAccent, Colors.purpleAccent]),
+            shadowColor: Gradients.backToFuture.colors.last.withOpacity(0.75),
           ),
-          /*ElevatedButton(
+          ElevatedButton(
             onPressed: () {
               setState(() {});
             },
@@ -148,34 +192,45 @@ class Login extends State<LoginScreen> {
           ),*/
           Expanded(
               child: ListView.builder(
-            shrinkWrap: true,
+            //shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(12.0),
             itemCount: data.length,
             itemBuilder: (BuildContext ctx, int index) {
               name = data[index].name;
+              description = data[index].description;
+
               id = data[index].id;
-              return ListTile(
-                  title: Text(name),
-                  subtitle: Text(id.toString()),
-                  //tileColor: Color.fromARGB(255, 146, 105, 105),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    color: Colors.red,
-                    onPressed: () {
-                      setState(() {
-                        data.removeAt(index);
-                      });
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                StateDetail(data[index].id, data[index].name)));
-                    //Fluttertoast.showToast(msg: data[index].name);
-                  });
+              return Card(
+                  borderOnForeground: true,
+                  elevation: 3.0,
+                  child: Column(
+                    //mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      ListTile(
+                          title: Text(name),
+                          subtitle: Text(description.toString()),
+                          //tileColor: Color.fromARGB(255, 146, 105, 105),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete),
+                            color: Colors.red,
+                            onPressed: () {
+                              setState(() {
+                                data.removeAt(index);
+                              });
+                            },
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StateDetail(
+                                        data[index].id, data[index].name)));
+                            //Fluttertoast.showToast(msg: data[index].name);
+                          })
+                    ],
+                  ));
             },
           )),
         ],
