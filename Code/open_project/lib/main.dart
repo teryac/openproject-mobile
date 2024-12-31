@@ -1,16 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:open_project/Login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'DetailOfProject.dart';
 import 'Project.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 ButtonStyle button() {
@@ -28,7 +22,7 @@ ButtonStyle button() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -356,9 +350,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 transform: Matrix4.translationValues(0, _offsetY, 0),
                 child: ElevatedButton(
                   onPressed: () {
-                    /*ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Login Button Pressed")),
-                  );*/
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -415,6 +406,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                       child: ElevatedButton(
                                         style: button(),
                                         onPressed: () {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                backgroundColor: Colors.green,
+                                                duration:
+                                                    Duration(milliseconds: 500),
+                                                content: Text(
+                                                    "Login successful",
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white))),
+                                          );
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
