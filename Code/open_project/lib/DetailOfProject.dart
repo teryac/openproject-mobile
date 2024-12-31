@@ -119,15 +119,16 @@ class Detail extends State<StateDetail> {
                     ListTile(
                       title: Text(dataOfSubject[index].subject),
                       subtitle: Text(dataOfSubject[index].description),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        color: Colors.red,
-                        onPressed: () {
-                          setState(() {
-                            deleteTask(dataOfSubject[index].id.toString());
-                          });
-                        },
+                      trailing: TextButton(
+                        onPressed: () {},
+                        style: button(),
+                        child: const Text(""),
                       ),
+                      onLongPress: () {
+                        setState(() {
+                          deleteTask(dataOfSubject[index].id.toString());
+                        });
+                      },
                       onTap: () {
                         Navigator.push(
                           context,
