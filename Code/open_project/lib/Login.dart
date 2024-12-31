@@ -1,9 +1,7 @@
+// ignore: file_names
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/Project.dart';
@@ -11,6 +9,8 @@ import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   State<LoginScreen> createState() => Login();
 }
