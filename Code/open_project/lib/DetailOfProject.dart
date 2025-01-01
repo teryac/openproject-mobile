@@ -67,8 +67,14 @@ class Detail extends State<StateDetail> {
             data['description']?['raw'] ?? 'No description available';
         String subject = data['subject'];
         id = data['id'];
+        //String status = data['status'];
 
-        return Subjects(id: id, subject: subject, description: rawDescription);
+        return Subjects(
+            id: id,
+            subject: subject,
+            description: rawDescription /*,
+            status: status*/
+            );
       }).toList();
 
       if (mounted) {
