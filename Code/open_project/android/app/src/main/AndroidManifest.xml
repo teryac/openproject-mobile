@@ -2,7 +2,7 @@
     <application
         android:label="open_project"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/open_project">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
