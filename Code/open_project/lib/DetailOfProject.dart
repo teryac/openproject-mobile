@@ -136,9 +136,8 @@ class Detail extends State<StateDetail> {
                               trailing: Text(
                                 dataOfSubject[index].status,
                                 style: const TextStyle(
-                                  fontSize: 13.0,
-                                  color: Colors.white,
-                                  backgroundColor: Colors.cyan,
+                                  fontSize: 14.0,
+                                  color: Colors.cyan,
                                 ),
                               ),
                               leading: CircleAvatar(
@@ -153,7 +152,38 @@ class Detail extends State<StateDetail> {
                               ),
                               onLongPress: () {
                                 setState(() {
-                                  deleteTask(id.toString());
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              "Do you want delete task $sub ?"),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    deleteTask(id.toString());
+                                                  });
+                                                },
+                                                child: const Text(
+                                                  "Yes",
+                                                  style: TextStyle(
+                                                      color: Colors.green),
+                                                )),
+                                            TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    Navigator.pop(context);
+                                                  });
+                                                },
+                                                child: const Text(
+                                                  "No",
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                )),
+                                          ],
+                                        );
+                                      });
                                 });
                               },
                               onTap: () {
