@@ -65,29 +65,29 @@ class Detail extends State<StateDetail> {
         // Safely access the raw field
         String rawDescription =
             data['description']?['raw'] ?? 'No description available';
-        String subject = data['subject'];
-        id = data['id'];
+        String sub = data['subject'];
+
+        int idTask = data['id'];
         //String status = data['status'];
 
         return Subjects(
-            id: id,
-            subject: subject,
+            id: idTask,
+            subject: sub,
             description: rawDescription /*,
             status: status*/
             );
       }).toList();
 
-      if (mounted) {
-        setState(() {
-          dataOfSubject = subjects;
-        });
-      }
+      //if (mounted) {
+      setState(() {
+        dataOfSubject = subjects;
+      });
+      //}
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getTask();
   }
@@ -95,6 +95,7 @@ class Detail extends State<StateDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
@@ -107,50 +108,64 @@ class Detail extends State<StateDetail> {
                 MaterialPageRoute(builder: (context) => AddScreen(id, name)));
           },
           child: const Icon(Icons.add)),
-      body: Column(
-        children: [
-          Expanded(
-              child: ListView.builder(
-            //shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(12.0),
-            itemCount: dataOfSubject.length,
-            itemBuilder: (BuildContext ctx, int index) {
-              return Card(
-                borderOnForeground: true,
-                elevation: 3.0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      title: Text(dataOfSubject[index].subject),
-                      subtitle: Text(dataOfSubject[index].description),
-                      trailing: TextButton(
-                        onPressed: () {},
-                        style: button(),
-                        child: const Text(""),
-                      ),
-                      onLongPress: () {
-                        setState(() {
-                          deleteTask(dataOfSubject[index].id.toString());
-                        });
-                      },
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  UpdateScreen(dataOfSubject[index].id, name)),
-                        );
-                      },
-                    )
-                  ],
+      body: dataOfSubject.isEmpty
+          ? const Center(child: Text('No tasks available...'))
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    padding: const EdgeInsets.all(12.0),
+                    itemCount: dataOfSubject.length,
+                    itemBuilder: (BuildContext ctx, int index) {
+                      String sub = dataOfSubject[index].subject;
+                      String desc = dataOfSubject[index].description;
+                      int id = dataOfSubject[index].id;
+                      return Card(
+                        borderOnForeground: true,
+                        elevation: 3.0,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Text(sub),
+                              subtitle: Text(desc),
+                              trailing: Text(
+                                id.toString(),
+                              ),
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.lightBlueAccent,
+                                child: Text(
+                                  sub.isNotEmpty ? sub[0] : 'N/A',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25),
+                                ),
+                              ),
+                              onLongPress: () {
+                                setState(() {
+                                  deleteTask(id.toString());
+                                });
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UpdateScreen(
+                                          dataOfSubject[index].id, name)),
+                                );
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
-          )),
-        ],
-      ),
+              ],
+            ),
     );
   }
 
