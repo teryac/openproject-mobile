@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:open_project/Login.dart';
 import 'Project.dart';
 
@@ -399,7 +400,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: TextButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Fluttertoast.showToast(
+                                                msg: "Contact by support !!!");
+                                          },
                                           child:
                                               const Text('Forget password?')),
                                     ),
@@ -408,24 +412,48 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                       child: ElevatedButton(
                                         style: button(),
                                         onPressed: () {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                backgroundColor: Colors.green,
-                                                duration:
-                                                    Duration(milliseconds: 500),
-                                                content: Text(
-                                                    "Login successful",
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.white))),
-                                          );
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const LoginScreen()));
-                                          setState(() {});
+                                          if (apiKey.text == username &&
+                                              enteredToken.text == password) {
+                                            apiKey.text = "";
+                                            enteredToken.text = "";
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  backgroundColor: Colors.green,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  content: Text(
+                                                      "Login successful",
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color:
+                                                              Colors.white))),
+                                            );
+
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen()));
+                                            setState(() {});
+                                          } else {
+                                            apiKey.text = "";
+                                            enteredToken.text = "";
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  backgroundColor: Colors.red,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  content: Text("Login failed",
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color:
+                                                              Colors.white))),
+                                            );
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          }
                                         },
                                         child: const Text(
                                           "Login",
