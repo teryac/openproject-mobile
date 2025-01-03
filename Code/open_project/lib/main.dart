@@ -57,8 +57,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   late Animation<double> _rotation, _randomOffset;
   double _opacity = 1.0;
   double _offsetY = 50.0;
-  final int ballCount = 10; // Total number of balls
-  final double radius = 100.0; // Radius of the circle
 
   /* void getData() {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
@@ -123,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     )..repeat(); // Repeating the animation indefinitely
 
     // Define the rotation animation (from 0 to 1 for a full turn)
-    _rotation = Tween<double>(begin: 0.0, end: 0.0).animate(_controller);
+    _rotation = Tween<double>(begin: 0.0, end: 6.18).animate(_controller);
 
     _controller2 = AnimationController(
       duration: const Duration(milliseconds: 1000),
@@ -426,7 +424,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      LoginScreen()));
+                                                      const LoginScreen()));
                                           setState(() {});
                                         },
                                         child: const Text(
