@@ -68,14 +68,14 @@ class Detail extends State<StateDetail> {
         String sub = data['subject'];
 
         int idTask = data['id'];
-        //String status = data['status'];
+        String status =
+            data['_links']?['status']?['title'] ?? 'No Status available';
 
         return Subjects(
             id: idTask,
             subject: sub,
-            description: rawDescription /*,
-            status: status*/
-            );
+            description: rawDescription,
+            status: status);
       }).toList();
 
       //if (mounted) {
@@ -129,10 +129,17 @@ class Detail extends State<StateDetail> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             ListTile(
-                              title: Text(sub),
+                              title: Text(sub,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                               subtitle: Text(desc),
                               trailing: Text(
-                                id.toString(),
+                                dataOfSubject[index].status,
+                                style: const TextStyle(
+                                  fontSize: 13.0,
+                                  color: Colors.white,
+                                  backgroundColor: Colors.cyan,
+                                ),
                               ),
                               leading: CircleAvatar(
                                 backgroundColor: Colors.lightBlueAccent,
