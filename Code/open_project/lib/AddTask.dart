@@ -51,60 +51,86 @@ class AddTask extends State<AddScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: desc,
-                    keyboardType: TextInputType.name,
-                    decoration: const InputDecoration(
-                      labelText: 'Name of task',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Task",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: TextField(
+                          controller: desc,
+                          keyboardType: TextInputType.name,
+                          decoration: const InputDecoration(
+                            labelText: 'Name of task',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              desc.text = value;
+                            });
+                          },
                         ),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        desc.text = value;
-                      });
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButton<String>(
-                    value: type,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    style: const TextStyle(color: Colors.black),
-                    underline: Container(
-                      height: 3,
-                      color: Colors.black,
+                    const SizedBox(
+                        width:
+                            10), // Add spacing between TextField and DropdownButton
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue[
+                            200], // Background color for the DropdownButton
+                        borderRadius:
+                            BorderRadius.circular(8), // Rounded corners
+                      ),
+                      padding: const EdgeInsets.only(left: 3), // Inner padding
+                      child: DropdownButton<String>(
+                        dropdownColor: Colors.blue[200],
+                        iconEnabledColor: Colors.white,
+                        value: type,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        style: const TextStyle(color: Colors.white),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            type = newValue!;
+                          });
+                        },
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Task',
+                            child: Text('Task'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Milestone',
+                            child: Text('Milestone'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Phase',
+                            child: Text('Phase'),
+                          ),
+                        ],
+                      ),
                     ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        type = newValue!;
-                      });
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'Task',
-                        child: Text('Task'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Milestone',
-                        child: Text('Milestone'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Phase',
-                        child: Text('Phase'),
-                      ),
-                    ],
-                  ),
+                    const SizedBox(width: 10),
+                  ],
                 ),
               ],
             ),
-            Row(children: [
+            /*Row(children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButton<String>(
@@ -521,7 +547,7 @@ class AddTask extends State<AddScreen> {
                 'Add',
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
-            ),
+            ),*/
           ],
         ),
       ),
