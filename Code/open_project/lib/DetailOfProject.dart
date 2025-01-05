@@ -101,6 +101,7 @@ class Detail extends State<StateDetail> {
         backgroundColor: Colors.blueAccent,
         title: Text(name, style: const TextStyle(color: Colors.white)),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.lightBlue,
           onPressed: () {
@@ -108,6 +109,34 @@ class Detail extends State<StateDetail> {
                 MaterialPageRoute(builder: (context) => AddScreen(id, name)));
           },
           child: const Icon(Icons.add)),
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.blueAccent,
+        items: [
+          CurvedNavigationBarItem(
+            child: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          CurvedNavigationBarItem(
+            child: Icon(Icons.search),
+            label: 'Search',
+          ),
+          CurvedNavigationBarItem(
+            child: Icon(Icons.chat_bubble_outline),
+            label: 'Chat',
+          ),
+          CurvedNavigationBarItem(
+            child: Icon(Icons.newspaper),
+            label: 'Feed',
+          ),
+          CurvedNavigationBarItem(
+            child: Icon(Icons.perm_identity),
+            label: 'Personal',
+          ),
+        ],
+        onTap: (index) {
+          // Handle button tap
+        },
+      ),
       body: dataOfSubject.isEmpty
           ? const Center(child: Text('No tasks available...'))
           : Column(
@@ -133,13 +162,10 @@ class Detail extends State<StateDetail> {
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold)),
                               subtitle: Text(desc),
-                              trailing: Text(
-                                dataOfSubject[index].status,
-                                style: const TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.cyan,
-                                ),
-                              ),
+                              trailing: Badge(
+                                  textColor: Colors.white,
+                                  backgroundColor: Colors.cyan,
+                                  child: Text(dataOfSubject[0].status)),
                               leading: CircleAvatar(
                                 backgroundColor: Colors.lightBlueAccent,
                                 child: Text(
