@@ -6,6 +6,8 @@ import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+import 'package:easy_date_timeline/easy_date_timeline.dart';
+
 class AddScreen extends StatefulWidget {
   int id;
   String name;
@@ -127,6 +129,17 @@ class AddTask extends State<AddScreen> {
                     ),
                     const SizedBox(width: 10),
                   ],
+                ),
+                EasyDateTimeLine(
+                  initialDate: DateTime.now(),
+                  onDateChange: (selectedDate) {
+                    //[selectedDate] the new date selected.
+                  },
+                  activeColor: const Color(0xff85A389),
+                  dayProps: const EasyDayProps(
+                    todayHighlightStyle: TodayHighlightStyle.withBackground,
+                    todayHighlightColor: Color(0xffE1ECC8),
+                  ),
                 ),
               ],
             ),
