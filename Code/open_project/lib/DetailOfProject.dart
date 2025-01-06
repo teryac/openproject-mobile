@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_project/AddTask.dart';
+import 'package:open_project/Login.dart';
 import 'package:open_project/UpdateTask.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:badges/badges.dart' as badges;
 
 import 'Subjects.dart';
 
@@ -60,29 +62,30 @@ class Detail extends State<StateDetail> {
     http.get(uri).then((response) {
       var jsonResponse = jsonDecode(response.body);
       var embedded = jsonResponse['_embedded'];
-      var elements = embedded['elements'] as List;
-      List<Subjects> subjects = elements.map((data) {
-        // Safely access the raw field
-        String rawDescription =
-            data['description']?['raw'] ?? 'No description available';
-        String sub = data['subject'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Subjects> subjects = elements.map((data) {
+          // Safely access the raw field
+          String rawDescription =
+              data['description']?['raw'] ?? 'No description available';
+          String sub = data['subject'];
 
-        int idTask = data['id'];
-        String status =
-            data['_links']?['status']?['title'] ?? 'No Status available';
+          int idTask = data['id'];
+          String status =
+              data['_links']?['status']?['title'] ?? 'No Status available';
 
-        return Subjects(
-            id: idTask,
-            subject: sub,
-            description: rawDescription,
-            status: status);
-      }).toList();
+          return Subjects(
+              id: idTask,
+              subject: sub,
+              description: rawDescription,
+              status: status);
+        }).toList();
 
-      //if (mounted) {
-      setState(() {
-        dataOfSubject = subjects;
-      });
-      //}
+        //if (mounted) {
+        setState(() {
+          dataOfSubject = subjects;
+        });
+      }
     });
   }
 
@@ -98,47 +101,42 @@ class Detail extends State<StateDetail> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.lightBlue,
         title: Text(name, style: const TextStyle(color: Colors.white)),
+        leading: IconButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()));
+            setState(() {});
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+          mini: true,
+          elevation: 5.0,
+          shape: const CircleBorder(),
           backgroundColor: Colors.lightBlue,
+          foregroundColor: const Color(0xfff8f8f8),
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => AddScreen(id, name)));
           },
           child: const Icon(Icons.add)),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.blueAccent,
-        items: [
-          CurvedNavigationBarItem(
-            child: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.search),
-            label: 'Search',
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.chat_bubble_outline),
-            label: 'Chat',
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.newspaper),
-            label: 'Feed',
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.perm_identity),
-            label: 'Personal',
-          ),
-        ],
-        onTap: (index) {
-          // Handle button tap
-        },
+      bottomNavigationBar: const BottomAppBar(
+        color: Colors.lightBlue,
+        height: 50.0,
+        notchMargin: 5.0,
+        shape: CircularNotchedRectangle(),
       ),
       body: dataOfSubject.isEmpty
-          ? const Center(child: Text('No tasks available...'))
+          ? const Center(
+              child: Text(
+              'No tasks available...',
+              style: TextStyle(fontSize: 20.0),
+            ))
           : Column(
               children: [
                 Expanded(
@@ -162,10 +160,29 @@ class Detail extends State<StateDetail> {
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold)),
                               subtitle: Text(desc),
-                              trailing: Badge(
-                                  textColor: Colors.white,
-                                  backgroundColor: Colors.cyan,
-                                  child: Text(dataOfSubject[0].status)),
+                              trailing: badges.Badge(
+                                badgeContent: Text(
+                                  dataOfSubject[index].status,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                badgeAnimation:
+                                    const badges.BadgeAnimation.rotation(
+                                  animationDuration: Duration(seconds: 1),
+                                  colorChangeAnimationDuration:
+                                      Duration(seconds: 1),
+                                  loopAnimation: false,
+                                  curve: Curves.fastOutSlowIn,
+                                  colorChangeAnimationCurve: Curves.easeInCubic,
+                                ),
+                                badgeStyle: badges.BadgeStyle(
+                                  shape: badges.BadgeShape.square,
+                                  badgeColor: Colors.lightBlueAccent,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  elevation: 0,
+                                ),
+                              ),
                               leading: CircleAvatar(
                                 backgroundColor: Colors.lightBlueAccent,
                                 child: Text(
