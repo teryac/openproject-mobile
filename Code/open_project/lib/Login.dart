@@ -110,6 +110,7 @@ class Login extends State<LoginScreen> {
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
         leading: IconButton(
+          color: Colors.white,
           onPressed: () {
             Navigator.pop(context,
                 MaterialPageRoute(builder: (context) => const MyHomePage()));
@@ -170,7 +171,6 @@ class Login extends State<LoginScreen> {
                         color: Colors.white,
                         elevation: 3.0,
                         child: Column(
-                          //mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             ListTile(
@@ -181,15 +181,14 @@ class Login extends State<LoginScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Text(description),
-                                /*trailing: IconButton(
-                            icon: const Icon(Icons.delete),
-                            //color: Colors.red,
-                            onPressed: () {
-                              setState(() {
-                                data.removeAt(index);
-                              });
-                            },
-                          ),*/
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.arrow_forward_sharp),
+                                  onPressed: () {
+                                    setState(() {
+                                      //data.removeAt(index);
+                                    });
+                                  },
+                                ),
                                 onTap: () {
                                   Navigator.push(
                                       context,
