@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
+import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -23,11 +24,11 @@ class AddTask extends State<AddScreen> {
   String percentageDone = '0.0';
   String name;
   String progressValue = 'In Progress';
-  String personvalue = 'Shaaban Shaheen';
-  String assignee = 'Shaaban Shaheen';
-  String accountable = 'Shaaban Shaheen';
+  String personvalue = 'Shaaban Shahin';
+  String assignee = 'Shaaban Shahin';
+  String accountable = 'Shaaban Shahin';
   String category = 'Not found';
-  String version = 'V 1.0';
+  String version = 'v 1.0';
   String priority = 'High';
   String type = 'Task';
 
@@ -46,6 +47,15 @@ class AddTask extends State<AddScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         title: Text(name, style: const TextStyle(color: Colors.white)),
+        leading: IconButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context,
+                MaterialPageRoute(builder: (context) => StateDetail(id, name)));
+            setState(() {});
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
