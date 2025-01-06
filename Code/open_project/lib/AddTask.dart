@@ -89,42 +89,41 @@ class AddTask extends State<AddScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                        width:
-                            10), // Add spacing between TextField and DropdownButton
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue[
-                            200], // Background color for the DropdownButton
-                        borderRadius:
-                            BorderRadius.circular(8), // Rounded corners
-                      ),
-                      padding: const EdgeInsets.only(left: 3), // Inner padding
-                      child: DropdownButton<String>(
-                        dropdownColor: Colors.blue[200],
-                        iconEnabledColor: Colors.white,
-                        value: type,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.white),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            type = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'Task',
-                            child: Text('Task'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Milestone',
-                            child: Text('Milestone'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Phase',
-                            child: Text('Phase'),
-                          ),
-                        ],
+                    const SizedBox(width: 5),
+                    SizedBox(
+                      height: 63, // Match this height with the TextField height
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(3),
+                        child: DropdownButton<String>(
+                          dropdownColor: Colors.blueAccent,
+                          iconEnabledColor: Colors.white,
+                          value: type,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          style: const TextStyle(color: Colors.white),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              type = newValue!;
+                            });
+                          },
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Task',
+                              child: Text('Task'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Milestone',
+                              child: Text('Milestone'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Phase',
+                              child: Text('Phase'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
