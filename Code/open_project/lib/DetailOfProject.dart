@@ -138,7 +138,18 @@ class Detail extends State<StateDetail> {
               style: TextStyle(fontSize: 20.0),
             ))
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 15.0, top: 5.0),
+                  child: Text(
+                    "List of tasks:",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -168,13 +179,9 @@ class Detail extends State<StateDetail> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 badgeAnimation:
-                                    const badges.BadgeAnimation.rotation(
+                                    const badges.BadgeAnimation.fade(
                                   animationDuration: Duration(seconds: 1),
-                                  colorChangeAnimationDuration:
-                                      Duration(seconds: 1),
                                   loopAnimation: false,
-                                  curve: Curves.fastOutSlowIn,
-                                  colorChangeAnimationCurve: Curves.easeInCubic,
                                 ),
                                 badgeStyle: badges.BadgeStyle(
                                   shape: badges.BadgeShape.square,
