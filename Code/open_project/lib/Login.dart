@@ -121,7 +121,9 @@ class Login extends State<LoginScreen> {
             style: TextStyle(fontSize: 25, color: Colors.white)),
       ),
       body: data.isEmpty
-          ? const Center(child: Text('No projects available...'))
+          ? const Center(
+              child: Text('No projects available...',
+                  style: TextStyle(fontSize: 20.0)))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

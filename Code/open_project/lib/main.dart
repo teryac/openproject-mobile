@@ -429,7 +429,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                                           color:
                                                               Colors.white))),
                                             );
-
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
