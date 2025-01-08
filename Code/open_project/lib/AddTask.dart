@@ -28,7 +28,7 @@ class AddTask extends State<AddScreen> {
   String assignee = 'Shaaban Shahin';
   String accountable = 'Shaaban Shahin';
   String category = 'Not found';
-  String version = 'v 1.0';
+  String version = 'V 1.0';
   String priority = 'High';
   String type = 'Task';
 
@@ -60,13 +60,15 @@ class AddTask extends State<AddScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            //Row 1
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //Task
                 const Padding(
                   padding: EdgeInsets.only(left: 10.0),
                   child: Text(
-                    "Task",
+                    "Task:",
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.black,
@@ -139,141 +141,189 @@ class AddTask extends State<AddScreen> {
                     const SizedBox(width: 10),
                   ],
                 ),
-                EasyDateTimeLine(
-                  initialDate: DateTime.now(),
-                  onDateChange: (selectedDate) {
-                    //[selectedDate] the new date selected.
-                  },
-                  activeColor: const Color(0xff85A389),
-                  dayProps: const EasyDayProps(
-                    todayHighlightStyle: TodayHighlightStyle.withBackground,
-                    todayHighlightColor: Color(0xffE1ECC8),
+                const SizedBox(height: 5.0),
+              ],
+            ),
+            //Status
+            Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Status:",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 22.0),
+                SizedBox(
+                  height: 25.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.only(left: 8),
+                    child: DropdownButton<String>(
+                      value: progressValue,
+                      dropdownColor: Colors.blueAccent,
+                      iconEnabledColor: Colors.white,
+                      icon: const Icon(Icons.arrow_drop_down),
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          progressValue = newValue!;
+                        });
+                      },
+                      items: const [
+                        DropdownMenuItem<String>(
+                          value: 'In Progress',
+                          child: Text('In Progress'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'New',
+                          child: Text('New'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'In Specification',
+                          child: Text('In Specification'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Specified',
+                          child: Text('Specified'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Developed',
+                          child: Text('Developed'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'In testing',
+                          child: Text('In testing'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Tested',
+                          child: Text('Tested'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Test failed',
+                          child: Text('Test failed'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Closed',
+                          child: Text('Closed'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'On hold',
+                          child: Text('On hold'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Reject',
+                          child: Text('Reject'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-            /*Row(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  value: progressValue,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  style: const TextStyle(color: Colors.black),
-                  underline: Container(
-                    height: 3,
+            const SizedBox(height: 5.0),
+            //Create by
+            const Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Create by:",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 5.0,
+                ),
+                Text(
+                  "Shaaban Shahin",
+                  style: TextStyle(
+                    fontSize: 15,
                     color: Colors.black,
                   ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      progressValue = newValue!;
-                    });
-                  },
-                  items: const [
-                    DropdownMenuItem<String>(
-                      value: 'In Progress',
-                      child: Text('In Progress'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'New',
-                      child: Text('New'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'In Specification',
-                      child: Text('In Specification'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Specified',
-                      child: Text('Specified'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Developed',
-                      child: Text('Developed'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'In testing',
-                      child: Text('In testing'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Tested',
-                      child: Text('Tested'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Test failed',
-                      child: Text('Test failed'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Closed',
-                      child: Text('Closed'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'On hold',
-                      child: Text('On hold'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Reject',
-                      child: Text('Reject'),
-                    ),
-                  ],
                 ),
-              ),
-              Column(children: [
-                Row(children: [
-                  Text("Create by:"),
-                  SizedBox(width: 5, height: 3),
-                  DropdownButton<String>(
-                    value: personvalue,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    style: const TextStyle(color: Colors.black),
-                    underline: Container(
-                      height: 3,
+              ],
+            ),
+            const SizedBox(height: 5.0),
+            //Update at
+            Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Update at:",
+                    style: TextStyle(
+                      fontSize: 15,
                       color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
-                    onChanged: (String? newValue) {
+                  ),
+                ),
+                const SizedBox(
+                  width: 5.0,
+                ),
+                Text(
+                  '${updateTime.year} / ${updateTime.month} / ${updateTime.day}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 5.0),
+            //Description
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "Description:",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                  child: TextField(
+                    controller: desc,
+                    keyboardType: TextInputType.name,
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                      ),
+                    ),
+                    onChanged: (value) {
                       setState(() {
-                        personvalue = newValue!;
+                        desc.text = value;
                       });
                     },
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: 'Shaaban Shaheen',
-                        child: Text('Shaaban Shaheen'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Yaman Kalaji',
-                        child: Text('Yaman Kalaji'),
-                      ),
-                    ],
-                  ),
-                ]),
-                Row(children: [
-                  const Text("Last updates:"),
-                  const SizedBox(width: 5, height: 3),
-                  Text(
-                      '${updateTime.year} / ${updateTime.month} / ${updateTime.day}'),
-                ]),
-              ]),
-            ]),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: desc,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
                   ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    desc.text = value;
-                  });
-                },
-              ),
+              ],
             ),
+            const SizedBox(height: 5.0),
+            //Assignee & Accountable
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -282,164 +332,181 @@ class AddTask extends State<AddScreen> {
                     const Text(
                       "People:",
                       style: TextStyle(
-                          fontSize: 20.0, fontStyle: FontStyle.italic),
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
                     ),
                     Row(children: [
                       const Text("Assignee:"),
                       const SizedBox(width: 28, height: 0),
-                      DropdownButton<String>(
-                        value: assignee,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            assignee = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Shaaban Shaheen',
-                            child: Text('Shaaban Shaheen'),
+                      SizedBox(
+                        height: 25.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          DropdownMenuItem<String>(
-                            value: 'Yaman Kalaji',
-                            child: Text('Yaman Kalaji'),
-                          )
-                        ],
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: DropdownButton<String>(
+                            value: assignee,
+                            dropdownColor: Colors.blueAccent,
+                            iconEnabledColor: Colors.white,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            style: const TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                assignee = newValue!;
+                              });
+                            },
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: 'Shaaban Shahin',
+                                child: Text('Shaaban Shahin'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Yaman Kalaji',
+                                child: Text('Yaman Kalaji'),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ]),
+                    const SizedBox(height: 8),
                     Row(children: [
                       const Text("Accountable:"),
                       const SizedBox(width: 8, height: 0),
-                      DropdownButton<String>(
-                        value: accountable,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            accountable = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Shaaban Shaheen',
-                            child: Text('Shaaban Shaheen'),
+                      SizedBox(
+                        height: 25.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          DropdownMenuItem<String>(
-                            value: 'Yaman Kalaji',
-                            child: Text('Yaman Kalaji'),
-                          )
-                        ],
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButton<String>(
+                            value: accountable,
+                            dropdownColor: Colors.blueAccent,
+                            iconEnabledColor: Colors.white,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            style: const TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                accountable = newValue!;
+                              });
+                            },
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: 'Shaaban Shahin',
+                                child: Text('Shaaban Shahin'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Yaman Kalaji',
+                                child: Text('Yaman Kalaji'),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ]),
                   ]),
             ),
+            // Estimates & Time
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 8.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Estimates & Time:',
                         style: TextStyle(
-                            fontSize: 20.0, fontStyle: FontStyle.italic)),
+                            fontSize: 15.0, fontWeight: FontWeight.bold)),
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                          child: Text('${hours.hour}'),
-                          onPressed: () {
-                            showCupertinoModalPopup(
-                                context: context,
-                                builder: (BuildContext context) => SizedBox(
-                                      height: 250,
-                                      child: CupertinoDatePicker(
-                                        backgroundColor: Colors.white,
-                                        initialDateTime: hours,
-                                        use24hFormat: true,
-                                        mode: CupertinoDatePickerMode.time,
-                                        onDateTimeChanged: (DateTime value) {
-                                          setState(() {
-                                            hours = value;
-                                          });
-                                        },
-                                      ),
-                                    ));
-                          }),
+                        child: Text('${hours.hour}'),
+                        onPressed: () {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: (BuildContext context) => SizedBox(
+                              height: 250,
+                              child: CupertinoDatePicker(
+                                backgroundColor: Colors.white,
+                                initialDateTime: hours,
+                                use24hFormat: true,
+                                mode: CupertinoDatePickerMode.time,
+                                onDateTimeChanged: (DateTime value) {
+                                  setState(() {
+                                    hours = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       const Text('h')
                     ]),
                   ]),
             ),
+            //Detail
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 8.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Detail:',
+                    const Text(
+                      'Detail:',
+                      style: TextStyle(
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
+                    ),
+                    //Start Date && Due Date
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Start Date:'),
+                          EasyDateTimeLine(
+                            initialDate: DateTime.now(),
+                            onDateChange: (selectedDate) {
+                              //[selectedDate] the new date selected.
+                            },
+                            activeColor: const Color(0xff85A389),
+                            dayProps: const EasyDayProps(
+                              todayHighlightStyle:
+                                  TodayHighlightStyle.withBackground,
+                              todayHighlightColor: Color(0xffE1ECC8),
+                            ),
+                          ),
+                          const Text('Due Date:'),
+                          EasyDateTimeLine(
+                            initialDate: DateTime.now(),
+                            onDateChange: (selectedDate) {
+                              //[selectedDate] the new date selected.
+                            },
+                            activeColor: const Color(0xff85A389),
+                            dayProps: const EasyDayProps(
+                              todayHighlightStyle:
+                                  TodayHighlightStyle.withBackground,
+                              todayHighlightColor: Color(0xffE1ECC8),
+                            ),
+                          ),
+                        ]),
+                    //Progress
+                    Row(children: [
+                      const Text(
+                        "Progress%:",
                         style: TextStyle(
-                            fontSize: 20.0, fontStyle: FontStyle.italic)),
-                    Row(children: [
-                      const Text('Date:'),
-                      TextButton(
-                        child: Text(
-                            '${startdate.year} / ${startdate.month} / ${startdate.day}'),
-                        onPressed: () {
-                          showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2030))
-                              .then((value) {
-                            if (value != null && startdate.isBefore(value)) {
-                              setState(() {
-                                startdate = value;
-                              });
-                            }
-                          });
-                        },
+                            fontSize: 15.0, fontWeight: FontWeight.bold),
                       ),
-                      TextButton(
-                        child: Text(
-                            '${enddate.year} / ${enddate.month} / ${enddate.day}'),
-                        onPressed: () {
-                          showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2030))
-                              .then((value) {
-                            if (value != null && enddate.isBefore(value)) {
-                              setState(() {
-                                enddate = value;
-                              });
-                            }
-                          });
-                        },
-                      )
-                    ]),
-                    Row(children: [
-                      const Text("Progress%:"),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: LinearPercentIndicator(
-                          width: 100.0,
-                          animation: true,
-                          animationDuration: 1000,
-                          animateFromLastPercent: true,
-                          lineHeight: 20.0,
-                          percent:
-                              double.parse(percentageDone.toString()) / 100.0,
-                          center: Text(
-                              '${double.parse(percentageDone.toString())}'),
-                          barRadius: const Radius.circular(16),
-                          progressColor: Colors.blue,
-                        ),
+                      LinearPercentIndicator(
+                        width: 100.0,
+                        animation: true,
+                        animationDuration: 1000,
+                        animateFromLastPercent: true,
+                        lineHeight: 20.0,
+                        percent:
+                            double.parse(percentageDone.toString()) / 100.0,
+                        center:
+                            Text('${double.parse(percentageDone.toString())}'),
+                        barRadius: const Radius.circular(16),
+                        progressColor: Colors.blue,
                       ),
                       IconButton(
                         onPressed: () {
@@ -477,64 +544,141 @@ class AddTask extends State<AddScreen> {
                         color: Colors.blue,
                       ),
                     ]),
+                    const SizedBox(height: 3.0),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //category
+                          Row(
+                            children: [
+                              const Text(
+                                "Category:",
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 10.0),
+                              SizedBox(
+                                height: 25.0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueAccent,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: DropdownButton<String>(
+                                    value: category,
+                                    dropdownColor: Colors.blueAccent,
+                                    iconEnabledColor: Colors.white,
+                                    icon: const Icon(Icons.arrow_drop_down),
+                                    style: const TextStyle(color: Colors.white),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        category = newValue!;
+                                      });
+                                    },
+                                    items: const [
+                                      DropdownMenuItem<String>(
+                                        value: 'Not found',
+                                        child: Text('Not found'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15.0),
+                          //version
+                          Row(
+                            children: [
+                              const Text(
+                                "Version:",
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 50.0),
+                              SizedBox(
+                                height: 25.0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueAccent,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: DropdownButton<String>(
+                                    value: version,
+                                    dropdownColor: Colors.blueAccent,
+                                    iconEnabledColor: Colors.white,
+                                    icon: const Icon(Icons.arrow_drop_down),
+                                    style: const TextStyle(color: Colors.white),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        version = newValue!;
+                                      });
+                                    },
+                                    items: const [
+                                      DropdownMenuItem<String>(
+                                        value: 'V 1.0',
+                                        child: Text('V 1.0'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ]),
+                    const SizedBox(height: 15.0),
+                    //Priority
                     Row(children: [
-                      const Text("Category:"),
-                      const SizedBox(width: 5.0),
-                      DropdownButton<String>(
-                        value: category,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            category = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Not found',
-                            child: Text('Not found'),
-                          )
-                        ],
+                      const Text(
+                        "Priority:",
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(width: 10.0),
-                      const Text("Version:"),
-                      const SizedBox(width: 5.0),
-                      DropdownButton<String>(
-                        value: version,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
+                      const SizedBox(width: 32.0),
+                      SizedBox(
+                        height: 25.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButton<String>(
+                            value: priority,
+                            dropdownColor: Colors.blueAccent,
+                            iconEnabledColor: Colors.white,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            style: const TextStyle(color: Colors.white),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                priority = newValue!;
+                              });
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'Low',
+                                child: Text('Low'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Medium',
+                                child: Text('Medium'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'High',
+                                child: Text('High'),
+                              ),
+                            ],
+                          ),
                         ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            version = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'V 1.0',
-                            child: Text('V 1.0'),
-                          )
-                        ],
                       ),
-                    ]),
-                    Row(children: [
-                      const Text("Priority:"),
-                      const SizedBox(width: 5.0),
-                      DropdownButton<String>(
+                      /*DropdownButton<String>(
                         value: priority,
                         icon: const Icon(Icons.arrow_drop_down),
                         style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
                         onChanged: (String? newValue) {
                           setState(() {
                             priority = newValue!;
@@ -554,10 +698,11 @@ class AddTask extends State<AddScreen> {
                             child: Text('High'),
                           ),
                         ],
-                      ),
+                      ),*/
                     ]),
                   ]),
             ),
+            const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
                 //Fluttertoast.showToast(msg: lockVersion.toString());
@@ -569,7 +714,8 @@ class AddTask extends State<AddScreen> {
                 'Add',
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
-            ),*/
+            ),
+            const SizedBox(height: 25.0),
           ],
         ),
       ),

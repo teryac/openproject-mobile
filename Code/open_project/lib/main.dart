@@ -48,8 +48,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List<Project> data = [];
   late String name;
   late int id;
-  String? apikey;
-  String? token;
   String username = 'apikey';
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
