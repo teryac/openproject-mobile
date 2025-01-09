@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:open_project/AddTask.dart';
 import 'package:open_project/Login.dart';
 import 'package:open_project/UpdateTask.dart';
@@ -55,12 +58,18 @@ class Detail extends State<StateDetail> {
     });
   }
 
-  void getTask() {
-    Uri uri =
-        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages");
+  void getTask() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
 
-    http.get(uri).then((response) {
-      var jsonResponse = jsonDecode(response.body);
+    Response r = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages"),
+        headers: <String, String>{'authorization': basicAuth});
+
+    if (r.statusCode == 200) {
+      var jsonResponse = jsonDecode(r.body);
       var embedded = jsonResponse['_embedded'];
       if (embedded != null) {
         var elements = embedded['elements'] as List;
@@ -86,7 +95,7 @@ class Detail extends State<StateDetail> {
           dataOfSubject = subjects;
         });
       }
-    });
+    }
   }
 
   @override
@@ -113,23 +122,23 @@ class Detail extends State<StateDetail> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-          mini: true,
-          elevation: 5.0,
-          shape: const CircleBorder(),
-          backgroundColor: Colors.lightBlue,
-          foregroundColor: const Color(0xfff8f8f8),
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AddScreen(id, name)));
-          },
-          child: const Icon(Icons.add)),
-      bottomNavigationBar: const BottomAppBar(
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: const Color(0xfff8f8f8),
+        animationDuration: const Duration(seconds: 5),
+        animationCurve: Curves.bounceInOut,
         color: Colors.lightBlue,
-        height: 50.0,
-        notchMargin: 5.0,
-        shape: CircularNotchedRectangle(),
+        items: const [
+          CurvedNavigationBarItem(
+            child: Icon(Icons.add, color: Colors.white),
+            label: 'Add task',
+            labelStyle: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ],
+        onTap: (index) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddScreen(id, name)));
+        },
       ),
       body: dataOfSubject.isEmpty
           ? const Center(
@@ -180,7 +189,7 @@ class Detail extends State<StateDetail> {
                                 ),
                                 badgeAnimation:
                                     const badges.BadgeAnimation.fade(
-                                  animationDuration: Duration(seconds: 1),
+                                  animationDuration: Duration(seconds: 4),
                                   loopAnimation: false,
                                 ),
                                 badgeStyle: badges.BadgeStyle(

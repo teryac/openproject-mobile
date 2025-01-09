@@ -38,12 +38,15 @@ class AddTask extends State<AddScreen> {
   DateTime enddate = DateTime.now();
   DateTime hours = DateTime.now();
   DateTime updateTime = DateTime.now();
+  var initialDate;
+  var selectedYear;
 
   AddTask(this.id, this.name);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         title: Text(name, style: const TextStyle(color: Colors.white)),
@@ -370,7 +373,7 @@ class AddTask extends State<AddScreen> {
                         ),
                       ),
                     ]),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 20),
                     Row(children: [
                       const Text("Accountable:"),
                       const SizedBox(width: 8, height: 0),
@@ -421,7 +424,8 @@ class AddTask extends State<AddScreen> {
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                        child: Text('${hours.hour}'),
+                        child: Text(
+                            'Day: ${hours.day}  Hour: ${hours.hour}  Minutes: ${hours.minute}'),
                         onPressed: () {
                           showCupertinoModalPopup(
                             context: context,
@@ -431,7 +435,7 @@ class AddTask extends State<AddScreen> {
                                 backgroundColor: Colors.white,
                                 initialDateTime: hours,
                                 use24hFormat: true,
-                                mode: CupertinoDatePickerMode.time,
+                                mode: CupertinoDatePickerMode.dateAndTime,
                                 onDateTimeChanged: (DateTime value) {
                                   setState(() {
                                     hours = value;
@@ -442,7 +446,6 @@ class AddTask extends State<AddScreen> {
                           );
                         },
                       ),
-                      const Text('h')
                     ]),
                   ]),
             ),
@@ -462,10 +465,52 @@ class AddTask extends State<AddScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('Start Date:'),
+                          /*CupertinoButton(
+                            child: Text("Select Year"),
+                            onPressed: () async {
+                              selectedYear = await showCupertinoModalPopup<int>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    height: 250,
+                                    color: Colors.white,
+                                    child: CupertinoPicker(
+                                      scrollController:
+                                          FixedExtentScrollController(
+                                        initialItem: DateTime.now().year -
+                                            2000, // Adjust as needed
+                                      ),
+                                      itemExtent: 40,
+                                      onSelectedItemChanged: (int index) {
+                                        Navigator.pop(
+                                            context,
+                                            2000 +
+                                                index); // Return the selected year
+                                      },
+                                      children: List<Widget>.generate(
+                                        100, // Years range from 2000 to 2099
+                                        (index) => Center(
+                                          child: Text('${2000 + index}'),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+
+                              if (selectedYear != null) {
+                                // Update your timeline with the selected year.
+                                setState(() {
+                                  initialDate = DateTime(selectedYear,
+                                      DateTime(1900).month, DateTime(1900).day);
+                                });
+                              }
+                            },
+                          ),*/
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              //[selectedDate] the new date selected.
+                              // Handle the new selected date, including the year.
                             },
                             activeColor: const Color(0xff85A389),
                             dayProps: const EasyDayProps(
@@ -474,6 +519,7 @@ class AddTask extends State<AddScreen> {
                               todayHighlightColor: Color(0xffE1ECC8),
                             ),
                           ),
+                          const SizedBox(height: 5.0),
                           const Text('Due Date:'),
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),

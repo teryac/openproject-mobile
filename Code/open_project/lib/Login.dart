@@ -127,7 +127,6 @@ class Login extends State<LoginScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ///const SizedBox(height: 15.0),
                 const Padding(
                   padding: EdgeInsets.only(top: 8.0, left: 8.0),
                   child: Text(
@@ -139,9 +138,7 @@ class Login extends State<LoginScreen> {
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(
-                    left: 8.0,
-                  ),
+                  padding: EdgeInsets.only(left: 8.0),
                   child: Text(
                     "Welcome back",
                     style: TextStyle(color: Colors.black),
@@ -157,6 +154,7 @@ class Login extends State<LoginScreen> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
+                const SizedBox(height: 5.0),
                 Expanded(
                     child: ListView.builder(
                   //shrinkWrap: true,

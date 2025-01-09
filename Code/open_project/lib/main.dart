@@ -153,9 +153,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 150.0,
-            ),
+            const SizedBox(height: 150.0),
             SizedBox(
               height: 250,
               child: Stack(
