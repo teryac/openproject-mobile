@@ -12,8 +12,8 @@ ButtonStyle button() {
   ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: Colors.lightBlue,
     elevation: 10,
-    minimumSize: Size(327, 50),
-    padding: EdgeInsets.symmetric(horizontal: 35),
+    minimumSize: const Size(327, 50),
+    padding: const EdgeInsets.symmetric(horizontal: 35),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(50)),
     ),
@@ -292,7 +292,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               animation: _controller,
               builder: (context, child) {
                 final random = Random();
-
                 return Stack(
                   children: [
                     // Main text (base layer)

@@ -8,6 +8,7 @@ import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class AddScreen extends StatefulWidget {
   int id;
@@ -38,8 +39,60 @@ class AddTask extends State<AddScreen> {
   DateTime enddate = DateTime.now();
   DateTime hours = DateTime.now();
   DateTime updateTime = DateTime.now();
-  var initialDate;
-  var selectedYear;
+  final List<String> listOfStatus = [
+    'In progress',
+    'New',
+    'In Specification',
+    'Specified',
+    'Developed',
+    'In testing',
+    'Tested',
+    'Test failed',
+    'Closed',
+    'On hold',
+    'Reject',
+  ];
+
+  final List<String> listOfType = [
+    'Task',
+    'Milestone',
+    'Phase',
+    'User story',
+    'Bug',
+    'Epic',
+  ];
+
+  final List<String> listOfPriority = [
+    'Low',
+    'Medium',
+    'Normal',
+    'Immediate',
+    'High',
+  ];
+
+  final List<String> listOfVersion = [
+    'V 1.0',
+    'Bug Backlog',
+    'Product Backlog',
+    'Sprit 1',
+    'Sprit 2',
+  ];
+
+  final List<String> listOfUser = [
+    'Shaaban Shahin',
+    'Yaman Kalaji',
+  ];
+
+  final List<String> listOfCategory = [
+    'Not found',
+  ];
+
+  String? selectedStatus;
+  String? selectedType;
+  String? selectedPriority;
+  String? selectedUser;
+  String? selectedVersion;
+  String? selectedCategory;
 
   AddTask(this.id, this.name);
 
@@ -87,7 +140,7 @@ class AddTask extends State<AddScreen> {
                         padding: const EdgeInsets.only(left: 10.0),
                         child: TextField(
                           controller: desc,
-                          keyboardType: TextInputType.name,
+                          keyboardType: TextInputType.multiline,
                           decoration: const InputDecoration(
                             labelText: 'Name of task',
                             border: OutlineInputBorder(
@@ -109,35 +162,87 @@ class AddTask extends State<AddScreen> {
                       height: 63, // Match this height with the TextField height
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.blueAccent,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: const EdgeInsets.all(3),
-                        child: DropdownButton<String>(
-                          dropdownColor: Colors.blueAccent,
-                          iconEnabledColor: Colors.white,
-                          value: type,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          style: const TextStyle(color: Colors.white),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              type = newValue!;
-                            });
-                          },
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'Task',
-                              child: Text('Task'),
+                        padding: const EdgeInsets.only(left: 3),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Select Type',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2595AF),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
-                            DropdownMenuItem(
-                              value: 'Milestone',
-                              child: Text('Milestone'),
+                            items: listOfType
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xff2595AF),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ))
+                                .toList(),
+                            value: selectedType,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedType = value;
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 60,
+                              width: 120,
+                              padding: const EdgeInsets.only(left: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.black26,
+                                ),
+                                color: const Color(0xffE1F2F6),
+                              ),
+                              elevation: 0,
                             ),
-                            DropdownMenuItem(
-                              value: 'Phase',
-                              child: Text('Phase'),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                              ),
+                              iconSize: 20,
+                              iconEnabledColor: Color(0xff2595AF),
+                              iconDisabledColor: Color(0xff2595AF),
                             ),
-                          ],
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 120,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: const Color(0xffE1F2F6),
+                              ),
+                              //offset: const Offset(0, 0),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(40),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -161,72 +266,91 @@ class AddTask extends State<AddScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 22.0),
+                const SizedBox(width: 15.0),
                 SizedBox(
                   height: 25.0,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.blueAccent,
+                      //color: Colors.blueAccent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.only(left: 8),
-                    child: DropdownButton<String>(
-                      value: progressValue,
-                      dropdownColor: Colors.blueAccent,
-                      iconEnabledColor: Colors.white,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      style: const TextStyle(color: Colors.white),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          progressValue = newValue!;
-                        });
-                      },
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'In Progress',
-                          child: Text('In Progress'),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Select Status',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                        DropdownMenuItem<String>(
-                          value: 'New',
-                          child: Text('New'),
+                        items: listOfStatus
+                            .map((String item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ))
+                            .toList(),
+                        value: selectedStatus,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 50,
+                          width: 150,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Colors.black26,
+                            ),
+                            color: const Color(0xff69B73F),
+                          ),
                         ),
-                        DropdownMenuItem<String>(
-                          value: 'In Specification',
-                          child: Text('In Specification'),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                          ),
+                          iconSize: 20,
+                          iconEnabledColor: Colors.white,
+                          iconDisabledColor: Colors.grey,
                         ),
-                        DropdownMenuItem<String>(
-                          value: 'Specified',
-                          child: Text('Specified'),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 120,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            color: const Color(0xff69B73F),
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(40),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
                         ),
-                        DropdownMenuItem<String>(
-                          value: 'Developed',
-                          child: Text('Developed'),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 14, right: 14),
                         ),
-                        DropdownMenuItem<String>(
-                          value: 'In testing',
-                          child: Text('In testing'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Tested',
-                          child: Text('Tested'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Test failed',
-                          child: Text('Test failed'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Closed',
-                          child: Text('Closed'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'On hold',
-                          child: Text('On hold'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Reject',
-                          child: Text('Reject'),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -344,31 +468,88 @@ class AddTask extends State<AddScreen> {
                         height: 25.0,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: DropdownButton<String>(
-                            value: assignee,
-                            dropdownColor: Colors.blueAccent,
-                            iconEnabledColor: Colors.white,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            style: const TextStyle(color: Colors.white),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                assignee = newValue!;
-                              });
-                            },
-                            items: const [
-                              DropdownMenuItem<String>(
-                                value: 'Shaaban Shahin',
-                                child: Text('Shaaban Shahin'),
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Select Assinee',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff2595AF),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              DropdownMenuItem<String>(
-                                value: 'Yaman Kalaji',
-                                child: Text('Yaman Kalaji'),
-                              )
-                            ],
+                              items: listOfUser
+                                  .map(
+                                      (String item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                  .toList(),
+                              value: selectedUser,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedUser = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 140,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 20,
+                                iconEnabledColor: Color(0xff2595AF),
+                                iconDisabledColor: Color(0xff2595AF),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 120,
+                                width: 140,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                //offset: const Offset(0, 0),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -381,31 +562,88 @@ class AddTask extends State<AddScreen> {
                         height: 25.0,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: DropdownButton<String>(
-                            value: accountable,
-                            dropdownColor: Colors.blueAccent,
-                            iconEnabledColor: Colors.white,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            style: const TextStyle(color: Colors.white),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                accountable = newValue!;
-                              });
-                            },
-                            items: const [
-                              DropdownMenuItem<String>(
-                                value: 'Shaaban Shahin',
-                                child: Text('Shaaban Shahin'),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Select Assinee',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff2595AF),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              DropdownMenuItem<String>(
-                                value: 'Yaman Kalaji',
-                                child: Text('Yaman Kalaji'),
-                              )
-                            ],
+                              items: listOfUser
+                                  .map(
+                                      (String item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                  .toList(),
+                              value: selectedUser,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedUser = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 140,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 20,
+                                iconEnabledColor: Color(0xff2595AF),
+                                iconDisabledColor: Color(0xff2595AF),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 120,
+                                width: 140,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                //offset: const Offset(0, 0),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -512,7 +750,7 @@ class AddTask extends State<AddScreen> {
                             onDateChange: (selectedDate) {
                               // Handle the new selected date, including the year.
                             },
-                            activeColor: const Color(0xff85A389),
+                            activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
                               todayHighlightStyle:
                                   TodayHighlightStyle.withBackground,
@@ -526,7 +764,7 @@ class AddTask extends State<AddScreen> {
                             onDateChange: (selectedDate) {
                               //[selectedDate] the new date selected.
                             },
-                            activeColor: const Color(0xff85A389),
+                            activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
                               todayHighlightStyle:
                                   TodayHighlightStyle.withBackground,
@@ -603,32 +841,99 @@ class AddTask extends State<AddScreen> {
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.bold),
                               ),
-                              const SizedBox(width: 10.0),
+                              const SizedBox(width: 30),
                               SizedBox(
                                 height: 25.0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.blueAccent,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: DropdownButton<String>(
-                                    value: category,
-                                    dropdownColor: Colors.blueAccent,
-                                    iconEnabledColor: Colors.white,
-                                    icon: const Icon(Icons.arrow_drop_down),
-                                    style: const TextStyle(color: Colors.white),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        category = newValue!;
-                                      });
-                                    },
-                                    items: const [
-                                      DropdownMenuItem<String>(
-                                        value: 'Not found',
-                                        child: Text('Not found'),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Select Category',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                      items: listOfCategory
+                                          .map((String item) =>
+                                              DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xff2595AF),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ))
+                                          .toList(),
+                                      value: selectedCategory,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedCategory = value;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 60,
+                                        width: 150,
+                                        padding:
+                                            const EdgeInsets.only(left: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
+                                            color: Colors.black26,
+                                          ),
+                                          color: const Color(0xffE1F2F6),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                        ),
+                                        iconSize: 20,
+                                        iconEnabledColor: Color(0xff2595AF),
+                                        iconDisabledColor: Color(0xff2595AF),
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 120,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          color: const Color(0xffE1F2F6),
+                                        ),
+                                        //offset: const Offset(0, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -649,27 +954,94 @@ class AddTask extends State<AddScreen> {
                                 height: 25.0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.blueAccent,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: DropdownButton<String>(
-                                    value: version,
-                                    dropdownColor: Colors.blueAccent,
-                                    iconEnabledColor: Colors.white,
-                                    icon: const Icon(Icons.arrow_drop_down),
-                                    style: const TextStyle(color: Colors.white),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        version = newValue!;
-                                      });
-                                    },
-                                    items: const [
-                                      DropdownMenuItem<String>(
-                                        value: 'V 1.0',
-                                        child: Text('V 1.0'),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Select version',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                      items: listOfVersion
+                                          .map((String item) =>
+                                              DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xff2595AF),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ))
+                                          .toList(),
+                                      value: selectedVersion,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedVersion = value;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 60,
+                                        width: 140,
+                                        padding:
+                                            const EdgeInsets.only(left: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
+                                            color: Colors.black26,
+                                          ),
+                                          color: const Color(0xffE1F2F6),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                        ),
+                                        iconSize: 20,
+                                        iconEnabledColor: Color(0xff2595AF),
+                                        iconDisabledColor: Color(0xff2595AF),
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 120,
+                                        width: 140,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          color: const Color(0xffE1F2F6),
+                                        ),
+                                        //offset: const Offset(0, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -684,67 +1056,96 @@ class AddTask extends State<AddScreen> {
                         style: TextStyle(
                             fontSize: 15.0, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(width: 32.0),
+                      const SizedBox(width: 50),
                       SizedBox(
                         height: 25.0,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: DropdownButton<String>(
-                            value: priority,
-                            dropdownColor: Colors.blueAccent,
-                            iconEnabledColor: Colors.white,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            style: const TextStyle(color: Colors.white),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                priority = newValue!;
-                              });
-                            },
-                            items: const [
-                              DropdownMenuItem(
-                                value: 'Low',
-                                child: Text('Low'),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Select Priority',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff2595AF),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              DropdownMenuItem(
-                                value: 'Medium',
-                                child: Text('Medium'),
+                              items: listOfPriority
+                                  .map(
+                                      (String item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                  .toList(),
+                              value: selectedPriority,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedPriority = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 140,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0,
                               ),
-                              DropdownMenuItem(
-                                value: 'High',
-                                child: Text('High'),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 20,
+                                iconEnabledColor: Color(0xff2595AF),
+                                iconDisabledColor: Color(0xff2595AF),
                               ),
-                            ],
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 120,
+                                width: 110,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                //offset: const Offset(0, 0),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      /*DropdownButton<String>(
-                        value: priority,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            priority = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'Low',
-                            child: Text('Low'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Medium',
-                            child: Text('Medium'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'High',
-                            child: Text('High'),
-                          ),
-                        ],
-                      ),*/
                     ]),
                   ]),
             ),
@@ -761,7 +1162,7 @@ class AddTask extends State<AddScreen> {
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
             ),
-            const SizedBox(height: 25.0),
+            const SizedBox(height: 50.0),
           ],
         ),
       ),

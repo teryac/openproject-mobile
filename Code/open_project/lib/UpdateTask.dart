@@ -31,7 +31,7 @@ class UpdateTasks extends State<UpdateScreen> {
   String assignee = 'Shaaban Shahin';
   String accountable = 'Shaaban Shahin';
   String category = 'Not found';
-  String version = 'v 1.0';
+  String version = 'V 1.0';
   String priority = 'High';
   String type = 'Task';
   String? apikey;
@@ -636,8 +636,8 @@ class UpdateTasks extends State<UpdateScreen> {
                         },
                         items: const [
                           DropdownMenuItem<String>(
-                            value: 'v 1.0',
-                            child: Text('v 1.0'),
+                            value: 'V 1.0',
+                            child: Text('V 1.0'),
                           ),
                           DropdownMenuItem<String>(
                             value: 'Bug Backlog',

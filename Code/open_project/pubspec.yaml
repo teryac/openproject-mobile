@@ -42,7 +42,7 @@ dependencies:
   percent_indicator: ^4.0.1
   fluttericon: ^2.0.0
   shared_preferences: ^2.0.15
-  gradient_widgets: ^0.6.0
+  dropdown_button2: ^2.3.9
   easy_date_timeline: ^1.0.3
   badges: ^3.1.2
   curved_labeled_navigation_bar: ^2.0.5 #latest version
