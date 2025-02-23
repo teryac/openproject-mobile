@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -230,6 +232,61 @@ class AddTask extends State<AddScreen> {
         });
       }
     }
+  }
+
+  void addTask() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+    String newTask = """{\n    
+    "_type": "WorkPackage",\n    
+    "subject": "Design New Feature",\n    
+    "description": {\n        
+    "format": "markdown",\n        
+    "raw": "Create a detailed design document for the new feature."\n    },\n   
+     "priority": {\n        
+     "href": "/api/v3/priorities/10",\n       
+      "title": "Immediate"\n    },\n    
+      "status": {\n        
+      "href": "/api/v3/statuses/7",\n        
+      "title": "In progress"\n    },\n    
+      "type": {\n        
+      "href": "/api/v3/types/2",\n        
+      "title": "Milestone"\n    },\n    
+      "assignee": {\n        
+      "href": "/api/v3/users/5",\n        
+      "title": "Shaaban Shahin"\n    },\n    
+      "responsible": {\n        
+      "href": "/api/v3/users/5",\n        
+      "title": "Shaaban Shahin"\n    },\n    
+      "project": {\n        
+      "href": "/api/v3/projects/1",\n        
+      "title": "Demo projecy"\n    },\n    
+      "version": {\n        
+      "href": "/api/v3/versions/5",\n        
+      "title": "Release 1.1"\n    },\n    
+      "startDate": "2025-01-20",\n    
+      "dueDate": "2025-01-30",\n    
+      "estimatedTime": "PT5H",\n    
+      "customField1": "Custom Value",\n    
+      "customField2": 123,\n    
+      "percentageDone": 0\n}""";
+    await http.post(
+      Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages"),
+      body: newTask,
+      headers: <String, String>{
+        'content-type': 'application/json; charset=UTF-8',
+        'authorization': basicAuth
+      },
+    ).then((response) {
+      if (response.statusCode == 201) {
+        Fluttertoast.showToast(msg: 'Task has been added');
+      } else {
+        Fluttertoast.showToast(msg: 'You cannot add task');
+      }
+    });
   }
 
   @override
@@ -1297,7 +1354,7 @@ class AddTask extends State<AddScreen> {
             ElevatedButton(
               onPressed: () {
                 //Fluttertoast.showToast(msg: lockVersion.toString());
-
+                addTask();
                 setState(() {});
               },
               style: button(),
