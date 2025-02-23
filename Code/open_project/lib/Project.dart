@@ -1,25 +1,3 @@
-/* class ProjectCollection {
-  Embedded embedded;
-
-  ProjectCollection({required this.embedded});
-
-  //factory ProjectCollection.fromJson(Map<String, dynamic> parsedJson){
-  //       return ProjectCollection(
-   //      embedded: Embedded.fromJson(parsedJson["_embedded"])
-   //      );
-   //    }
-}
-
-class Embedded {
-  List<Project> elements;
-
-  Embedded({required this.elements});
-  
-  //static fromJson(Map<String, dynamic> parsedJson) {
-  //  return Embedded(elements: List<Project>.from();
- // }
-} */
-
 class Project {
   var description;
   String name;

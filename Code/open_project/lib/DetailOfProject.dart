@@ -90,7 +90,6 @@ class Detail extends State<StateDetail> {
               status: status);
         }).toList();
 
-        //if (mounted) {
         setState(() {
           dataOfSubject = subjects;
         });
