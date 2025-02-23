@@ -1,14 +1,17 @@
-// ignore_for_file: must_be_immutable
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
+import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
+import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddScreen extends StatefulWidget {
   int id;
@@ -39,8 +42,8 @@ class AddTask extends State<AddScreen> {
   DateTime enddate = DateTime.now();
   DateTime hours = DateTime.now();
   DateTime updateTime = DateTime.now();
-  final List<String> listOfStatus = [
-    'In progress',
+  List<Property> listOfStatus = [
+    /*'In progress',
     'New',
     'In Specification',
     'Specified',
@@ -50,51 +53,191 @@ class AddTask extends State<AddScreen> {
     'Test failed',
     'Closed',
     'On hold',
-    'Reject',
+    'Reject',*/
   ];
 
-  final List<String> listOfType = [
-    'Task',
+  List<Property> listOfType = [
+    /*'Task',
     'Milestone',
     'Phase',
     'User story',
     'Bug',
-    'Epic',
+    'Epic',*/
   ];
 
-  final List<String> listOfPriority = [
-    'Low',
+  List<Property> listOfPriority = [
+    /* 'Low',
     'Medium',
     'Normal',
     'Immediate',
-    'High',
+    'High',*/
   ];
 
-  final List<String> listOfVersion = [
-    'V 1.0',
+  List<Property> listOfVersion = [
+    /*'V 1.0',
     'Bug Backlog',
     'Product Backlog',
     'Sprit 1',
-    'Sprit 2',
+    'Sprit 2',*/
   ];
 
-  final List<String> listOfUser = [
-    'Shaaban Shahin',
-    'Yaman Kalaji',
-  ];
+  List<Property> listOfUser = [];
 
-  final List<String> listOfCategory = [
-    'Not found',
-  ];
+  List<Property> listOfCategory = [];
 
-  String? selectedStatus;
-  String? selectedType;
-  String? selectedPriority;
-  String? selectedUser;
-  String? selectedVersion;
-  String? selectedCategory;
+  Property? selectedStatus;
+  Property? selectedType;
+  Property? selectedPriority;
+  Property? selectedUser;
+  Property? selectedVersion;
+  Property? selectedCategory;
+  String? apikey;
+  String? token;
 
   AddTask(this.id, this.name);
+
+  void getAllData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+    //Categories
+    Response rCategories = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/categories"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rCategories.statusCode == 200) {
+      var jsonResponse = jsonDecode(rCategories.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idCategory = data['id'];
+
+          return Property(id: idCategory, name: pro);
+        }).toList();
+        setState(() {
+          listOfCategory = property;
+        });
+      }
+    }
+    //Priorities
+    Response rPriorities = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/priorities"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rPriorities.statusCode == 200) {
+      var jsonResponse = jsonDecode(rPriorities.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idProperty = data['id'];
+
+          return Property(id: idProperty, name: pro);
+        }).toList();
+        setState(() {
+          listOfPriority = property;
+        });
+      }
+    }
+    //Types
+    Response rTypes = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/types"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rTypes.statusCode == 200) {
+      var jsonResponse = jsonDecode(rTypes.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idType = data['id'];
+
+          return Property(id: idType, name: pro);
+        }).toList();
+        setState(() {
+          listOfType = property;
+        });
+      }
+    }
+    //Users
+    Response rUsers = await get(
+        Uri.parse(
+            "https://op.yaman-ka.com/api/v3/projects/$id/available_assignees"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rUsers.statusCode == 200) {
+      var jsonResponse = jsonDecode(rUsers.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idUser = data['id'];
+
+          return Property(id: idUser, name: pro);
+        }).toList();
+        setState(() {
+          listOfUser = property;
+        });
+      }
+    }
+
+    //Versions
+    Response rVersion = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/versions"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rVersion.statusCode == 200) {
+      var jsonResponse = jsonDecode(rVersion.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idVersion = data['id'];
+
+          return Property(id: idVersion, name: pro);
+        }).toList();
+        setState(() {
+          listOfVersion = property;
+        });
+      }
+    }
+    //Status
+    Response rStatus = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/statuses"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rStatus.statusCode == 200) {
+      var jsonResponse = jsonDecode(rStatus.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idStatus = data['id'];
+
+          return Property(id: idStatus, name: pro);
+        }).toList();
+        setState(() {
+          listOfStatus = property;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +309,7 @@ class AddTask extends State<AddScreen> {
                         ),
                         padding: const EdgeInsets.only(left: 3),
                         child: DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
+                          child: DropdownButton2<Property>(
                             isExpanded: true,
                             hint: const Row(
                               children: [
@@ -184,10 +327,11 @@ class AddTask extends State<AddScreen> {
                               ],
                             ),
                             items: listOfType
-                                .map((String item) => DropdownMenuItem<String>(
+                                .map((Property item) =>
+                                    DropdownMenuItem<Property>(
                                       value: item,
                                       child: Text(
-                                        item,
+                                        item.name,
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
@@ -276,7 +420,7 @@ class AddTask extends State<AddScreen> {
                     ),
                     padding: const EdgeInsets.only(left: 8),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
+                      child: DropdownButton2<Property>(
                         isExpanded: true,
                         hint: const Row(
                           children: [
@@ -294,10 +438,10 @@ class AddTask extends State<AddScreen> {
                           ],
                         ),
                         items: listOfStatus
-                            .map((String item) => DropdownMenuItem<String>(
+                            .map((Property item) => DropdownMenuItem<Property>(
                                   value: item,
                                   child: Text(
-                                    item,
+                                    item.name,
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -334,7 +478,7 @@ class AddTask extends State<AddScreen> {
                           iconDisabledColor: Colors.grey,
                         ),
                         dropdownStyleData: DropdownStyleData(
-                          maxHeight: 120,
+                          maxHeight: 130,
                           width: 150,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
@@ -347,7 +491,7 @@ class AddTask extends State<AddScreen> {
                           ),
                         ),
                         menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
+                          height: 30,
                           padding: EdgeInsets.only(left: 14, right: 14),
                         ),
                       ),
@@ -472,13 +616,13 @@ class AddTask extends State<AddScreen> {
                           ),
                           padding: const EdgeInsets.only(left: 8.0),
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
+                            child: DropdownButton2<Property>(
                               isExpanded: true,
                               hint: const Row(
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Select Assinee',
+                                      'Select Assignee',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -490,19 +634,19 @@ class AddTask extends State<AddScreen> {
                                 ],
                               ),
                               items: listOfUser
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2595AF),
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
+                                  .map((Property item) =>
+                                      DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
                                   .toList(),
                               value: selectedUser,
                               onChanged: (value) {
@@ -512,7 +656,7 @@ class AddTask extends State<AddScreen> {
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 60,
-                                width: 140,
+                                width: 150,
                                 padding: const EdgeInsets.only(left: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
@@ -566,13 +710,13 @@ class AddTask extends State<AddScreen> {
                           ),
                           padding: const EdgeInsets.only(left: 8.0),
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
+                            child: DropdownButton2<Property>(
                               isExpanded: true,
                               hint: const Row(
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Select Assinee',
+                                      'Select Accountable',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -584,19 +728,19 @@ class AddTask extends State<AddScreen> {
                                 ],
                               ),
                               items: listOfUser
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2595AF),
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
+                                  .map((Property item) =>
+                                      DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
                                   .toList(),
                               value: selectedUser,
                               onChanged: (value) {
@@ -606,7 +750,7 @@ class AddTask extends State<AddScreen> {
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 60,
-                                width: 140,
+                                width: 170,
                                 padding: const EdgeInsets.only(left: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
@@ -850,7 +994,7 @@ class AddTask extends State<AddScreen> {
                                   ),
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
+                                    child: DropdownButton2<Property>(
                                       isExpanded: true,
                                       hint: const Row(
                                         children: [
@@ -868,11 +1012,11 @@ class AddTask extends State<AddScreen> {
                                         ],
                                       ),
                                       items: listOfCategory
-                                          .map((String item) =>
-                                              DropdownMenuItem<String>(
+                                          .map((Property item) =>
+                                              DropdownMenuItem<Property>(
                                                 value: item,
                                                 child: Text(
-                                                  item,
+                                                  item.name,
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.bold,
@@ -958,7 +1102,7 @@ class AddTask extends State<AddScreen> {
                                   ),
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
+                                    child: DropdownButton2<Property>(
                                       isExpanded: true,
                                       hint: const Row(
                                         children: [
@@ -976,11 +1120,11 @@ class AddTask extends State<AddScreen> {
                                         ],
                                       ),
                                       items: listOfVersion
-                                          .map((String item) =>
-                                              DropdownMenuItem<String>(
+                                          .map((Property item) =>
+                                              DropdownMenuItem<Property>(
                                                 value: item,
                                                 child: Text(
-                                                  item,
+                                                  item.name,
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.bold,
@@ -1065,7 +1209,7 @@ class AddTask extends State<AddScreen> {
                           ),
                           padding: const EdgeInsets.only(left: 8.0),
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
+                            child: DropdownButton2<Property>(
                               isExpanded: true,
                               hint: const Row(
                                 children: [
@@ -1083,19 +1227,19 @@ class AddTask extends State<AddScreen> {
                                 ],
                               ),
                               items: listOfPriority
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2595AF),
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
+                                  .map((Property item) =>
+                                      DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
                                   .toList(),
                               value: selectedPriority,
                               onChanged: (value) {
@@ -1126,7 +1270,7 @@ class AddTask extends State<AddScreen> {
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 maxHeight: 120,
-                                width: 110,
+                                width: 140,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
                                   color: const Color(0xffE1F2F6),
