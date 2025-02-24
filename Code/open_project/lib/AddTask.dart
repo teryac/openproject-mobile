@@ -29,14 +29,20 @@ class AddTask extends State<AddScreen> {
   int id;
   String percentageDone = '0.0';
   String name;
-  String progressValue = 'In Progress';
-  String personvalue = 'Shaaban Shahin';
+  String status = 'New';
+  int idStatus = 1;
+  String? task;
+  //int idUser = 5;
+  int estimatedTime = 0;
   String assignee = 'Shaaban Shahin';
   String accountable = 'Shaaban Shahin';
   String category = 'Not found';
-  String version = 'V 1.0';
-  String priority = 'High';
-  String type = 'Task';
+  String version = 'v 1.0';
+  int idVersion = 0;
+  String priority = 'Normal';
+  int idPriority = 8;
+  String type = "Task";
+  int idType = 1;
 
   TextEditingController desc = TextEditingController();
   TextEditingController percent = TextEditingController();
@@ -44,44 +50,13 @@ class AddTask extends State<AddScreen> {
   DateTime enddate = DateTime.now();
   DateTime hours = DateTime.now();
   DateTime updateTime = DateTime.now();
-  List<Property> listOfStatus = [
-    /*'In progress',
-    'New',
-    'In Specification',
-    'Specified',
-    'Developed',
-    'In testing',
-    'Tested',
-    'Test failed',
-    'Closed',
-    'On hold',
-    'Reject',*/
-  ];
+  List<Property> listOfStatus = [];
 
-  List<Property> listOfType = [
-    /*'Task',
-    'Milestone',
-    'Phase',
-    'User story',
-    'Bug',
-    'Epic',*/
-  ];
+  List<Property> listOfType = [];
 
-  List<Property> listOfPriority = [
-    /* 'Low',
-    'Medium',
-    'Normal',
-    'Immediate',
-    'High',*/
-  ];
+  List<Property> listOfPriority = [];
 
-  List<Property> listOfVersion = [
-    /*'V 1.0',
-    'Bug Backlog',
-    'Product Backlog',
-    'Sprit 1',
-    'Sprit 2',*/
-  ];
+  List<Property> listOfVersion = [];
 
   List<Property> listOfUser = [];
 
@@ -291,7 +266,6 @@ class AddTask extends State<AddScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getAllData();
   }
@@ -351,7 +325,7 @@ class AddTask extends State<AddScreen> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              desc.text = value;
+                              task = desc.text;
                             });
                           },
                         ),
@@ -401,7 +375,8 @@ class AddTask extends State<AddScreen> {
                             value: selectedType,
                             onChanged: (value) {
                               setState(() {
-                                selectedType = value;
+                                type = selectedType!.name;
+                                idType = selectedType!.id;
                               });
                             },
                             buttonStyleData: ButtonStyleData(
@@ -432,7 +407,6 @@ class AddTask extends State<AddScreen> {
                                 borderRadius: BorderRadius.circular(14),
                                 color: const Color(0xffE1F2F6),
                               ),
-                              //offset: const Offset(0, 0),
                               scrollbarTheme: ScrollbarThemeData(
                                 radius: const Radius.circular(40),
                                 thickness: MaterialStateProperty.all(6),
@@ -511,7 +485,8 @@ class AddTask extends State<AddScreen> {
                         value: selectedStatus,
                         onChanged: (value) {
                           setState(() {
-                            selectedStatus = value;
+                            status = selectedStatus!.name;
+                            idStatus = selectedStatus!.id;
                           });
                         },
                         buttonStyleData: ButtonStyleData(
