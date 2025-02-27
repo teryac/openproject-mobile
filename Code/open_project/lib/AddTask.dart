@@ -33,16 +33,20 @@ class AddTask extends State<AddScreen> {
   int idStatus = 1;
   String? task;
   //int idUser = 5;
-  int estimatedTime = 0;
-  String assignee = 'Shaaban Shahin';
-  String accountable = 'Shaaban Shahin';
-  String category = 'Not found';
+  late int estimatedTime;
+  String? assignee;
+  int? idAssignee;
+  int? idAccountable;
+  String? accountable;
+  late String category;
+  late int idCategory;
   String version = 'v 1.0';
-  int idVersion = 0;
+  int idVersion = 5;
   String priority = 'Normal';
   int idPriority = 8;
   String type = "Task";
   int idType = 1;
+  late String description;
 
   TextEditingController desc = TextEditingController();
   TextEditingController percent = TextEditingController();
@@ -65,7 +69,8 @@ class AddTask extends State<AddScreen> {
   Property? selectedStatus;
   Property? selectedType;
   Property? selectedPriority;
-  Property? selectedUser;
+  Property? selectedAssignee;
+  Property? selectedAccountable;
   Property? selectedVersion;
   Property? selectedCategory;
   String? apikey;
@@ -220,34 +225,35 @@ class AddTask extends State<AddScreen> {
     "subject": "Design New Feature",\n    
     "description": {\n        
     "format": "markdown",\n        
-    "raw": "Create a detailed design document for the new feature."\n    },\n   
+    "raw": null \n    },\n   
      "priority": {\n        
-     "href": "/api/v3/priorities/10",\n       
-      "title": "Immediate"\n    },\n    
+     "href": "/api/v3/priorities/$idPriority",\n       
+      "title": "$priority"\n    },\n    
       "status": {\n        
-      "href": "/api/v3/statuses/7",\n        
-      "title": "In progress"\n    },\n    
+      "href": "/api/v3/statuses/$idStatus",\n        
+      "title": "$status"\n    },\n    
       "type": {\n        
-      "href": "/api/v3/types/2",\n        
-      "title": "Milestone"\n    },\n    
+      "href": "/api/v3/types/$idType",\n        
+      "title": "$type"\n    },\n    
       "assignee": {\n        
-      "href": "/api/v3/users/5",\n        
-      "title": "Shaaban Shahin"\n    },\n    
+      "href": "/api/v3/users/$idAssignee",\n        
+      "title": "$assignee"\n    },\n    
       "responsible": {\n        
-      "href": "/api/v3/users/5",\n        
-      "title": "Shaaban Shahin"\n    },\n    
+      "href": "/api/v3/users/$idAccountable",\n        
+      "title": "$accountable"\n    },\n    
       "project": {\n        
-      "href": "/api/v3/projects/1",\n        
-      "title": "Demo projecy"\n    },\n    
+      "href": "/api/v3/projects/$id",\n        
+      "title": "$name"\n    },\n    
       "version": {\n        
-      "href": "/api/v3/versions/5",\n        
-      "title": "Release 1.1"\n    },\n    
+      "href": "/api/v3/versions/$idVersion",\n        
+      "title": "$version"\n    },\n    
       "startDate": "2025-01-20",\n    
       "dueDate": "2025-01-30",\n    
-      "estimatedTime": "PT5H",\n    
+      "estimatedTime": "PT0H",\n    
       "customField1": "Custom Value",\n    
       "customField2": 123,\n    
       "percentageDone": 0\n}""";
+    print(newTask);
     await http.post(
       Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages"),
       body: newTask,
@@ -256,6 +262,7 @@ class AddTask extends State<AddScreen> {
         'authorization': basicAuth
       },
     ).then((response) {
+      print(response.body);
       if (response.statusCode == 201) {
         Fluttertoast.showToast(msg: 'Task has been added');
       } else {
@@ -375,8 +382,8 @@ class AddTask extends State<AddScreen> {
                             value: selectedType,
                             onChanged: (value) {
                               setState(() {
-                                type = selectedType!.name;
-                                idType = selectedType!.id;
+                                type = value!.name;
+                                idType = value.id;
                               });
                             },
                             buttonStyleData: ButtonStyleData(
@@ -485,8 +492,8 @@ class AddTask extends State<AddScreen> {
                         value: selectedStatus,
                         onChanged: (value) {
                           setState(() {
-                            status = selectedStatus!.name;
-                            idStatus = selectedStatus!.id;
+                            status = value!.name;
+                            idStatus = value.id;
                           });
                         },
                         buttonStyleData: ButtonStyleData(
@@ -618,7 +625,7 @@ class AddTask extends State<AddScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        desc.text = value;
+                        description = desc.text;
                       });
                     },
                   ),
@@ -680,10 +687,11 @@ class AddTask extends State<AddScreen> {
                                         ),
                                       ))
                                   .toList(),
-                              value: selectedUser,
+                              value: selectedAssignee,
                               onChanged: (value) {
                                 setState(() {
-                                  selectedUser = value;
+                                  assignee = value!.name;
+                                  idAssignee = value.id;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
@@ -774,10 +782,11 @@ class AddTask extends State<AddScreen> {
                                         ),
                                       ))
                                   .toList(),
-                              value: selectedUser,
+                              value: selectedAccountable,
                               onChanged: (value) {
                                 setState(() {
-                                  selectedUser = value;
+                                  accountable = value!.name;
+                                  idAccountable = value.id;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
@@ -879,48 +888,6 @@ class AddTask extends State<AddScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('Start Date:'),
-                          /*CupertinoButton(
-                            child: Text("Select Year"),
-                            onPressed: () async {
-                              selectedYear = await showCupertinoModalPopup<int>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    height: 250,
-                                    color: Colors.white,
-                                    child: CupertinoPicker(
-                                      scrollController:
-                                          FixedExtentScrollController(
-                                        initialItem: DateTime.now().year -
-                                            2000, // Adjust as needed
-                                      ),
-                                      itemExtent: 40,
-                                      onSelectedItemChanged: (int index) {
-                                        Navigator.pop(
-                                            context,
-                                            2000 +
-                                                index); // Return the selected year
-                                      },
-                                      children: List<Widget>.generate(
-                                        100, // Years range from 2000 to 2099
-                                        (index) => Center(
-                                          child: Text('${2000 + index}'),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-
-                              if (selectedYear != null) {
-                                // Update your timeline with the selected year.
-                                setState(() {
-                                  initialDate = DateTime(selectedYear,
-                                      DateTime(1900).month, DateTime(1900).day);
-                                });
-                              }
-                            },
-                          ),*/
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
@@ -1062,7 +1029,8 @@ class AddTask extends State<AddScreen> {
                                       value: selectedCategory,
                                       onChanged: (value) {
                                         setState(() {
-                                          selectedCategory = value;
+                                          category = value!.name;
+                                          idCategory = value.id;
                                         });
                                       },
                                       buttonStyleData: ButtonStyleData(
@@ -1170,7 +1138,8 @@ class AddTask extends State<AddScreen> {
                                       value: selectedVersion,
                                       onChanged: (value) {
                                         setState(() {
-                                          selectedVersion = value;
+                                          version = value!.name;
+                                          idVersion = value.id;
                                         });
                                       },
                                       buttonStyleData: ButtonStyleData(
@@ -1276,7 +1245,8 @@ class AddTask extends State<AddScreen> {
                               value: selectedPriority,
                               onChanged: (value) {
                                 setState(() {
-                                  selectedPriority = value;
+                                  priority = value!.name;
+                                  idPriority = value.id;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
@@ -1330,6 +1300,7 @@ class AddTask extends State<AddScreen> {
               onPressed: () {
                 //Fluttertoast.showToast(msg: lockVersion.toString());
                 addTask();
+
                 setState(() {});
               },
               style: button(),
