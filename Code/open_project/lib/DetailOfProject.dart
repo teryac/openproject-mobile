@@ -221,6 +221,7 @@ class Detail extends State<StateDetail> {
                                                 onPressed: () {
                                                   setState(() {
                                                     deleteTask(id.toString());
+                                                    Navigator.pop(context);
                                                   });
                                                 },
                                                 child: const Text(
