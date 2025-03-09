@@ -32,7 +32,6 @@ class AddTask extends State<AddScreen> {
   String status = 'New';
   int idStatus = 1;
   String? task;
-  //int idUser = 5;
   late int estimatedTime;
   String? assignee;
   int? idAssignee;
@@ -46,24 +45,22 @@ class AddTask extends State<AddScreen> {
   int idPriority = 8;
   String type = "Task";
   int idType = 1;
-  late String description;
+  String? description;
+  int hour = 0, minutes = 0;
 
   TextEditingController desc = TextEditingController();
+  TextEditingController nameOfTask = TextEditingController();
   TextEditingController percent = TextEditingController();
-  DateTime startdate = DateTime.now();
-  DateTime enddate = DateTime.now();
-  DateTime hours = DateTime.now();
+  String? startdate;
+  String? duedate;
+  DateTime? hours, sDate, dDate;
   DateTime updateTime = DateTime.now();
+
   List<Property> listOfStatus = [];
-
   List<Property> listOfType = [];
-
   List<Property> listOfPriority = [];
-
   List<Property> listOfVersion = [];
-
   List<Property> listOfUser = [];
-
   List<Property> listOfCategory = [];
 
   Property? selectedStatus;
@@ -222,10 +219,10 @@ class AddTask extends State<AddScreen> {
     String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
     String newTask = """{\n    
     "_type": "WorkPackage",\n    
-    "subject": "Design New Feature",\n    
+    "subject": "$task",\n    
     "description": {\n        
     "format": "markdown",\n        
-    "raw": null \n    },\n   
+    "raw": "$description" \n    },\n   
      "priority": {\n        
      "href": "/api/v3/priorities/$idPriority",\n       
       "title": "$priority"\n    },\n    
@@ -247,12 +244,12 @@ class AddTask extends State<AddScreen> {
       "version": {\n        
       "href": "/api/v3/versions/$idVersion",\n        
       "title": "$version"\n    },\n    
-      "startDate": "2025-01-20",\n    
-      "dueDate": "2025-01-30",\n    
-      "estimatedTime": "PT0H",\n    
+      "startDate": $startdate,\n    
+      "dueDate": $duedate,\n    
+      "estimatedTime": "PT${hour}H${minutes}M",\n    
       "customField1": "Custom Value",\n    
       "customField2": 123,\n    
-      "percentageDone": 0\n}""";
+      "percentageDone": "$percentageDone"\n}""";
     print(newTask);
     await http.post(
       Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages"),
@@ -320,7 +317,7 @@ class AddTask extends State<AddScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                         child: TextField(
-                          controller: desc,
+                          controller: nameOfTask,
                           keyboardType: TextInputType.multiline,
                           decoration: const InputDecoration(
                             labelText: 'Name of task',
@@ -332,7 +329,9 @@ class AddTask extends State<AddScreen> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              task = desc.text;
+                              task = value.isNotEmpty
+                                  ? value
+                                  : "Enter name of task";
                             });
                           },
                         ),
@@ -387,22 +386,19 @@ class AddTask extends State<AddScreen> {
                               });
                             },
                             buttonStyleData: ButtonStyleData(
-                              height: 60,
-                              width: 120,
-                              padding: const EdgeInsets.only(left: 14),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: Colors.black26,
+                                height: 60,
+                                width: 120,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
                                 ),
-                                color: const Color(0xffE1F2F6),
-                              ),
-                              elevation: 0,
-                            ),
+                                elevation: 0),
                             iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                              ),
+                              icon: Icon(Icons.arrow_drop_down),
                               iconSize: 20,
                               iconEnabledColor: Color(0xff2595AF),
                               iconDisabledColor: Color(0xff2595AF),
@@ -614,7 +610,7 @@ class AddTask extends State<AddScreen> {
                   padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                   child: TextField(
                     controller: desc,
-                    keyboardType: TextInputType.name,
+                    keyboardType: TextInputType.multiline,
                     decoration: const InputDecoration(
                       labelText: 'Description',
                       border: OutlineInputBorder(
@@ -625,7 +621,7 @@ class AddTask extends State<AddScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        description = desc.text;
+                        description = value;
                       });
                     },
                   ),
@@ -848,7 +844,7 @@ class AddTask extends State<AddScreen> {
                       const Text('Estimated time:'),
                       CupertinoButton(
                         child: Text(
-                            'Day: ${hours.day}  Hour: ${hours.hour}  Minutes: ${hours.minute}'),
+                            'Hour: ${hours?.hour}  Minutes: ${hours?.minute}'),
                         onPressed: () {
                           showCupertinoModalPopup(
                             context: context,
@@ -856,12 +852,13 @@ class AddTask extends State<AddScreen> {
                               height: 250,
                               child: CupertinoDatePicker(
                                 backgroundColor: Colors.white,
-                                initialDateTime: hours,
+                                initialDateTime: DateTime.now(),
                                 use24hFormat: true,
-                                mode: CupertinoDatePickerMode.dateAndTime,
+                                mode: CupertinoDatePickerMode.time,
                                 onDateTimeChanged: (DateTime value) {
                                   setState(() {
-                                    hours = value;
+                                    hour = value.hour;
+                                    minutes = value.minute;
                                   });
                                 },
                               ),
@@ -891,7 +888,10 @@ class AddTask extends State<AddScreen> {
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              // Handle the new selected date, including the year.
+                              sDate = selectedDate;
+                              startdate =
+                                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                              print(sDate);
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -905,7 +905,10 @@ class AddTask extends State<AddScreen> {
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              //[selectedDate] the new date selected.
+                              dDate = selectedDate;
+                              duedate =
+                                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                              print(dDate);
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -1298,9 +1301,40 @@ class AddTask extends State<AddScreen> {
             const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
-                //Fluttertoast.showToast(msg: lockVersion.toString());
-                addTask();
-
+                if (nameOfTask.text.isEmpty) {
+                  Fluttertoast.showToast(msg: "Enter name of task");
+                } else if (sDate != null && sDate!.isBefore(DateTime.now())) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 3000),
+                        content: Text("Cannot be start date is past",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white))),
+                  );
+                } else if (dDate != null && dDate!.isBefore(DateTime.now())) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 3000),
+                        content: Text("Cannot be due date is past",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white))),
+                  );
+                } else if (dDate != null &&
+                    sDate != null &&
+                    dDate!.isBefore(sDate!)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 2000),
+                        content: Text("Start date cannot be after due date",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white))),
+                  );
+                } else {
+                  addTask();
+                }
                 setState(() {});
               },
               style: button(),
