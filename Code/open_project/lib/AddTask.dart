@@ -718,7 +718,6 @@ class AddTask extends State<AddScreen> {
                                   borderRadius: BorderRadius.circular(14),
                                   color: const Color(0xffE1F2F6),
                                 ),
-                                //offset: const Offset(0, 0),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
@@ -808,12 +807,11 @@ class AddTask extends State<AddScreen> {
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 maxHeight: 120,
-                                width: 140,
+                                width: 160,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
                                   color: const Color(0xffE1F2F6),
                                 ),
-                                //offset: const Offset(0, 0),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
@@ -891,7 +889,6 @@ class AddTask extends State<AddScreen> {
                               sDate = selectedDate;
                               startdate =
                                   "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-                              print(sDate);
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -908,7 +905,6 @@ class AddTask extends State<AddScreen> {
                               dDate = selectedDate;
                               duedate =
                                   "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-                              print(dDate);
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -1326,11 +1322,13 @@ class AddTask extends State<AddScreen> {
                     dDate!.isBefore(sDate!)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        backgroundColor: Colors.red,
-                        duration: Duration(milliseconds: 2000),
-                        content: Text("Start date cannot be after due date",
-                            style:
-                                TextStyle(fontSize: 20, color: Colors.white))),
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 2000),
+                      content: Text(
+                        "Start date cannot be after due date",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ),
                   );
                 } else {
                   addTask();
