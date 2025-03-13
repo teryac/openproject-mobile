@@ -2,10 +2,13 @@
 
 import 'dart:convert';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
+import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -31,9 +34,9 @@ class UpdateTasks extends State<UpdateScreen> {
   String assignee = 'Shaaban Shahin';
   String accountable = 'Shaaban Shahin';
   String category = 'Not found';
-  String version = 'V 1.0';
+  String version = 'v 1.0';
   String priority = 'High';
-  String type = 'Task';
+  //String type = 'Task';
   String? apikey;
   String? token;
 
@@ -53,16 +56,29 @@ class UpdateTasks extends State<UpdateScreen> {
       estimatedTime = 'Not found',
       percentageDone = 0,
       updatedAt = 'Not changed';
-  var rawOfdescription = 'Not found',
-      nameOfType = 'Not type',
-      nameOfPriority = 'Not found',
-      nameOfStatus = 'Not found',
-      nameOfAuthor = 'No person',
-      nameOfAssignee = 'No person',
-      nameOfVersion = 'No version',
-      color = '#000000',
-      lockVersion = 0;
+  var nameOfAuthor = 'No person', nameOfAssignee = 'No person', lockVersion = 0;
+
   String taskBody = "No body";
+  String nameOfType = 'Task';
+  String nameOfPriority = 'Normal';
+  String nameOfStatus = 'Normal';
+  String nameOfVersion = 'No version';
+  String? rawOfdescription;
+
+  List<Property> listOfStatus = [];
+  List<Property> listOfType = [];
+  List<Property> listOfPriority = [];
+  List<Property> listOfVersion = [];
+  List<Property> listOfUser = [];
+  List<Property> listOfCategory = [];
+
+  Property? selectedStatus;
+  Property? selectedType;
+  Property? selectedPriority;
+  Property? selectedAssignee;
+  Property? selectedAccountable;
+  Property? selectedVersion;
+  Property? selectedCategory;
 
   void updateTask(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -71,8 +87,25 @@ class UpdateTasks extends State<UpdateScreen> {
     token = prefs.getString('password');
     String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
 
-    taskBody =
-        "{\n  \"_type\": \"WorkPackage\",\n    \"id\": $id,\n    \"lockVersion\": $lockVersion,\n    \"subject\": \"$subject\",\n    \"description\": {\n        \"format\": \"markdown\",\n        \"raw\": \"$rawOfdescription\",\n        \"html\": \"\"\n    },\n    \"scheduleManually\": false,\n    \"startDate\": \"$startDate\",\n    \"dueDate\": \"$dueDate\",\n    \"estimatedTime\": \"$estimatedTime\",\n    \"derivedEstimatedTime\": null,\n    \"duration\": \"$durationDay\",\n    \"ignoreNonWorkingDays\": true,\n    \"percentageDone\": $percentageDone,\n    \"remainingTime\": null,\n    \"derivedRemainingTime\": null\n  \n}";
+    taskBody = """{\n  "_type": "WorkPackage",\n    
+        "id": $id,\n    
+        "lockVersion": $lockVersion,\n    
+        "subject": "$subject",\n    
+        "description": {\n        
+        "format": "markdown",\n        
+        "raw": "$rawOfdescription",\n        
+        "html": ""\n    },\n    
+        "scheduleManually": false,\n    
+        "startDate": "$startDate",\n    
+        "dueDate": "$dueDate",\n    
+        "estimatedTime": "$estimatedTime",\n    
+        "derivedEstimatedTime": null,\n    
+        "duration": "$durationDay",\n    
+        "ignoreNonWorkingDays": true,\n    
+        "percentageDone": $percentageDone,\n    
+        "remainingTime": null,\n    
+        "derivedRemainingTime": null\n  \n}""";
+
     print(taskBody);
     await http.patch(
       Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id"),
@@ -119,8 +152,6 @@ class UpdateTasks extends State<UpdateScreen> {
         //Type
         var type = embedded['type'];
         nameOfType = type['name'];
-        color = type['color'];
-        //Color typeColor = Color.fromHex('#aabbcc');
         //Priority
         embedded = jsonResponse['_embedded'];
         var priority = embedded['priority'];
@@ -155,6 +186,144 @@ class UpdateTasks extends State<UpdateScreen> {
     });
   }
 
+  void getAllData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+    //Categories
+    Response rCategories = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/categories"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rCategories.statusCode == 200) {
+      var jsonResponse = jsonDecode(rCategories.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idCategory = data['id'];
+
+          return Property(id: idCategory, name: pro);
+        }).toList();
+        setState(() {
+          listOfCategory = property;
+        });
+      }
+    }
+    //Priorities
+    Response rPriorities = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/priorities"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rPriorities.statusCode == 200) {
+      var jsonResponse = jsonDecode(rPriorities.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idProperty = data['id'];
+
+          return Property(id: idProperty, name: pro);
+        }).toList();
+        setState(() {
+          listOfPriority = property;
+        });
+      }
+    }
+    //Types
+    Response rTypes = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/types"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rTypes.statusCode == 200) {
+      var jsonResponse = jsonDecode(rTypes.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idType = data['id'];
+
+          return Property(id: idType, name: pro);
+        }).toList();
+        setState(() {
+          listOfType = property;
+        });
+      }
+    }
+    //Users
+    Response rUsers = await get(
+        Uri.parse(
+            "https://op.yaman-ka.com/api/v3/projects/$id/available_assignees"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rUsers.statusCode == 200) {
+      var jsonResponse = jsonDecode(rUsers.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idUser = data['id'];
+
+          return Property(id: idUser, name: pro);
+        }).toList();
+        setState(() {
+          listOfUser = property;
+        });
+      }
+    }
+
+    //Versions
+    Response rVersion = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/versions"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rVersion.statusCode == 200) {
+      var jsonResponse = jsonDecode(rVersion.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idVersion = data['id'];
+
+          return Property(id: idVersion, name: pro);
+        }).toList();
+        setState(() {
+          listOfVersion = property;
+        });
+      }
+    }
+    //Status
+    Response rStatus = await get(
+        Uri.parse("https://op.yaman-ka.com/api/v3/statuses"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (rStatus.statusCode == 200) {
+      var jsonResponse = jsonDecode(rStatus.body);
+      var embedded = jsonResponse['_embedded'];
+      if (embedded != null) {
+        var elements = embedded['elements'] as List;
+        List<Property> property = elements.map((data) {
+          String pro = data['name'];
+
+          int idStatus = data['id'];
+
+          return Property(id: idStatus, name: pro);
+        }).toList();
+        if (mounted) {
+          setState(() {
+            listOfStatus = property;
+          });
+        }
+      }
+    }
+  }
+
   void getUsers() async {
     Uri uri = Uri.parse(
         "https://op.yaman-ka.com/api/v3/projects/$id/available_assignees");
@@ -171,6 +340,7 @@ class UpdateTasks extends State<UpdateScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getAllData();
     getTask();
   }
 
@@ -187,13 +357,318 @@ class UpdateTasks extends State<UpdateScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //Task
+                const Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Task:",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: TextField(
+                          controller: task,
+                          keyboardType: TextInputType.multiline,
+                          decoration: InputDecoration(
+                            labelText: subject.toString(),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              subject = value.isNotEmpty
+                                  ? value
+                                  : "Enter name of task";
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    SizedBox(
+                      height: 63, // Match this height with the TextField height
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.only(left: 3),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<Property>(
+                            isExpanded: true,
+                            hint: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    nameOfType,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2595AF),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            items: listOfType
+                                .map((Property item) =>
+                                    DropdownMenuItem<Property>(
+                                      value: item,
+                                      child: Text(
+                                        item.name,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xff2595AF),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ))
+                                .toList(),
+                            value: selectedType,
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 120,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.arrow_drop_down),
+                              iconSize: 20,
+                              iconEnabledColor: Color(0xff2595AF),
+                              iconDisabledColor: Color(0xff2595AF),
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 120,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: const Color(0xffE1F2F6),
+                              ),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(40),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                  ],
+                ),
+                const SizedBox(height: 5.0),
+              ],
+            ),
+            Column(children: [
+              //Status
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Status:",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15.0),
+                  SizedBox(
+                    height: 25.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        //color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.only(left: 8),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<Property>(
+                          isExpanded: true,
+                          hint: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  nameOfStatus,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          items: listOfStatus
+                              .map(
+                                  (Property item) => DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
+                              .toList(),
+                          value: selectedStatus,
+                          onChanged: (value) {
+                            setState(() {});
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            height: 50,
+                            width: 150,
+                            padding: const EdgeInsets.only(left: 14, right: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: Colors.black26,
+                              ),
+                              color: const Color(0xff69B73F),
+                            ),
+                          ),
+                          iconStyleData: const IconStyleData(
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                            ),
+                            iconSize: 20,
+                            iconEnabledColor: Colors.white,
+                            iconDisabledColor: Colors.grey,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 130,
+                            width: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: const Color(0xff69B73F),
+                            ),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(40),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility: MaterialStateProperty.all(true),
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 30,
+                            padding: EdgeInsets.only(left: 14, right: 14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5.0),
+              //Create by
+              const Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Create by:",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5.0,
+                  ),
+                  Text(
+                    "Shaaban Shahin",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5.0),
+              //Update at
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Update at:",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5.0,
+                  ),
+                  Text(
+                    '${updateTime.year} / ${updateTime.month} / ${updateTime.day}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5.0),
+              //Description
+            ]),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "Description:",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                   child: TextField(
-                    controller: task,
-                    keyboardType: TextInputType.name,
+                    controller: desc,
+                    keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
-                      labelText: subject.toString(),
+                      labelText: rawOfdescription,
                       border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
@@ -201,184 +676,14 @@ class UpdateTasks extends State<UpdateScreen> {
                       ),
                     ),
                     onChanged: (value) {
-                      setState(() {
-                        subject = task.text;
-                      });
+                      setState(() {});
                     },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButton<String>(
-                    value: type,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    style: const TextStyle(color: Colors.black),
-                    underline: Container(
-                      height: 3,
-                      color: Colors.black,
-                    ),
-                    onChanged: (String? newValue) {
-                      type = nameOfType;
-                      setState(() {
-                        nameOfType = newValue!;
-                      });
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'Task',
-                        child: Text('Task'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Milestone',
-                        child: Text('Milestone'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Phase',
-                        child: Text('Phase'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'User story',
-                        child: Text('User story'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Bug',
-                        child: Text('Bug'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Epic',
-                        child: Text('Epic'),
-                      ),
-                    ],
                   ),
                 ),
               ],
             ),
-            Row(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  value: progressValue,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  style: const TextStyle(color: Colors.black),
-                  underline: Container(
-                    height: 3,
-                    color: Colors.black,
-                  ),
-                  onChanged: (String? newValue) {
-                    progressValue = nameOfStatus;
-                    setState(() {
-                      nameOfStatus = newValue!;
-                    });
-                  },
-                  items: const [
-                    DropdownMenuItem<String>(
-                      value: 'In progress',
-                      child: Text('In progress'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'New',
-                      child: Text('New'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'In Specification',
-                      child: Text('In Specification'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Specified',
-                      child: Text('Specified'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Developed',
-                      child: Text('Developed'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'In testing',
-                      child: Text('In testing'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Tested',
-                      child: Text('Tested'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Test failed',
-                      child: Text('Test failed'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Closed',
-                      child: Text('Closed'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'On hold',
-                      child: Text('On hold'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'Reject',
-                      child: Text('Reject'),
-                    ),
-                  ],
-                ),
-              ),
-              Column(children: [
-                Row(children: [
-                  const Text("Create by:"),
-                  const SizedBox(width: 5, height: 3),
-                  DropdownButton<String>(
-                    value: personvalue,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    style: const TextStyle(color: Colors.black),
-                    underline: Container(
-                      height: 3,
-                      color: Colors.black,
-                    ),
-                    onChanged: (String? newValue) {
-                      personvalue = nameOfAssignee;
-                      setState(() {
-                        nameOfAssignee = newValue!;
-                        print(nameOfAssignee);
-                      });
-                    },
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: 'Shaaban Shahin',
-                        child: Text('Shaaban Shahin'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Yaman Kalaji',
-                        child: Text('Yaman Kalaji'),
-                      ),
-                    ],
-                  ),
-                ]),
-                Row(children: [
-                  const Text("Last updates:"),
-                  const SizedBox(width: 5, height: 3),
-                  Text(
-                      '${updateTime.year} / ${updateTime.month} / ${updateTime.day}'),
-                ]),
-              ]),
-            ]),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: desc,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: InputDecoration(
-                  labelText: rawOfdescription.toString(),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    rawOfdescription = desc.text;
-                    print(rawOfdescription);
-                  });
-                },
-              ),
-            ),
+            const SizedBox(height: 5.0),
+            //Assignee & Accountable
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -387,69 +692,192 @@ class UpdateTasks extends State<UpdateScreen> {
                     const Text(
                       "People:",
                       style: TextStyle(
-                          fontSize: 20.0, fontStyle: FontStyle.italic),
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
                     ),
                     Row(children: [
                       const Text("Assignee:"),
                       const SizedBox(width: 28, height: 0),
-                      DropdownButton<String>(
-                        value: assignee,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          assignee = nameOfAssignee;
-                          setState(() {
-                            nameOfAssignee = newValue!;
-                            print(nameOfAssignee);
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Shaaban Shahin',
-                            child: Text('Shaaban Shahin'),
+                      SizedBox(
+                        height: 25.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          DropdownMenuItem<String>(
-                            value: 'Yaman Kalaji',
-                            child: Text('Yaman Kalaji'),
-                          )
-                        ],
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<Property>(
+                              isExpanded: true,
+                              hint: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      nameOfAssignee,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff2595AF),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              items: listOfUser
+                                  .map((Property item) =>
+                                      DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
+                                  .toList(),
+                              value: selectedAssignee,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 150,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 20,
+                                iconEnabledColor: Color(0xff2595AF),
+                                iconDisabledColor: Color(0xff2595AF),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 120,
+                                width: 140,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ]),
+                    const SizedBox(height: 20),
                     Row(children: [
                       const Text("Accountable:"),
                       const SizedBox(width: 8, height: 0),
-                      DropdownButton<String>(
-                        value: accountable,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            accountable = newValue!;
-                            print(accountable);
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Shaaban Shahin',
-                            child: Text('Shaaban Shahin'),
+                      SizedBox(
+                        height: 25.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          DropdownMenuItem<String>(
-                            value: 'Yaman Kalaji',
-                            child: Text('Yaman Kalaji'),
-                          )
-                        ],
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<Property>(
+                              isExpanded: true,
+                              hint: const Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Select Accountable',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff2595AF),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              items: listOfUser
+                                  .map((Property item) =>
+                                      DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
+                                  .toList(),
+                              value: selectedAccountable,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 170,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 20,
+                                iconEnabledColor: Color(0xff2595AF),
+                                iconDisabledColor: Color(0xff2595AF),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 120,
+                                width: 160,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ]),
                   ]),
             ),
+            // Estimates & Time
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -636,8 +1064,8 @@ class UpdateTasks extends State<UpdateScreen> {
                         },
                         items: const [
                           DropdownMenuItem<String>(
-                            value: 'V 1.0',
-                            child: Text('V 1.0'),
+                            value: 'v 1.0',
+                            child: Text('v 1.0'),
                           ),
                           DropdownMenuItem<String>(
                             value: 'Bug Backlog',
