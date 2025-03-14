@@ -183,9 +183,11 @@ class AddTask extends State<AddScreen> {
 
           return Property(id: idVersion, name: pro);
         }).toList();
-        setState(() {
-          listOfVersion = property;
-        });
+        if (mounted) {
+          setState(() {
+            listOfVersion = property;
+          });
+        }
       }
     }
     //Status
