@@ -36,9 +36,9 @@ class UpdateTasks extends State<UpdateScreen> {
   String personvalue = 'Shaaban Shahin';
   String assignee = 'Shaaban Shahin';
   String accountable = 'Shaaban Shahin';
-  String category = 'Not found';
   String version = 'v 1.0';
   String priority = 'High';
+  String category = 'Not found';
   String? apikey;
   String? token;
 
@@ -51,22 +51,17 @@ class UpdateTasks extends State<UpdateScreen> {
   DateTime updateTime = DateTime.now();
   DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  var embedded,
-      subject = 'Not found',
-      sDate = 'Not found',
-      dDate = 'Not found',
-      percentageDone = 0,
-      updatedAt = 'Not changed';
+  var embedded, percentageDone = 0, updatedAt = 'Not changed';
   var nameOfAuthor = 'No person', lockVersion = 0;
 
   String taskBody = "No body";
   String nameOfType = 'Task';
-  String nameOfPriority = 'Normal';
-  String nameOfStatus = 'Normal';
+  String nameOfPriority = 'No Priority';
+  String nameOfStatus = 'New';
   String nameOfVersion = 'No version';
   String nameOfAccountable = 'No person';
   String nameOfAssignee = 'No person';
-  String? rawOfdescription;
+  String? rawOfdescription, subject, dDate, sDate;
   String estimatedTime = "PT0H0M";
 
   List<Property> listOfStatus = [];
@@ -129,6 +124,26 @@ class UpdateTasks extends State<UpdateScreen> {
     });
   }
 
+  String convertDuration(String duration) {
+    // Remove 'PT' prefix
+    duration = duration.replaceFirst('PT', '');
+
+    // Extract hours and minutes
+    final RegExp regex = RegExp(r'(\d+)H|(\d+)M');
+    int hours = 0, minutes = 0;
+
+    for (final match in regex.allMatches(duration)) {
+      if (match.group(1) != null) {
+        hours = int.parse(match.group(1)!);
+      }
+      if (match.group(2) != null) {
+        minutes = int.parse(match.group(2)!);
+      }
+    }
+
+    return 'Hour : $hours ,   Minutes : $minutes';
+  }
+
   void getTask() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -148,7 +163,7 @@ class UpdateTasks extends State<UpdateScreen> {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         subject = jsonResponse['subject'];
-        task.text = subject;
+        task.text = subject!;
         lockVersion = jsonResponse['lockVersion'];
         if (jsonResponse['estimatedTime'] != null) {
           estimatedTime = jsonResponse['estimatedTime'];
@@ -920,7 +935,7 @@ class UpdateTasks extends State<UpdateScreen> {
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                          child: Text(estimatedTime),
+                          child: Text(convertDuration(estimatedTime)),
                           onPressed: () {
                             showCupertinoModalPopup(
                                 context: context,
@@ -963,8 +978,12 @@ class UpdateTasks extends State<UpdateScreen> {
                             onDateChange: (selectedDate) {
                               //sDate = selectedDate;
                               setState(() {
-                                sDate =
-                                    "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                                if (dDate != null &&
+                                    selectedDate
+                                        .isBefore(DateTime.parse(dDate!))) {
+                                  sDate =
+                                      "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                                }
                               });
 
                               //sDate = formatter.format("${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}");
@@ -985,11 +1004,12 @@ class UpdateTasks extends State<UpdateScreen> {
                               dDate =
                                   "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
                               if (sDate != null &&
-                                  selectedDate.isAfter(DateTime.parse(sDate))) {
+                                  selectedDate
+                                      .isAfter(DateTime.parse(sDate!))) {
                                 setState(() {
                                   dDate = formatter.format(selectedDate);
-                                  Duration duration = DateTime.parse(dDate)
-                                      .difference(DateTime.parse(sDate));
+                                  Duration duration = DateTime.parse(dDate!)
+                                      .difference(DateTime.parse(sDate!));
                                   durationDay = "P${duration.inDays + 1}D";
                                   print("$durationDay days");
                                 });
@@ -1004,7 +1024,11 @@ class UpdateTasks extends State<UpdateScreen> {
                           ),
                         ]),
                     Row(children: [
-                      const Text("Progress%:"),
+                      const Text(
+                        "Progress%:",
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: LinearPercentIndicator(
@@ -1046,6 +1070,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                                     int.parse(percent.text);
                                                 print(percentageDone);
                                                 percent.clear();
+                                                return;
                                               } else {
                                                 return;
                                               }
@@ -1059,115 +1084,303 @@ class UpdateTasks extends State<UpdateScreen> {
                         color: Colors.blue,
                       ),
                     ]),
-                    Row(children: [
-                      const Text("Category:"),
-                      const SizedBox(width: 5.0),
-                      DropdownButton<String>(
-                        value: category,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            category = newValue!;
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Not found',
-                            child: Text('Not found'),
-                          )
+                    Column(children: [
+                      Row(
+                        children: [
+                          const Text(
+                            "Category:",
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 30),
+                          SizedBox(
+                            height: 25.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2<Property>(
+                                  isExpanded: true,
+                                  hint: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          category,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  items: listOfCategory
+                                      .map((Property item) =>
+                                          DropdownMenuItem<Property>(
+                                            value: item,
+                                            child: Text(
+                                              item.name,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                      .toList(),
+                                  value: selectedCategory,
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 60,
+                                    width: 150,
+                                    padding: const EdgeInsets.only(left: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: Colors.black26,
+                                      ),
+                                      color: const Color(0xffE1F2F6),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                    ),
+                                    iconSize: 20,
+                                    iconEnabledColor: Color(0xff2595AF),
+                                    iconDisabledColor: Color(0xff2595AF),
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 120,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      color: const Color(0xffE1F2F6),
+                                    ),
+                                    //offset: const Offset(0, 0),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(40),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(width: 10.0),
-                      const Text("Version:"),
-                      const SizedBox(width: 5.0),
-                      DropdownButton<String>(
-                        value: version,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
-                        ),
-                        onChanged: (String? newValue) {
-                          version = nameOfVersion;
-                          setState(() {
-                            nameOfVersion = newValue!;
-                            print(nameOfVersion);
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'v 1.0',
-                            child: Text('v 1.0'),
+                      const SizedBox(height: 15.0),
+                      //version
+                      Row(
+                        children: [
+                          const Text(
+                            "Version:",
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold),
                           ),
-                          DropdownMenuItem<String>(
-                            value: 'Bug Backlog',
-                            child: Text('Bug Backlog'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Product Backlog',
-                            child: Text('Product Backlog'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Sprint 1',
-                            child: Text('Sprint 1'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Sprint 2',
-                            child: Text('Sprint 2'),
+                          const SizedBox(width: 50.0),
+                          SizedBox(
+                            height: 25.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2<Property>(
+                                  isExpanded: true,
+                                  hint: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          nameOfVersion,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  items: listOfVersion
+                                      .map((Property item) =>
+                                          DropdownMenuItem<Property>(
+                                            value: item,
+                                            child: Text(
+                                              item.name,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff2595AF),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                      .toList(),
+                                  value: selectedVersion,
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 60,
+                                    width: 140,
+                                    padding: const EdgeInsets.only(left: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: Colors.black26,
+                                      ),
+                                      color: const Color(0xffE1F2F6),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                    ),
+                                    iconSize: 20,
+                                    iconEnabledColor: Color(0xff2595AF),
+                                    iconDisabledColor: Color(0xff2595AF),
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 120,
+                                    width: 140,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      color: const Color(0xffE1F2F6),
+                                    ),
+                                    //offset: const Offset(0, 0),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(40),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ]),
+                    const SizedBox(height: 15.0),
                     Row(children: [
-                      const Text("Priority:"),
-                      const SizedBox(width: 5.0),
-                      DropdownButton<String>(
-                        value: priority,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        style: const TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 3,
-                          color: Colors.black,
+                      const Text(
+                        "Priority:",
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 50),
+                      SizedBox(
+                        height: 25.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<Property>(
+                              isExpanded: true,
+                              hint: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      nameOfPriority,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff2595AF),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              items: listOfPriority
+                                  .map((Property item) =>
+                                      DropdownMenuItem<Property>(
+                                        value: item,
+                                        child: Text(
+                                          item.name,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2595AF),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
+                                  .toList(),
+                              value: selectedPriority,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 60,
+                                width: 140,
+                                padding: const EdgeInsets.only(left: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                  ),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 20,
+                                iconEnabledColor: Color(0xff2595AF),
+                                iconDisabledColor: Color(0xff2595AF),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 120,
+                                width: 140,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: const Color(0xffE1F2F6),
+                                ),
+                                //offset: const Offset(0, 0),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                            ),
+                          ),
                         ),
-                        onChanged: (String? newValue) {
-                          priority = nameOfPriority;
-                          setState(() {
-                            nameOfPriority = newValue!;
-                            print(nameOfPriority);
-                          });
-                        },
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'Low',
-                            child: Text('Low'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Medium',
-                            child: Text('Medium'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Normal',
-                            child: Text('Normal'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Immediate',
-                            child: Text('Immmediate'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'High',
-                            child: Text('High'),
-                          ),
-                        ],
                       ),
                     ]),
                   ]),
             ),
+            const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
                 updateTask(id.toString());
@@ -1181,6 +1394,7 @@ class UpdateTasks extends State<UpdateScreen> {
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
             ),
+            const SizedBox(height: 50.0),
           ],
         ),
       ),
