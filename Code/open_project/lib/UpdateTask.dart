@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
@@ -38,23 +39,22 @@ class UpdateTasks extends State<UpdateScreen> {
   String category = 'Not found';
   String version = 'v 1.0';
   String priority = 'High';
-  //String type = 'Task';
   String? apikey;
   String? token;
 
   TextEditingController desc = TextEditingController();
   TextEditingController percent = TextEditingController();
   TextEditingController task = TextEditingController();
-  DateTime startdate = DateTime.now();
-  DateTime enddate = DateTime.now();
+  var startdate = DateTime.now();
+  var duedate = DateTime.now();
   DateTime hours = DateTime.now();
   DateTime updateTime = DateTime.now();
   DateFormat formatter = DateFormat('yyyy-MM-dd');
 
   var embedded,
       subject = 'Not found',
-      startDate = 'Not found',
-      dueDate = 'Not found',
+      sDate = 'Not found',
+      dDate = 'Not found',
       percentageDone = 0,
       updatedAt = 'Not changed';
   var nameOfAuthor = 'No person', lockVersion = 0;
@@ -67,7 +67,7 @@ class UpdateTasks extends State<UpdateScreen> {
   String nameOfAccountable = 'No person';
   String nameOfAssignee = 'No person';
   String? rawOfdescription;
-  String? estimatedTime;
+  String estimatedTime = "PT0H0M";
 
   List<Property> listOfStatus = [];
   List<Property> listOfType = [];
@@ -100,8 +100,8 @@ class UpdateTasks extends State<UpdateScreen> {
         "raw": "$rawOfdescription",\n        
         "html": ""\n    },\n    
         "scheduleManually": false,\n    
-        "startDate": "$startDate",\n    
-        "dueDate": "$dueDate",\n    
+        "startDate": "$sDate",\n    
+        "dueDate": "$dDate",\n    
         "estimatedTime": "$estimatedTime",\n    
         "derivedEstimatedTime": null,\n    
         "duration": "$durationDay",\n    
@@ -154,10 +154,12 @@ class UpdateTasks extends State<UpdateScreen> {
           estimatedTime = jsonResponse['estimatedTime'];
         }
         if (jsonResponse['startDate'] != null) {
-          startDate = jsonResponse['startDate'];
+          sDate = jsonResponse['startDate'];
+          //startdate = DateTime.parse(jsonResponse['startDate']);
         }
         if (jsonResponse['dueDate'] != null) {
-          dueDate = jsonResponse['dueDate'];
+          dDate = jsonResponse['dueDate'];
+          //duedate = DateTime.parse(jsonResponse['dueDate']);
         }
         if (jsonResponse['updatedAt'] != null) {
           updatedAt = jsonResponse['updatedAt'];
@@ -918,7 +920,7 @@ class UpdateTasks extends State<UpdateScreen> {
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                          child: Text(estimatedTime!),
+                          child: Text(estimatedTime),
                           onPressed: () {
                             showCupertinoModalPopup(
                                 context: context,
@@ -938,62 +940,69 @@ class UpdateTasks extends State<UpdateScreen> {
                                       ),
                                     ));
                           }),
-                      const Text('h')
                     ]),
                   ]),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 8.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Detail:',
-                        style: TextStyle(
-                            fontSize: 20.0, fontStyle: FontStyle.italic)),
-                    Row(children: [
-                      const Text('Date:'),
-                      TextButton(
-                        child: Text(startDate),
-                        onPressed: () {
-                          showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2030))
-                              .then((value) {
-                            if (value != null) {
+                    const Text(
+                      'Detail:',
+                      style: TextStyle(
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
+                    ),
+                    //Start Date && Due Date
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Start Date:   $sDate'),
+                          EasyDateTimeLine(
+                            initialDate: startdate,
+                            onDateChange: (selectedDate) {
+                              //sDate = selectedDate;
                               setState(() {
-                                /*startDate =
-                                    '${value.year}-${value.month}-${value.day}';*/
-                                startDate = formatter.format(value);
+                                sDate =
+                                    "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
                               });
-                            }
-                          });
-                        },
-                      ),
-                      TextButton(
-                        child: Text(dueDate),
-                        onPressed: () {
-                          showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2030))
-                              .then((value) {
-                            if (value != null &&
-                                value.isAfter(DateTime.parse(startDate))) {
-                              setState(() {
-                                dueDate = formatter.format(value);
-                                Duration duration = DateTime.parse(dueDate)
-                                    .difference(DateTime.parse(startDate));
-                                durationDay = "P${duration.inDays + 1}D";
-                                print("$durationDay days");
-                              });
-                            }
-                          });
-                        },
-                      )
-                    ]),
+
+                              //sDate = formatter.format("${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}");
+                            },
+                            activeColor: const Color(0xff2595AF),
+                            dayProps: const EasyDayProps(
+                              todayHighlightStyle:
+                                  TodayHighlightStyle.withBackground,
+                              todayHighlightColor: Color(0xffE1ECC8),
+                            ),
+                          ),
+                          const SizedBox(height: 5.0),
+                          Text('Due Date:  $dDate'),
+                          EasyDateTimeLine(
+                            initialDate: duedate,
+                            onDateChange: (selectedDate) {
+                              //dDate = selectedDate;
+                              dDate =
+                                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                              if (sDate != null &&
+                                  selectedDate.isAfter(DateTime.parse(sDate))) {
+                                setState(() {
+                                  dDate = formatter.format(selectedDate);
+                                  Duration duration = DateTime.parse(dDate)
+                                      .difference(DateTime.parse(sDate));
+                                  durationDay = "P${duration.inDays + 1}D";
+                                  print("$durationDay days");
+                                });
+                              }
+                            },
+                            activeColor: const Color(0xff2595AF),
+                            dayProps: const EasyDayProps(
+                              todayHighlightStyle:
+                                  TodayHighlightStyle.withBackground,
+                              todayHighlightColor: Color(0xffE1ECC8),
+                            ),
+                          ),
+                        ]),
                     Row(children: [
                       const Text("Progress%:"),
                       Padding(
