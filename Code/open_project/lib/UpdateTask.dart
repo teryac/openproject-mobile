@@ -17,18 +17,20 @@ import 'package:intl/intl.dart';
 
 class UpdateScreen extends StatefulWidget {
   int id;
+  int idProject;
   String name;
 
-  UpdateScreen(this.id, this.name);
+  UpdateScreen(this.idProject, this.id, this.name);
 
   @override
-  State<UpdateScreen> createState() => UpdateTasks(id, name);
+  State<UpdateScreen> createState() => UpdateTasks(idProject, id, name);
 }
 
 class UpdateTasks extends State<UpdateScreen> {
   int id;
   String? durationDay;
   String name;
+  int idProject;
   String progressValue = 'In progress';
   String personvalue = 'Shaaban Shahin';
   String assignee = 'Shaaban Shahin';
@@ -53,17 +55,19 @@ class UpdateTasks extends State<UpdateScreen> {
       subject = 'Not found',
       startDate = 'Not found',
       dueDate = 'Not found',
-      estimatedTime = 'Not found',
       percentageDone = 0,
       updatedAt = 'Not changed';
-  var nameOfAuthor = 'No person', nameOfAssignee = 'No person', lockVersion = 0;
+  var nameOfAuthor = 'No person', lockVersion = 0;
 
   String taskBody = "No body";
   String nameOfType = 'Task';
   String nameOfPriority = 'Normal';
   String nameOfStatus = 'Normal';
   String nameOfVersion = 'No version';
+  String nameOfAccountable = 'No person';
+  String nameOfAssignee = 'No person';
   String? rawOfdescription;
+  String? estimatedTime;
 
   List<Property> listOfStatus = [];
   List<Property> listOfType = [];
@@ -126,11 +130,25 @@ class UpdateTasks extends State<UpdateScreen> {
   }
 
   void getTask() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id");
-    await http.get(uri).then((response) {
+    await http.get(
+      uri,
+      headers: <String, String>{
+        'content-type': 'application/json; charset=UTF-8',
+        'authorization': basicAuth
+      },
+    ).then((response) {
+      print(response.body);
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         subject = jsonResponse['subject'];
+        task.text = subject;
         lockVersion = jsonResponse['lockVersion'];
         if (jsonResponse['estimatedTime'] != null) {
           estimatedTime = jsonResponse['estimatedTime'];
@@ -163,8 +181,17 @@ class UpdateTasks extends State<UpdateScreen> {
         var author = embedded['author'];
         nameOfAuthor = author['name'];
         //Assignee
+        embedded = jsonResponse['_embedded'];
         var assignee = embedded['assignee'];
-        nameOfAssignee = assignee['name'];
+        if (assignee != null) {
+          nameOfAssignee = assignee['name'];
+        }
+        //Accountable
+        embedded = jsonResponse['_embedded'];
+        var accountable = embedded['responsible'];
+        if (accountable != null) {
+          nameOfAccountable = accountable['name'];
+        }
         //Version
         if (embedded['version'] != null) {
           var version = embedded['version'];
@@ -175,13 +202,12 @@ class UpdateTasks extends State<UpdateScreen> {
         var raw = description['raw'];
         if (raw != "") {
           rawOfdescription = raw;
+          desc.text = rawOfdescription!;
         }
 
         if (mounted) {
           setState(() {});
         }
-      } else {
-        print('Failed');
       }
     });
   }
@@ -194,7 +220,8 @@ class UpdateTasks extends State<UpdateScreen> {
     String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
     //Categories
     Response rCategories = await get(
-        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/categories"),
+        Uri.parse(
+            "https://op.yaman-ka.com/api/v3/projects/$idProject/categories"),
         headers: <String, String>{'authorization': basicAuth});
     if (rCategories.statusCode == 200) {
       var jsonResponse = jsonDecode(rCategories.body);
@@ -236,7 +263,7 @@ class UpdateTasks extends State<UpdateScreen> {
     }
     //Types
     Response rTypes = await get(
-        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/types"),
+        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$idProject/types"),
         headers: <String, String>{'authorization': basicAuth});
     if (rTypes.statusCode == 200) {
       var jsonResponse = jsonDecode(rTypes.body);
@@ -258,7 +285,7 @@ class UpdateTasks extends State<UpdateScreen> {
     //Users
     Response rUsers = await get(
         Uri.parse(
-            "https://op.yaman-ka.com/api/v3/projects/$id/available_assignees"),
+            "https://op.yaman-ka.com/api/v3/projects/$idProject/available_assignees"),
         headers: <String, String>{'authorization': basicAuth});
     if (rUsers.statusCode == 200) {
       var jsonResponse = jsonDecode(rUsers.body);
@@ -272,15 +299,17 @@ class UpdateTasks extends State<UpdateScreen> {
 
           return Property(id: idUser, name: pro);
         }).toList();
-        setState(() {
-          listOfUser = property;
-        });
+        if (mounted) {
+          setState(() {
+            listOfUser = property;
+          });
+        }
       }
     }
-
     //Versions
     Response rVersion = await get(
-        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/versions"),
+        Uri.parse(
+            "https://op.yaman-ka.com/api/v3/projects/$idProject/versions"),
         headers: <String, String>{'authorization': basicAuth});
     if (rVersion.statusCode == 200) {
       var jsonResponse = jsonDecode(rVersion.body);
@@ -334,14 +363,14 @@ class UpdateTasks extends State<UpdateScreen> {
     });
   }
 
-  UpdateTasks(this.id, this.name);
+  UpdateTasks(this.idProject, this.id, this.name);
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getAllData();
     getTask();
+    getAllData();
   }
 
   @override
@@ -379,7 +408,7 @@ class UpdateTasks extends State<UpdateScreen> {
                           controller: task,
                           keyboardType: TextInputType.multiline,
                           decoration: InputDecoration(
-                            labelText: subject.toString(),
+                            labelText: subject,
                             border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(15),
@@ -711,7 +740,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      nameOfAssignee,
+                                      nameOfAssignee!,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -798,12 +827,12 @@ class UpdateTasks extends State<UpdateScreen> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton2<Property>(
                               isExpanded: true,
-                              hint: const Row(
+                              hint: Row(
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Select Accountable',
-                                      style: TextStyle(
+                                      nameOfAccountable,
+                                      style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xff2595AF),
@@ -885,11 +914,11 @@ class UpdateTasks extends State<UpdateScreen> {
                   children: [
                     const Text('Estimates & Time:',
                         style: TextStyle(
-                            fontSize: 20.0, fontStyle: FontStyle.italic)),
+                            fontSize: 15.0, fontWeight: FontWeight.bold)),
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                          child: Text(estimatedTime),
+                          child: Text(estimatedTime!),
                           onPressed: () {
                             showCupertinoModalPopup(
                                 context: context,
