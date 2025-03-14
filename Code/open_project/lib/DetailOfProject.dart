@@ -167,7 +167,6 @@ class Detail extends State<StateDetail> {
                     itemBuilder: (BuildContext ctx, int index) {
                       String sub = dataOfSubject[index].subject;
                       String desc = dataOfSubject[index].description;
-                      int id = dataOfSubject[index].id;
                       return Card(
                         borderOnForeground: true,
                         elevation: 3.0,
@@ -250,7 +249,7 @@ class Detail extends State<StateDetail> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => UpdateScreen(
-                                          dataOfSubject[index].id, name)),
+                                          id, dataOfSubject[index].id, name)),
                                 );
                               },
                             )
