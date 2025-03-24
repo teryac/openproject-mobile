@@ -86,6 +86,42 @@ class UpdateTasks extends State<UpdateScreen> {
     token = prefs.getString('password');
     String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
 
+    String newTask = """{\n    "_type": "WorkPackage",\n
+        "subject": "Design New Feature",\n    
+        "description": {\n        
+        "format": "markdown",\n        
+        "raw": "Create a detailed design document for the new feature."\n    },\n    
+        "priority": {\n        
+        "href": "/api/v3/priorities/1",\n        
+        "title": "High"\n    },\n   
+         "status": {\n        
+         "href": "/api/v3/statuses/1",\n        
+         "title": "New"\n    },\n    
+         "type": {\n        
+         "href": "/api/v3/types/2",\n        
+         "title": "Feature"\n    },\n    
+         "assignee": {\n        
+         "href": "/api/v3/users/10",\n        
+         "title": "Jane Smith - janesmith"\n    },\n    
+         "responsible": {\n        
+         "href": "/api/v3/users/11",\n        
+         "title": "John Doe - johndoe"\n    },\n    
+         "project": {\n        
+         "href": "/api/v3/projects/3",\n        
+         "title": "Product Development"\n    },\n    
+         "version": {\n        
+         "href": "/api/v3/versions/5",\n        
+         "title": "Release 1.1"\n    },\n    
+         "parent": {\n        
+         "href": "/api/v3/work_packages/1000",\n        
+         "title": "Parent Task"\n    },\n    
+         "startDate": "2025-01-20",\n    
+         "dueDate": "2025-01-30",\n    
+         "estimatedTime": "PT10H",\n    
+         "customField1": "Custom Value",\n    
+         "customField2": 123,\n    
+         "percentageDone": 0\n}""";
+
     taskBody = """{\n  "_type": "WorkPackage",\n    
         "id": $id,\n    
         "lockVersion": $lockVersion,\n    
@@ -368,16 +404,6 @@ class UpdateTasks extends State<UpdateScreen> {
         }
       }
     }
-  }
-
-  void getUsers() async {
-    Uri uri = Uri.parse(
-        "https://op.yaman-ka.com/api/v3/projects/$id/available_assignees");
-    await http.get(uri).then((response) {
-      if (response.statusCode == 200) {
-        var jsonResponse = jsonDecode(response.body);
-      }
-    });
   }
 
   UpdateTasks(this.idProject, this.id, this.name);
@@ -1383,8 +1409,8 @@ class UpdateTasks extends State<UpdateScreen> {
             const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
-                updateTask(id.toString());
-                print(lockVersion);
+                //updateTask(id.toString());
+                // print(lockVersion);
                 //print(taskBody);
                 setState(() {});
               },
