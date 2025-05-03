@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -33,17 +35,14 @@ class AddTask extends State<AddScreen> {
   String status = "New";
   int idStatus = 1;
   String? task;
-  late int estimatedTime;
   String? assignee;
   int? idAssignee;
   int? idAccountable;
   String? accountable;
-  late String category;
-  late int idCategory;
-  String defCategory = "Not found";
-  String defVersion = "No version";
-  String? version;
-  int idVersion = 5;
+  var category;
+  int? idCategory;
+  var version;
+  int? idVersion;
   String priority = 'Normal';
   int idPriority = 8;
   String type = "Task";
@@ -249,7 +248,10 @@ class AddTask extends State<AddScreen> {
       "title": "$name"\n    },\n    
       "version": {\n        
       "href": "/api/v3/versions/$idVersion",\n        
-      "title": "$version"\n    },\n    
+      "title": $version\n    },\n    
+      "category": {\n        
+      "href": "/api/v3/categories/$idCategory",\n        
+      "title": $category\n},\n  
       "startDate": $startdate,\n    
       "dueDate": $duedate,\n    
       "estimatedTime": "PT${hour}H${minutes}M",\n    
@@ -1316,6 +1318,8 @@ class AddTask extends State<AddScreen> {
             const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
+                category = (category != null) ? '"$category"' : 'null';
+                version = (version != null) ? '"$version"' : 'null';
                 if (nameOfTask.text.isEmpty) {
                   Fluttertoast.showToast(msg: "Enter name of task");
                 } else if (sDate != null && sDate!.isBefore(DateTime.now())) {
