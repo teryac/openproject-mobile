@@ -38,13 +38,7 @@ class UpdateTasks extends State<UpdateScreen> {
       idPriority,
       idCategory,
       idVersion;
-  String progressValue = 'In progress';
-  String personvalue = 'Shaaban Shahin';
 
-  String accountable = 'Shaaban Shahin';
-  String version = 'v 1.0';
-  var nameOfCategory;
-  String defCategory = 'Not found';
   String? apikey;
   String? token;
 
@@ -58,18 +52,17 @@ class UpdateTasks extends State<UpdateScreen> {
   DateFormat formatter = DateFormat('yyyy-MM-dd');
 
   var embedded, percentageDone = 0;
-  var nameOfAuthor = 'No person', lockVersion = 0;
+  String nameOfAuthor = 'No person';
+  int? lockVersion;
 
   String taskBody = "No body";
+  String nameOfCategory = "Not found";
   String nameOfType = "Not found";
   String nameOfPriority = "Not found";
   String nameOfStatus = "Not found";
-  String defVersion = 'No version';
-  String defAccountable = 'No person';
-  String defAssignee = 'No person';
-  var nameOfVersion;
-  String? nameOfAccountable;
-  String? nameOfAssignee;
+  String nameOfVersion = 'No version';
+  String nameOfAccountable = 'No person';
+  String nameOfAssignee = 'No person';
   String? rawOfdescription, subject;
   String estimatedTime = "PT0H0M";
 
@@ -197,16 +190,25 @@ class UpdateTasks extends State<UpdateScreen> {
         }
         if (jsonResponse['startDate'] != null) {
           startdate = jsonResponse['startDate'];
+          startdate = '"$startdate"';
+        }
+        if (jsonResponse['date'] != null) {
+          duedate = jsonResponse['date'];
+          startdate = jsonResponse['date'];
+          duedate = '"$duedate"';
+          startdate = '"$startdate"';
         }
         if (jsonResponse['dueDate'] != null) {
           duedate = jsonResponse['dueDate'];
+          duedate = '"$duedate"';
         }
         if (jsonResponse['percentageDone'] != 0) {
           percentageDone = jsonResponse['percentageDone'];
         }
         //Category
-        if (jsonResponse['category'] != null) {
-          var category = embedded['category'];
+        embedded = jsonResponse['_embedded'];
+        var category = embedded['category'];
+        if (category != null) {
           idCategory = category['id'];
           nameOfCategory = category['name'];
         }
@@ -466,6 +468,7 @@ class UpdateTasks extends State<UpdateScreen> {
                       ),
                     ),
                     const SizedBox(width: 5),
+                    //Type
                     SizedBox(
                       height: 63, // Match this height with the TextField height
                       child: Container(
@@ -590,7 +593,7 @@ class UpdateTasks extends State<UpdateScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  nameOfStatus!,
+                                  nameOfStatus,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -669,9 +672,9 @@ class UpdateTasks extends State<UpdateScreen> {
               ),
               const SizedBox(height: 5.0),
               //Create by
-              const Row(
+              Row(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       "Create by:",
@@ -682,12 +685,12 @@ class UpdateTasks extends State<UpdateScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5.0,
                   ),
                   Text(
-                    "Shaaban Shahin",
-                    style: TextStyle(
+                    nameOfAuthor,
+                    style: const TextStyle(
                       fontSize: 15,
                       color: Colors.black,
                     ),
@@ -722,8 +725,8 @@ class UpdateTasks extends State<UpdateScreen> {
                 ],
               ),
               const SizedBox(height: 5.0),
-              //Description
             ]),
+            //Description
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -739,6 +742,7 @@ class UpdateTasks extends State<UpdateScreen> {
                   ),
                 ),
                 const SizedBox(height: 5),
+                //Description
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                   child: TextField(
@@ -790,7 +794,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      defAssignee,
+                                      nameOfAssignee,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -885,7 +889,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      defAccountable,
+                                      nameOfAccountable,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -1019,15 +1023,11 @@ class UpdateTasks extends State<UpdateScreen> {
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
                               setState(() {
-                                //if (dDate != null &&
-                                //   selectedDate
-                                //      .isBefore(DateTime.parse(duedate))) {
                                 sDate = selectedDate;
                                 startdate = formatter.format(selectedDate);
                                 startdate = (startdate != null)
                                     ? '"$startdate"'
                                     : 'null';
-                                //}
                               });
                             },
                             activeColor: const Color(0xff2595AF),
@@ -1043,16 +1043,12 @@ class UpdateTasks extends State<UpdateScreen> {
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              //if (sDate != null &&
-                              //     selectedDate
-                              //        .isAfter(DateTime.parse(startdate))) {
                               setState(() {
                                 dDate = selectedDate;
                                 duedate = formatter.format(selectedDate);
                                 duedate =
                                     (duedate != null) ? '"$duedate"' : 'null';
                               });
-                              //}
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -1145,7 +1141,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          defCategory,
+                                          nameOfCategory,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1248,7 +1244,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          defVersion,
+                                          nameOfVersion,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1350,7 +1346,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      nameOfPriority!,
+                                      nameOfPriority,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -1433,10 +1429,11 @@ class UpdateTasks extends State<UpdateScreen> {
             const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
-                nameOfCategory =
+                /*nameOfCategory =
                     (nameOfCategory != null) ? '"$nameOfCategory"' : 'null';
-                nameOfVersion =
-                    (nameOfVersion != null) ? '"$nameOfVersion"' : 'null';
+                nameOfVersion = (nameOfVersion != "No version")
+                    ? '"$nameOfVersion"'
+                    : 'null';*/
                 if (task.text.isEmpty) {
                   Fluttertoast.showToast(msg: "Enter name of task");
                 } else if (sDate != null && sDate!.isBefore(DateTime.now())) {
@@ -1466,6 +1463,28 @@ class UpdateTasks extends State<UpdateScreen> {
                       duration: Duration(milliseconds: 2000),
                       content: Text(
                         "Start date cannot be after due date",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ),
+                  );
+                } else if (nameOfCategory == 'Not found') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 2000),
+                      content: Text(
+                        "The specified category does not exist.",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ),
+                  );
+                } else if (nameOfVersion == 'No version') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 2000),
+                      content: Text(
+                        "Version is not set to one of the allowed values.",
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ),
