@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
@@ -29,7 +30,7 @@ class AddTask extends State<AddScreen> {
   int id;
   String percentageDone = '0.0';
   String name;
-  String status = 'New';
+  String status = "New";
   int idStatus = 1;
   String? task;
   late int estimatedTime;
@@ -39,7 +40,9 @@ class AddTask extends State<AddScreen> {
   String? accountable;
   late String category;
   late int idCategory;
-  String version = 'v 1.0';
+  String defCategory = "Not found";
+  String defVersion = "No version";
+  String? version;
   int idVersion = 5;
   String priority = 'Normal';
   int idPriority = 8;
@@ -47,12 +50,13 @@ class AddTask extends State<AddScreen> {
   int idType = 1;
   String? description;
   int hour = 0, minutes = 0;
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
 
   TextEditingController desc = TextEditingController();
   TextEditingController nameOfTask = TextEditingController();
   TextEditingController percent = TextEditingController();
-  String? startdate;
-  String? duedate;
+  var startdate;
+  var duedate;
   DateTime? hours, sDate, dDate;
   DateTime updateTime = DateTime.now();
 
@@ -296,7 +300,7 @@ class AddTask extends State<AddScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            //Row 1
+            //Task & Type
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -354,7 +358,7 @@ class AddTask extends State<AddScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    'Select Type',
+                                    "Select type",
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -385,6 +389,7 @@ class AddTask extends State<AddScreen> {
                               setState(() {
                                 type = value!.name;
                                 idType = value.id;
+                                selectedType = value;
                               });
                             },
                             buttonStyleData: ButtonStyleData(
@@ -462,7 +467,7 @@ class AddTask extends State<AddScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                'Select Status',
+                                "Select status",
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -492,6 +497,7 @@ class AddTask extends State<AddScreen> {
                           setState(() {
                             status = value!.name;
                             idStatus = value.id;
+                            selectedStatus = value;
                           });
                         },
                         buttonStyleData: ButtonStyleData(
@@ -690,6 +696,7 @@ class AddTask extends State<AddScreen> {
                                 setState(() {
                                   assignee = value!.name;
                                   idAssignee = value.id;
+                                  selectedAssignee = value;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
@@ -784,6 +791,7 @@ class AddTask extends State<AddScreen> {
                                 setState(() {
                                   accountable = value!.name;
                                   idAccountable = value.id;
+                                  selectedAccountable = value;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
@@ -843,8 +851,7 @@ class AddTask extends State<AddScreen> {
                     Row(children: [
                       const Text('Estimated time:'),
                       CupertinoButton(
-                        child: Text(
-                            'Hour: ${hours?.hour}  Minutes: ${hours?.minute}'),
+                        child: Text('Hour: $hour  Minutes: $minutes'),
                         onPressed: () {
                           showCupertinoModalPopup(
                             context: context,
@@ -884,13 +891,17 @@ class AddTask extends State<AddScreen> {
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Start Date:'),
+                          Text('Start Date: $startdate'),
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              sDate = selectedDate;
-                              startdate =
-                                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                              setState(() {
+                                sDate = selectedDate;
+                                startdate = formatter.format(selectedDate);
+                                startdate = (startdate != null)
+                                    ? '"$startdate"'
+                                    : 'null';
+                              });
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -900,13 +911,16 @@ class AddTask extends State<AddScreen> {
                             ),
                           ),
                           const SizedBox(height: 5.0),
-                          const Text('Due Date:'),
+                          Text('Due Date: $duedate'),
                           EasyDateTimeLine(
                             initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              dDate = selectedDate;
-                              duedate =
-                                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+                              setState(() {
+                                dDate = selectedDate;
+                                duedate = formatter.format(selectedDate);
+                                duedate =
+                                    (duedate != null) ? '"$duedate"' : 'null';
+                              });
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -1000,7 +1014,7 @@ class AddTask extends State<AddScreen> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              'Select Category',
+                                              "Select Category",
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
@@ -1032,6 +1046,7 @@ class AddTask extends State<AddScreen> {
                                         setState(() {
                                           category = value!.name;
                                           idCategory = value.id;
+                                          selectedCategory = value;
                                         });
                                       },
                                       buttonStyleData: ButtonStyleData(
@@ -1141,6 +1156,7 @@ class AddTask extends State<AddScreen> {
                                         setState(() {
                                           version = value!.name;
                                           idVersion = value.id;
+                                          selectedVersion = value;
                                         });
                                       },
                                       buttonStyleData: ButtonStyleData(
@@ -1248,6 +1264,7 @@ class AddTask extends State<AddScreen> {
                                 setState(() {
                                   priority = value!.name;
                                   idPriority = value.id;
+                                  selectedPriority = value;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
