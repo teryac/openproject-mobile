@@ -29,39 +29,48 @@ class UpdateScreen extends StatefulWidget {
 
 class UpdateTasks extends State<UpdateScreen> {
   int id;
-  String? durationDay;
   String name;
   int idProject;
+  int? idType,
+      idStatus,
+      idAssignee,
+      idAccountable,
+      idPriority,
+      idCategory,
+      idVersion;
   String progressValue = 'In progress';
   String personvalue = 'Shaaban Shahin';
-  String assignee = 'Shaaban Shahin';
+
   String accountable = 'Shaaban Shahin';
   String version = 'v 1.0';
-  String priority = 'High';
-  String category = 'Not found';
+  var nameOfCategory;
+  String defCategory = 'Not found';
   String? apikey;
   String? token;
 
   TextEditingController desc = TextEditingController();
   TextEditingController percent = TextEditingController();
   TextEditingController task = TextEditingController();
-  var startdate = DateTime.now();
-  var duedate = DateTime.now();
-  DateTime hours = DateTime.now();
+  var startdate;
+  var duedate;
+  DateTime? sDate, dDate;
   DateTime updateTime = DateTime.now();
   DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  var embedded, percentageDone = 0, updatedAt = 'Not changed';
+  var embedded, percentageDone = 0;
   var nameOfAuthor = 'No person', lockVersion = 0;
 
   String taskBody = "No body";
-  String nameOfType = 'Task';
-  String nameOfPriority = 'No Priority';
-  String nameOfStatus = 'New';
-  String nameOfVersion = 'No version';
-  String nameOfAccountable = 'No person';
-  String nameOfAssignee = 'No person';
-  String? rawOfdescription, subject, dDate, sDate;
+  String nameOfType = "Not found";
+  String nameOfPriority = "Not found";
+  String nameOfStatus = "Not found";
+  String defVersion = 'No version';
+  String defAccountable = 'No person';
+  String defAssignee = 'No person';
+  var nameOfVersion;
+  String? nameOfAccountable;
+  String? nameOfAssignee;
+  String? rawOfdescription, subject;
   String estimatedTime = "PT0H0M";
 
   List<Property> listOfStatus = [];
@@ -79,7 +88,7 @@ class UpdateTasks extends State<UpdateScreen> {
   Property? selectedVersion;
   Property? selectedCategory;
 
-  void updateTask(String id) async {
+  void updateTask() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     apikey = prefs.getString('apikey');
@@ -87,64 +96,46 @@ class UpdateTasks extends State<UpdateScreen> {
     String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
 
     String newTask = """{\n    "_type": "WorkPackage",\n
-        "subject": "Design New Feature",\n    
-        "description": {\n        
-        "format": "markdown",\n        
-        "raw": "Create a detailed design document for the new feature."\n    },\n    
-        "priority": {\n        
-        "href": "/api/v3/priorities/1",\n        
-        "title": "High"\n    },\n   
-         "status": {\n        
-         "href": "/api/v3/statuses/1",\n        
-         "title": "New"\n    },\n    
-         "type": {\n        
-         "href": "/api/v3/types/2",\n        
-         "title": "Feature"\n    },\n    
-         "assignee": {\n        
-         "href": "/api/v3/users/10",\n        
-         "title": "Jane Smith - janesmith"\n    },\n    
-         "responsible": {\n        
-         "href": "/api/v3/users/11",\n        
-         "title": "John Doe - johndoe"\n    },\n    
-         "project": {\n        
-         "href": "/api/v3/projects/3",\n        
-         "title": "Product Development"\n    },\n    
-         "version": {\n        
-         "href": "/api/v3/versions/5",\n        
-         "title": "Release 1.1"\n    },\n    
-         "parent": {\n        
-         "href": "/api/v3/work_packages/1000",\n        
-         "title": "Parent Task"\n    },\n    
-         "startDate": "2025-01-20",\n    
-         "dueDate": "2025-01-30",\n    
-         "estimatedTime": "PT10H",\n    
-         "customField1": "Custom Value",\n    
-         "customField2": 123,\n    
-         "percentageDone": 0\n}""";
-
-    taskBody = """{\n  "_type": "WorkPackage",\n    
-        "id": $id,\n    
-        "lockVersion": $lockVersion,\n    
-        "subject": "$subject",\n    
-        "description": {\n        
-        "format": "markdown",\n        
-        "raw": "$rawOfdescription",\n        
-        "html": ""\n    },\n    
-        "scheduleManually": false,\n    
-        "startDate": "$sDate",\n    
-        "dueDate": "$dDate",\n    
-        "estimatedTime": "$estimatedTime",\n    
-        "derivedEstimatedTime": null,\n    
-        "duration": "$durationDay",\n    
-        "ignoreNonWorkingDays": true,\n    
-        "percentageDone": $percentageDone,\n    
-        "remainingTime": null,\n    
-        "derivedRemainingTime": null\n  \n}""";
-
-    print(taskBody);
+            "id": $id,\n
+            "subject": "$subject",\n    
+            "lockVersion": $lockVersion,\n    
+            "description": {\n        
+            "format": "markdown",\n        
+            "raw": "$rawOfdescription",\n        
+            "html": "<p>Updated description for the Testing API task.</p>"\n    },\n    
+            "project": {\n        
+            "href": "/api/v3/projects/$idProject",\n        
+            "title": "$name"\n    },\n    
+            "status": {\n        
+            "href": "/api/v3/statuses/$idStatus",\n        
+            "title": "$nameOfStatus"\n    },\n    
+            "type": {\n        
+            "href": "/api/v3/types/$idType",\n        
+            "title": "$nameOfType"\n    },\n    
+            "priority": {\n        
+            "href": "/api/v3/priorities/$idPriority",\n        
+            "title": "$nameOfPriority"\n    },\n    
+            "assignee": {\n        
+            "href": "/api/v3/users/$idAssignee",\n        
+            "title": "$nameOfAssignee"\n    },\n    
+            "version": {\n        
+            "href": "/api/v3/versions/$idVersion",\n        
+            "title": "$nameOfVersion"\n    },\t\n    
+            "responsible": {\n        
+            "href": "/api/v3/users/$idAccountable",\n        
+            "title": "$nameOfAccountable"\n    },\n    
+            "category": {\n        
+            "href": "/api/v3/categories/$idCategory",\n        
+            "title": "$nameOfCategory"\n},\n    
+            "startDate": $startdate,\n    
+            "dueDate": $duedate,\n    
+            "estimatedTime": "$estimatedTime",\n    
+            "scheduleManually": true,\n    
+            "ignoreNonWorkingDays": false,\n    
+            "percentageDone": $percentageDone\n}""";
     await http.patch(
       Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id"),
-      body: taskBody,
+      body: newTask,
       headers: <String, String>{
         'content-type': 'application/json; charset=UTF-8',
         'authorization': basicAuth
@@ -205,30 +196,33 @@ class UpdateTasks extends State<UpdateScreen> {
           estimatedTime = jsonResponse['estimatedTime'];
         }
         if (jsonResponse['startDate'] != null) {
-          sDate = jsonResponse['startDate'];
-          //startdate = DateTime.parse(jsonResponse['startDate']);
+          startdate = jsonResponse['startDate'];
         }
         if (jsonResponse['dueDate'] != null) {
-          dDate = jsonResponse['dueDate'];
-          //duedate = DateTime.parse(jsonResponse['dueDate']);
-        }
-        if (jsonResponse['updatedAt'] != null) {
-          updatedAt = jsonResponse['updatedAt'];
+          duedate = jsonResponse['dueDate'];
         }
         if (jsonResponse['percentageDone'] != 0) {
           percentageDone = jsonResponse['percentageDone'];
         }
-
+        //Category
+        if (jsonResponse['category'] != null) {
+          var category = embedded['category'];
+          idCategory = category['id'];
+          nameOfCategory = category['name'];
+        }
         embedded = jsonResponse['_embedded'];
         //Type
         var type = embedded['type'];
+        idType = type['id'];
         nameOfType = type['name'];
         //Priority
         embedded = jsonResponse['_embedded'];
         var priority = embedded['priority'];
+        idPriority = priority['id'];
         nameOfPriority = priority['name'];
         //Status
         var status = embedded['status'];
+        idStatus = status['id'];
         nameOfStatus = status['name'];
         //CreatedBy
         var author = embedded['author'];
@@ -237,17 +231,20 @@ class UpdateTasks extends State<UpdateScreen> {
         embedded = jsonResponse['_embedded'];
         var assignee = embedded['assignee'];
         if (assignee != null) {
+          idAssignee = assignee['id'];
           nameOfAssignee = assignee['name'];
         }
         //Accountable
         embedded = jsonResponse['_embedded'];
         var accountable = embedded['responsible'];
         if (accountable != null) {
+          idAccountable = accountable['id'];
           nameOfAccountable = accountable['name'];
         }
         //Version
         if (embedded['version'] != null) {
           var version = embedded['version'];
+          idVersion = version['id'];
           nameOfVersion = version['name'];
         }
         //Decription
@@ -511,7 +508,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                 .toList(),
                             value: selectedType,
                             onChanged: (value) {
-                              setState(() {});
+                              setState(() {
+                                nameOfType = value!.name;
+                                idType = value.id;
+                                selectedType = value;
+                              });
                             },
                             buttonStyleData: ButtonStyleData(
                                 height: 60,
@@ -589,7 +590,7 @@ class UpdateTasks extends State<UpdateScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  nameOfStatus,
+                                  nameOfStatus!,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -617,7 +618,11 @@ class UpdateTasks extends State<UpdateScreen> {
                               .toList(),
                           value: selectedStatus,
                           onChanged: (value) {
-                            setState(() {});
+                            setState(() {
+                              nameOfStatus = value!.name;
+                              idStatus = value.id;
+                              selectedStatus = value;
+                            });
                           },
                           buttonStyleData: ButtonStyleData(
                             height: 50,
@@ -748,7 +753,9 @@ class UpdateTasks extends State<UpdateScreen> {
                       ),
                     ),
                     onChanged: (value) {
-                      setState(() {});
+                      setState(() {
+                        rawOfdescription = value;
+                      });
                     },
                   ),
                 ),
@@ -783,7 +790,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      nameOfAssignee!,
+                                      defAssignee,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -811,7 +818,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                   .toList(),
                               value: selectedAssignee,
                               onChanged: (value) {
-                                setState(() {});
+                                setState(() {
+                                  nameOfAssignee = value!.name;
+                                  idAssignee = value.id;
+                                  selectedAssignee = value;
+                                });
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 60,
@@ -874,7 +885,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      nameOfAccountable,
+                                      defAccountable,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -902,7 +913,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                   .toList(),
                               value: selectedAccountable,
                               onChanged: (value) {
-                                setState(() {});
+                                setState(() {
+                                  nameOfAccountable = value!.name;
+                                  idAccountable = value.id;
+                                  selectedAccountable = value;
+                                });
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 60,
@@ -949,13 +964,13 @@ class UpdateTasks extends State<UpdateScreen> {
                     ]),
                   ]),
             ),
-            // Estimates & Time
+            // Estimates Time
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Estimates & Time:',
+                    const Text('Estimates Time:',
                         style: TextStyle(
                             fontSize: 15.0, fontWeight: FontWeight.bold)),
                     Row(children: [
@@ -969,7 +984,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                       height: 250,
                                       child: CupertinoDatePicker(
                                         backgroundColor: Colors.white,
-                                        initialDateTime: hours,
+                                        initialDateTime: DateTime.now(),
                                         use24hFormat: true,
                                         mode: CupertinoDatePickerMode.time,
                                         onDateTimeChanged: (DateTime value) {
@@ -984,6 +999,7 @@ class UpdateTasks extends State<UpdateScreen> {
                     ]),
                   ]),
             ),
+            //Detail
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Column(
@@ -994,25 +1010,25 @@ class UpdateTasks extends State<UpdateScreen> {
                       style: TextStyle(
                           fontSize: 15.0, fontWeight: FontWeight.bold),
                     ),
-                    //Start Date && Due Date
+                    //Start Date
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Start Date:   $sDate'),
+                          Text('Start Date:   $startdate'),
                           EasyDateTimeLine(
-                            initialDate: startdate,
+                            initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              //sDate = selectedDate;
                               setState(() {
-                                if (dDate != null &&
-                                    selectedDate
-                                        .isBefore(DateTime.parse(dDate!))) {
-                                  sDate =
-                                      "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-                                }
+                                //if (dDate != null &&
+                                //   selectedDate
+                                //      .isBefore(DateTime.parse(duedate))) {
+                                sDate = selectedDate;
+                                startdate = formatter.format(selectedDate);
+                                startdate = (startdate != null)
+                                    ? '"$startdate"'
+                                    : 'null';
+                                //}
                               });
-
-                              //sDate = formatter.format("${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}");
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -1022,24 +1038,21 @@ class UpdateTasks extends State<UpdateScreen> {
                             ),
                           ),
                           const SizedBox(height: 5.0),
-                          Text('Due Date:  $dDate'),
+                          //Due Date
+                          Text('Due Date:  $duedate'),
                           EasyDateTimeLine(
-                            initialDate: duedate,
+                            initialDate: DateTime.now(),
                             onDateChange: (selectedDate) {
-                              //dDate = selectedDate;
-                              dDate =
-                                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-                              if (sDate != null &&
-                                  selectedDate
-                                      .isAfter(DateTime.parse(sDate!))) {
-                                setState(() {
-                                  dDate = formatter.format(selectedDate);
-                                  Duration duration = DateTime.parse(dDate!)
-                                      .difference(DateTime.parse(sDate!));
-                                  durationDay = "P${duration.inDays + 1}D";
-                                  print("$durationDay days");
-                                });
-                              }
+                              //if (sDate != null &&
+                              //     selectedDate
+                              //        .isAfter(DateTime.parse(startdate))) {
+                              setState(() {
+                                dDate = selectedDate;
+                                duedate = formatter.format(selectedDate);
+                                duedate =
+                                    (duedate != null) ? '"$duedate"' : 'null';
+                              });
+                              //}
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
@@ -1094,7 +1107,6 @@ class UpdateTasks extends State<UpdateScreen> {
                                                     .pop(percent.text);
                                                 percentageDone =
                                                     int.parse(percent.text);
-                                                print(percentageDone);
                                                 percent.clear();
                                                 return;
                                               } else {
@@ -1133,7 +1145,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          category,
+                                          defCategory,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1161,7 +1173,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                       .toList(),
                                   value: selectedCategory,
                                   onChanged: (value) {
-                                    setState(() {});
+                                    setState(() {
+                                      nameOfCategory = value!.name;
+                                      idCategory = value.id;
+                                      selectedCategory = value;
+                                    });
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 60,
@@ -1232,7 +1248,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          nameOfVersion,
+                                          defVersion,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1260,7 +1276,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                       .toList(),
                                   value: selectedVersion,
                                   onChanged: (value) {
-                                    setState(() {});
+                                    setState(() {
+                                      nameOfVersion = value!.name;
+                                      idVersion = value.id;
+                                      selectedVersion = value;
+                                    });
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 60,
@@ -1330,7 +1350,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      nameOfPriority,
+                                      nameOfPriority!,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -1358,7 +1378,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                   .toList(),
                               value: selectedPriority,
                               onChanged: (value) {
-                                setState(() {});
+                                setState(() {
+                                  nameOfPriority = value!.name;
+                                  idPriority = value.id;
+                                  selectedPriority = value;
+                                });
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 60,
@@ -1409,9 +1433,46 @@ class UpdateTasks extends State<UpdateScreen> {
             const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
-                //updateTask(id.toString());
-                // print(lockVersion);
-                //print(taskBody);
+                nameOfCategory =
+                    (nameOfCategory != null) ? '"$nameOfCategory"' : 'null';
+                nameOfVersion =
+                    (nameOfVersion != null) ? '"$nameOfVersion"' : 'null';
+                if (task.text.isEmpty) {
+                  Fluttertoast.showToast(msg: "Enter name of task");
+                } else if (sDate != null && sDate!.isBefore(DateTime.now())) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 3000),
+                        content: Text("Cannot be start date is past",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white))),
+                  );
+                } else if (dDate != null && dDate!.isBefore(DateTime.now())) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 3000),
+                        content: Text("Cannot be due date is past",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white))),
+                  );
+                } else if (dDate != null &&
+                    sDate != null &&
+                    dDate!.isBefore(sDate!)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 2000),
+                      content: Text(
+                        "Start date cannot be after due date",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ),
+                  );
+                } else {
+                  updateTask();
+                }
                 setState(() {});
               },
               style: button(),
