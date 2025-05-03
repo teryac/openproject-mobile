@@ -35,7 +35,7 @@ class Detail extends State<StateDetail> {
 
   Detail(this.id, this.name);
 
-  void deleteTask(String id) async {
+  void deleteTask(int id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     apikey = prefs.getString('apikey');
@@ -49,6 +49,8 @@ class Detail extends State<StateDetail> {
         'authorization': basicAuth
       },
     ).then((response) {
+      print(id);
+      print(response.body);
       if (response.statusCode == 204) {
         getTask();
         Fluttertoast.showToast(msg: 'task of $id has been deleted');
@@ -219,7 +221,9 @@ class Detail extends State<StateDetail> {
                                             TextButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    deleteTask(id.toString());
+                                                    deleteTask(
+                                                        dataOfSubject[index]
+                                                            .id);
                                                     Navigator.pop(context);
                                                   });
                                                 },
