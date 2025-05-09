@@ -30,7 +30,7 @@ class Login extends State<LoginScreen> {
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
 
-  void getData() {
+  void getData() async {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
 
     http.get(uri).then((response) {

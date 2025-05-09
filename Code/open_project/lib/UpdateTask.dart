@@ -45,7 +45,7 @@ class UpdateTasks extends State<UpdateScreen> {
   TextEditingController desc = TextEditingController();
   TextEditingController percent = TextEditingController();
   TextEditingController task = TextEditingController();
-  var startdate;
+  var startdate, urlCategory, urlVersion;
   var duedate;
   DateTime? sDate, dDate;
   DateTime updateTime = DateTime.now();
@@ -56,11 +56,11 @@ class UpdateTasks extends State<UpdateScreen> {
   int? lockVersion;
 
   String taskBody = "No body";
-  String nameOfCategory = "Not found";
+  var nameOfCategory = 'Not found';
   String nameOfType = "Not found";
   String nameOfPriority = "Not found";
   String nameOfStatus = "Not found";
-  String nameOfVersion = 'No version';
+  var nameOfVersion = 'No version';
   String nameOfAccountable = 'No person';
   String nameOfAssignee = 'No person';
   String? rawOfdescription, subject;
@@ -112,13 +112,13 @@ class UpdateTasks extends State<UpdateScreen> {
             "href": "/api/v3/users/$idAssignee",\n        
             "title": "$nameOfAssignee"\n    },\n    
             "version": {\n        
-            "href": "/api/v3/versions/$idVersion",\n        
-            "title": "$nameOfVersion"\n    },\t\n    
+            "href": $urlVersion,\n        
+            "title": "$nameOfVersion"\n},\t\n    
             "responsible": {\n        
             "href": "/api/v3/users/$idAccountable",\n        
             "title": "$nameOfAccountable"\n    },\n    
             "category": {\n        
-            "href": "/api/v3/categories/$idCategory",\n        
+            "href": $urlCategory,\n        
             "title": "$nameOfCategory"\n},\n    
             "startDate": $startdate,\n    
             "dueDate": $duedate,\n    
@@ -126,6 +126,7 @@ class UpdateTasks extends State<UpdateScreen> {
             "scheduleManually": true,\n    
             "ignoreNonWorkingDays": false,\n    
             "percentageDone": $percentageDone\n}""";
+
     await http.patch(
       Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id"),
       body: newTask,
@@ -134,6 +135,7 @@ class UpdateTasks extends State<UpdateScreen> {
         'authorization': basicAuth
       },
     ).then((response) {
+      print(newTask);
       print(response.body);
       if (response.statusCode == 200) {
         getTask();
@@ -211,6 +213,7 @@ class UpdateTasks extends State<UpdateScreen> {
         if (category != null) {
           idCategory = category['id'];
           nameOfCategory = category['name'];
+          urlCategory = "/api/v3/categories/$idCategory";
         }
         embedded = jsonResponse['_embedded'];
         //Type
@@ -248,6 +251,7 @@ class UpdateTasks extends State<UpdateScreen> {
           var version = embedded['version'];
           idVersion = version['id'];
           nameOfVersion = version['name'];
+          urlVersion = "/api/v3/versions/$idVersion";
         }
         //Decription
         var description = jsonResponse['description'];
@@ -1028,6 +1032,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                 startdate = (startdate != null)
                                     ? '"$startdate"'
                                     : 'null';
+                                if (nameOfType == "Milestone") {
+                                  duedate = startdate;
+                                }
                               });
                             },
                             activeColor: const Color(0xff2595AF),
@@ -1048,6 +1055,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                 duedate = formatter.format(selectedDate);
                                 duedate =
                                     (duedate != null) ? '"$duedate"' : 'null';
+                                if (nameOfType == "Milestone") {
+                                  startdate = duedate;
+                                }
                               });
                             },
                             activeColor: const Color(0xff2595AF),
@@ -1059,6 +1069,7 @@ class UpdateTasks extends State<UpdateScreen> {
                           ),
                         ]),
                     Row(children: [
+                      //Progress
                       const Text(
                         "Progress%:",
                         style: TextStyle(
@@ -1173,6 +1184,8 @@ class UpdateTasks extends State<UpdateScreen> {
                                       nameOfCategory = value!.name;
                                       idCategory = value.id;
                                       selectedCategory = value;
+                                      urlCategory =
+                                          "/api/v3/categories/$idCategory";
                                     });
                                   },
                                   buttonStyleData: ButtonStyleData(
@@ -1244,7 +1257,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          nameOfVersion,
+                                          nameOfVersion!,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1276,6 +1289,8 @@ class UpdateTasks extends State<UpdateScreen> {
                                       nameOfVersion = value!.name;
                                       idVersion = value.id;
                                       selectedVersion = value;
+                                      urlVersion =
+                                          "/api/v3/versions/$idVersion";
                                     });
                                   },
                                   buttonStyleData: ButtonStyleData(
@@ -1429,11 +1444,6 @@ class UpdateTasks extends State<UpdateScreen> {
             const SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () {
-                /*nameOfCategory =
-                    (nameOfCategory != null) ? '"$nameOfCategory"' : 'null';
-                nameOfVersion = (nameOfVersion != "No version")
-                    ? '"$nameOfVersion"'
-                    : 'null';*/
                 if (task.text.isEmpty) {
                   Fluttertoast.showToast(msg: "Enter name of task");
                 } else if (sDate != null && sDate!.isBefore(DateTime.now())) {
@@ -1467,30 +1477,42 @@ class UpdateTasks extends State<UpdateScreen> {
                       ),
                     ),
                   );
-                } else if (nameOfCategory == 'Not found') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.red,
-                      duration: Duration(milliseconds: 2000),
-                      content: Text(
-                        "The specified category does not exist.",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                  );
-                } else if (nameOfVersion == 'No version') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.red,
-                      duration: Duration(milliseconds: 2000),
-                      content: Text(
-                        "Version is not set to one of the allowed values.",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                  );
+                } else if (nameOfCategory == 'Not found' &&
+                    nameOfVersion == 'No version') {
+                  urlCategory = null;
+                  nameOfCategory = '';
+                  urlVersion = null;
+                  nameOfVersion = '';
+                  updateTask();
+                  nameOfCategory = 'Not found';
+                  nameOfVersion = 'No version';
+                } else if (nameOfCategory != 'Not found' &&
+                    nameOfVersion == 'No version') {
+                  urlCategory = '"$urlCategory"';
+                  nameOfCategory = '$nameOfCategory';
+                  urlVersion = null;
+                  nameOfVersion = '';
+                  updateTask();
+                  nameOfVersion = 'No version';
+                } else if (nameOfVersion != 'No version' &&
+                    nameOfCategory == 'Not found') {
+                  urlVersion = '"$urlVersion"';
+                  nameOfVersion = '$nameOfVersion';
+                  urlCategory = null;
+                  nameOfCategory = '';
+                  updateTask();
+                  nameOfCategory = 'Not found';
+                } else if (nameOfVersion != 'No version' &&
+                    nameOfCategory != 'Not found') {
+                  urlVersion = '"$urlVersion"';
+                  nameOfVersion = '$nameOfVersion';
+                  urlCategory = '"$urlCategory"';
+                  nameOfCategory = '$nameOfCategory';
+                  updateTask();
                 } else {
                   updateTask();
+                  nameOfCategory = 'Not found';
+                  nameOfVersion = 'No version';
                 }
                 setState(() {});
               },
