@@ -903,6 +903,9 @@ class AddTask extends State<AddScreen> {
                                 startdate = (startdate != null)
                                     ? '"$startdate"'
                                     : 'null';
+                                if (type == "Milestone") {
+                                  startdate = duedate;
+                                }
                               });
                             },
                             activeColor: const Color(0xff2595AF),
@@ -922,6 +925,9 @@ class AddTask extends State<AddScreen> {
                                 duedate = formatter.format(selectedDate);
                                 duedate =
                                     (duedate != null) ? '"$duedate"' : 'null';
+                                if (type == "Milestone") {
+                                  duedate = startdate;
+                                }
                               });
                             },
                             activeColor: const Color(0xff2595AF),
