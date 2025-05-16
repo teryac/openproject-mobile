@@ -65,6 +65,7 @@ class UpdateTasks extends State<UpdateScreen> {
   String nameOfAssignee = 'No person';
   String? rawOfdescription, subject;
   String estimatedTime = "PT0H0M";
+  String? newTask;
 
   List<Property> listOfStatus = [];
   List<Property> listOfType = [];
@@ -80,6 +81,80 @@ class UpdateTasks extends State<UpdateScreen> {
   Property? selectedAccountable;
   Property? selectedVersion;
   Property? selectedCategory;
+
+  void getAll() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+
+    String newTask = """{\n    "_type": "WorkPackage",\n
+            "id": $id,\n
+            "subject": "$subject",\n    
+            "lockVersion": $lockVersion,\n    
+            "description": {\n        
+            "format": "markdown",\n        
+            "raw": "$rawOfdescription",\n        
+            "html": "<p>Updated description for the Testing API task.</p>"\n    },\n    
+            "project": {\n        
+            "href": "/api/v3/projects/$idProject",\n        
+            "title": "$name"\n    },\n    
+            "status": {\n        
+            "href": "/api/v3/statuses/$idStatus",\n        
+            "title": "$nameOfStatus"\n    },\n    
+            "type": {\n        
+            "href": "/api/v3/types/$idType",\n        
+            "title": "$nameOfType"\n    },\n    
+            "priority": {\n        
+            "href": "/api/v3/priorities/$idPriority",\n        
+            "title": "$nameOfPriority"\n    },\n    
+            "assignee": {\n        
+            "href": "/api/v3/users/$idAssignee",\n        
+            "title": "$nameOfAssignee"\n    },\n    
+              
+            "responsible": {\n        
+            "href": "/api/v3/users/$idAccountable",\n        
+            "title": "$nameOfAccountable"\n    },\n    
+               
+            "startDate": $startdate,\n    
+            "dueDate": $duedate,\n    
+            "estimatedTime": "$estimatedTime",\n    
+            "scheduleManually": true,\n    
+            "ignoreNonWorkingDays": false,\n    
+            "percentageDone": $percentageDone\n}""";
+
+    await http.post(
+      Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id/form"),
+      body: newTask,
+      headers: <String, String>{
+        'content-type': 'application/json; charset=UTF-8',
+        'authorization': basicAuth
+      },
+    ).then((response) {
+      if (response.statusCode == 200) {
+        //Fluttertoast.showToast(msg: 'OK!!!!');
+        var jsonResponse = json.decode(response.body);
+        var statusValues = jsonResponse['_embedded']['schema']['status']
+            ['_embedded']['allowedValues'];
+        List<Property> statusList = statusValues
+            .map((status) {
+              return Property(id: status['id'], name: status['name']);
+            })
+            .toList()
+            .cast<Property>();
+
+        print(statusList);
+        if (mounted) {
+          setState(() {
+            listOfStatus = statusList;
+          });
+        }
+      } else {
+        Fluttertoast.showToast(msg: response.reasonPhrase.toString());
+      }
+    });
+  }
 
   void updateTask() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -385,7 +460,7 @@ class UpdateTasks extends State<UpdateScreen> {
       }
     }
     //Status
-    Response rStatus = await get(
+    /*Response rStatus = await get(
         Uri.parse("https://op.yaman-ka.com/api/v3/statuses"),
         headers: <String, String>{'authorization': basicAuth});
     if (rStatus.statusCode == 200) {
@@ -406,14 +481,13 @@ class UpdateTasks extends State<UpdateScreen> {
           });
         }
       }
-    }
+    }*/
   }
 
   UpdateTasks(this.idProject, this.id, this.name);
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getTask();
     getAllData();
@@ -421,6 +495,7 @@ class UpdateTasks extends State<UpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    getAll();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
@@ -482,6 +557,9 @@ class UpdateTasks extends State<UpdateScreen> {
                         padding: const EdgeInsets.only(left: 3),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton2<Property>(
+                            onMenuStateChange: (isOpen) {
+                              getAll();
+                            },
                             isExpanded: true,
                             hint: Row(
                               children: [
@@ -519,6 +597,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 nameOfType = value!.name;
                                 idType = value.id;
                                 selectedType = value;
+                                getAll();
                               });
                             },
                             buttonStyleData: ButtonStyleData(
@@ -592,6 +671,9 @@ class UpdateTasks extends State<UpdateScreen> {
                       padding: const EdgeInsets.only(left: 8),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<Property>(
+                          onMenuStateChange: (isOpen) {
+                            getAll();
+                          },
                           isExpanded: true,
                           hint: Row(
                             children: [
@@ -1257,7 +1339,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          nameOfVersion!,
+                                          nameOfVersion,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1486,33 +1568,36 @@ class UpdateTasks extends State<UpdateScreen> {
                   updateTask();
                   nameOfCategory = 'Not found';
                   nameOfVersion = 'No version';
+                  getTask();
                 } else if (nameOfCategory != 'Not found' &&
                     nameOfVersion == 'No version') {
                   urlCategory = '"$urlCategory"';
-                  nameOfCategory = '$nameOfCategory';
                   urlVersion = null;
                   nameOfVersion = '';
                   updateTask();
                   nameOfVersion = 'No version';
+                  getTask();
                 } else if (nameOfVersion != 'No version' &&
                     nameOfCategory == 'Not found') {
                   urlVersion = '"$urlVersion"';
-                  nameOfVersion = '$nameOfVersion';
                   urlCategory = null;
                   nameOfCategory = '';
                   updateTask();
                   nameOfCategory = 'Not found';
+                  getTask();
                 } else if (nameOfVersion != 'No version' &&
                     nameOfCategory != 'Not found') {
                   urlVersion = '"$urlVersion"';
-                  nameOfVersion = '$nameOfVersion';
+
                   urlCategory = '"$urlCategory"';
-                  nameOfCategory = '$nameOfCategory';
+
                   updateTask();
+                  getTask();
                 } else {
                   updateTask();
                   nameOfCategory = 'Not found';
                   nameOfVersion = 'No version';
+                  getTask();
                 }
                 setState(() {});
               },

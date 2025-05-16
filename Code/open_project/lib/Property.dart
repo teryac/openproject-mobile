@@ -7,4 +7,7 @@ class Property {
   static fromJson(Map<String, dynamic> parsedJson) {
     return Property(id: parsedJson['id'], name: parsedJson['name']);
   }
+
+  @override
+  String toString() => 'Property(id: $id, name: $name)';
 }
