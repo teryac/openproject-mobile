@@ -164,9 +164,11 @@ class AddTask extends State<AddScreen> {
 
           return Property(id: idUser, name: pro);
         }).toList();
-        setState(() {
-          listOfUser = property;
-        });
+        if (mounted) {
+          setState(() {
+            listOfUser = property;
+          });
+        }
       }
     }
 
