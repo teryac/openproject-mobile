@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.lightBlue,
         title: const Center(
           child: Text("Open project",
               style: TextStyle(fontSize: 25, color: Colors.white)),
