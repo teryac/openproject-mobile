@@ -52,7 +52,7 @@ class UpdateTasks extends State<UpdateScreen> {
   DateTime updateTime = DateTime.now();
   DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  var embedded, percentageDone = 0;
+  var embedded, percentageDone = 0, colorType, colorStatus, colorPriority;
   String nameOfAuthor = 'No person';
   int? lockVersion;
 
@@ -71,7 +71,7 @@ class UpdateTasks extends State<UpdateScreen> {
   List<Property> listOfStatus = [];
   List<Property> listOfType = [];
   List<Property> listOfPriority = [];
-  List<Property> listOfVersion = [Property(id: 0, name: 'No version')];
+  List<Property> listOfVersion = [];
   List<Property> listOfUser = [];
   List<Property> listOfCategory = [];
 
@@ -138,7 +138,10 @@ class UpdateTasks extends State<UpdateScreen> {
             ['_embedded']['allowedValues'];
         List<Property> statusList = statusValues
             .map((status) {
-              return Property(id: status['id'], name: status['name']);
+              return Property(
+                  id: status['id'],
+                  name: status['name'],
+                  color: status['color']);
             })
             .toList()
             .cast<Property>();
@@ -149,8 +152,6 @@ class UpdateTasks extends State<UpdateScreen> {
             listOfStatus = statusList;
           });
         }
-      } else {
-        Fluttertoast.showToast(msg: response.reasonPhrase.toString());
       }
     });
   }
@@ -255,7 +256,6 @@ class UpdateTasks extends State<UpdateScreen> {
         'authorization': basicAuth
       },
     ).then((response) {
-      print(response.body);
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         subject = jsonResponse['subject'];
@@ -294,15 +294,18 @@ class UpdateTasks extends State<UpdateScreen> {
         var type = embedded['type'];
         idType = type['id'];
         nameOfType = type['name'];
+        colorType = type['color'];
         //Priority
         embedded = jsonResponse['_embedded'];
         var priority = embedded['priority'];
         idPriority = priority['id'];
         nameOfPriority = priority['name'];
+        colorPriority = priority['color'];
         //Status
         var status = embedded['status'];
         idStatus = status['id'];
         nameOfStatus = status['name'];
+        colorStatus = status['color'];
         //CreatedBy
         var author = embedded['author'];
         nameOfAuthor = author['name'];
@@ -363,9 +366,9 @@ class UpdateTasks extends State<UpdateScreen> {
 
           int idCategory = data['id'];
 
-          return Property(id: idCategory, name: pro);
+          return Property(id: idCategory, name: pro, color: "");
         }).toList();
-        property.add(Property(id: -1, name: 'Not found'));
+        property.add(Property(id: -1, name: 'Not found', color: ""));
         setState(() {
           listOfCategory = property;
         });
@@ -382,14 +385,16 @@ class UpdateTasks extends State<UpdateScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          String color = data['color'];
           int idProperty = data['id'];
 
-          return Property(id: idProperty, name: pro);
+          return Property(id: idProperty, name: pro, color: color);
         }).toList();
-        setState(() {
-          listOfPriority = property;
-        });
+        if (mounted) {
+          setState(() {
+            listOfPriority = property;
+          });
+        }
       }
     }
     //Types
@@ -403,10 +408,10 @@ class UpdateTasks extends State<UpdateScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          String color = data['color'] ?? '#000000';
           int idType = data['id'];
 
-          return Property(id: idType, name: pro);
+          return Property(id: idType, name: pro, color: color);
         }).toList();
         setState(() {
           listOfType = property;
@@ -428,7 +433,7 @@ class UpdateTasks extends State<UpdateScreen> {
 
           int idUser = data['id'];
 
-          return Property(id: idUser, name: pro);
+          return Property(id: idUser, name: pro, color: "");
         }).toList();
         if (mounted) {
           setState(() {
@@ -450,14 +455,13 @@ class UpdateTasks extends State<UpdateScreen> {
 
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
           int idVersion = data['id'];
 
-          return Property(id: idVersion, name: pro);
+          return Property(id: idVersion, name: pro, color: "");
         }).toList();
         setState(() {
           listOfVersion = property;
-          property.add(Property(id: -1, name: 'No version'));
+          property.add(Property(id: -1, name: 'No version', color: ""));
         });
       }
     }
@@ -484,6 +488,14 @@ class UpdateTasks extends State<UpdateScreen> {
         }
       }
     }*/
+  }
+
+  Color getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF$hexColor"; // add alpha if missing
+    }
+    return Color(int.parse(hexColor, radix: 16));
   }
 
   UpdateTasks(this.idProject, this.id, this.name);
@@ -577,10 +589,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                 Expanded(
                                   child: Text(
                                     nameOfType,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xff2595AF),
+                                      color: getColorFromHex(
+                                          colorType ?? '#000000'),
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -593,10 +606,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                       value: item,
                                       child: Text(
                                         item.name,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Color(0xff2595AF),
+                                          color: getColorFromHex(
+                                              item.color ?? '#000000'),
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -607,8 +621,8 @@ class UpdateTasks extends State<UpdateScreen> {
                               setState(() {
                                 nameOfType = value!.name;
                                 idType = value.id;
+                                colorType = value.color;
                                 selectedType = value;
-                                getAll();
                               });
                             },
                             buttonStyleData: ButtonStyleData(
@@ -676,7 +690,6 @@ class UpdateTasks extends State<UpdateScreen> {
                     height: 25.0,
                     child: Container(
                       decoration: BoxDecoration(
-                        //color: Colors.blueAccent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: const EdgeInsets.only(left: 8),
@@ -691,10 +704,11 @@ class UpdateTasks extends State<UpdateScreen> {
                               Expanded(
                                 child: Text(
                                   nameOfStatus,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: getColorFromHex(
+                                        colorStatus ?? '#000000'),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -707,10 +721,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                         value: item,
                                         child: Text(
                                           item.name,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                                            color: getColorFromHex(
+                                                item.color ?? '#000000'),
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -721,6 +736,7 @@ class UpdateTasks extends State<UpdateScreen> {
                             setState(() {
                               nameOfStatus = value!.name;
                               idStatus = value.id;
+                              colorStatus = value.color;
                               selectedStatus = value;
                             });
                           },
@@ -733,7 +749,7 @@ class UpdateTasks extends State<UpdateScreen> {
                               border: Border.all(
                                 color: Colors.black26,
                               ),
-                              color: const Color(0xff69B73F),
+                              color: Colors.green[100],
                             ),
                           ),
                           iconStyleData: const IconStyleData(
@@ -749,7 +765,7 @@ class UpdateTasks extends State<UpdateScreen> {
                             width: 150,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
-                              color: const Color(0xff69B73F),
+                              color: Colors.white,
                             ),
                             scrollbarTheme: ScrollbarThemeData(
                               radius: const Radius.circular(40),
@@ -1132,9 +1148,23 @@ class UpdateTasks extends State<UpdateScreen> {
                             },
                             activeColor: const Color(0xff2595AF),
                             dayProps: const EasyDayProps(
+                              inactiveDayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               todayHighlightStyle:
                                   TodayHighlightStyle.withBackground,
                               todayHighlightColor: Color(0xffE1ECC8),
+                              todayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 5.0),
@@ -1158,6 +1188,19 @@ class UpdateTasks extends State<UpdateScreen> {
                               todayHighlightStyle:
                                   TodayHighlightStyle.withBackground,
                               todayHighlightColor: Color(0xffE1ECC8),
+                              inactiveDayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              todayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                ),
+                              ),
                             ),
                           ),
                         ]),
@@ -1455,10 +1498,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                   Expanded(
                                     child: Text(
                                       nameOfPriority,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xff2595AF),
+                                        color: getColorFromHex(
+                                            colorPriority ?? '#000000'),
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -1471,10 +1515,11 @@ class UpdateTasks extends State<UpdateScreen> {
                                         value: item,
                                         child: Text(
                                           item.name,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xff2595AF),
+                                            color: getColorFromHex(
+                                                item.color ?? '#000000'),
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1514,7 +1559,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                 width: 140,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
-                                  color: const Color(0xffE1F2F6),
+                                  color: Colors.white,
                                 ),
                                 //offset: const Offset(0, 0),
                                 scrollbarTheme: ScrollbarThemeData(
@@ -1614,7 +1659,7 @@ class UpdateTasks extends State<UpdateScreen> {
               },
               style: button(),
               child: const Text(
-                'Save',
+                'Update',
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
             ),

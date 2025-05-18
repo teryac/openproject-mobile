@@ -54,7 +54,7 @@ class AddTask extends State<AddScreen> {
   TextEditingController desc = TextEditingController();
   TextEditingController nameOfTask = TextEditingController();
   TextEditingController percent = TextEditingController();
-  var startdate, urlCategory, urlVersion;
+  var startdate, urlCategory, urlVersion, color;
   var duedate;
   DateTime? hours, sDate, dDate;
   DateTime updateTime = DateTime.now();
@@ -95,10 +95,10 @@ class AddTask extends State<AddScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          color = data['color'];
           int idCategory = data['id'];
 
-          return Property(id: idCategory, name: pro);
+          return Property(id: idCategory, name: pro, color: color);
         }).toList();
         setState(() {
           listOfCategory = property;
@@ -116,10 +116,10 @@ class AddTask extends State<AddScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          color = data['color'];
           int idProperty = data['id'];
 
-          return Property(id: idProperty, name: pro);
+          return Property(id: idProperty, name: pro, color: color);
         }).toList();
         setState(() {
           listOfPriority = property;
@@ -137,10 +137,10 @@ class AddTask extends State<AddScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          color = data['color'];
           int idType = data['id'];
 
-          return Property(id: idType, name: pro);
+          return Property(id: idType, name: pro, color: color);
         }).toList();
         setState(() {
           listOfType = property;
@@ -159,10 +159,10 @@ class AddTask extends State<AddScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          color = data['color'];
           int idUser = data['id'];
 
-          return Property(id: idUser, name: pro);
+          return Property(id: idUser, name: pro, color: color);
         }).toList();
         if (mounted) {
           setState(() {
@@ -183,10 +183,10 @@ class AddTask extends State<AddScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          color = data['color'];
           int idVersion = data['id'];
 
-          return Property(id: idVersion, name: pro);
+          return Property(id: idVersion, name: pro, color: color);
         }).toList();
         if (mounted) {
           setState(() {
@@ -206,10 +206,10 @@ class AddTask extends State<AddScreen> {
         var elements = embedded['elements'] as List;
         List<Property> property = elements.map((data) {
           String pro = data['name'];
-
+          color = data['color'];
           int idStatus = data['id'];
 
-          return Property(id: idStatus, name: pro);
+          return Property(id: idStatus, name: pro, color: color);
         }).toList();
         if (mounted) {
           setState(() {
@@ -916,7 +916,21 @@ class AddTask extends State<AddScreen> {
                             dayProps: const EasyDayProps(
                               todayHighlightStyle:
                                   TodayHighlightStyle.withBackground,
+                              inactiveDayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               todayHighlightColor: Color(0xffE1ECC8),
+                              todayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 5.0),
@@ -938,7 +952,21 @@ class AddTask extends State<AddScreen> {
                             dayProps: const EasyDayProps(
                               todayHighlightStyle:
                                   TodayHighlightStyle.withBackground,
+                              inactiveDayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               todayHighlightColor: Color(0xffE1ECC8),
+                              todayStyle: DayStyle(
+                                borderRadius: 48.0,
+                                dayNumStyle: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ]),
@@ -1374,7 +1402,7 @@ class AddTask extends State<AddScreen> {
               },
               style: button(),
               child: const Text(
-                'Add',
+                'Create',
                 style: TextStyle(fontSize: 25, color: Colors.white),
               ),
             ),

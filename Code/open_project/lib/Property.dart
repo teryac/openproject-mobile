@@ -1,13 +1,17 @@
 class Property {
   String name;
   int id;
-
-  Property({required this.id, required this.name});
-
-  static fromJson(Map<String, dynamic> parsedJson) {
-    return Property(id: parsedJson['id'], name: parsedJson['name']);
-  }
+  var color;
+  Property({required this.id, required this.name, required this.color});
 
   @override
-  String toString() => 'Property(id: $id, name: $name)';
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Property && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  String toString() => 'Property(id: $id, name: $name, color: $color)';
 }
