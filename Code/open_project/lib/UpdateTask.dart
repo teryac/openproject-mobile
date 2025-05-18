@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -70,7 +71,7 @@ class UpdateTasks extends State<UpdateScreen> {
   List<Property> listOfStatus = [];
   List<Property> listOfType = [];
   List<Property> listOfPriority = [];
-  List<Property> listOfVersion = [];
+  List<Property> listOfVersion = [Property(id: 0, name: 'No version')];
   List<Property> listOfUser = [];
   List<Property> listOfCategory = [];
 
@@ -111,12 +112,10 @@ class UpdateTasks extends State<UpdateScreen> {
             "title": "$nameOfPriority"\n    },\n    
             "assignee": {\n        
             "href": "/api/v3/users/$idAssignee",\n        
-            "title": "$nameOfAssignee"\n    },\n    
-              
+            "title": "$nameOfAssignee"\n    },\n        
             "responsible": {\n        
             "href": "/api/v3/users/$idAccountable",\n        
-            "title": "$nameOfAccountable"\n    },\n    
-               
+            "title": "$nameOfAccountable"\n    },\n         
             "startDate": $startdate,\n    
             "dueDate": $duedate,\n    
             "estimatedTime": "$estimatedTime",\n    
@@ -366,6 +365,7 @@ class UpdateTasks extends State<UpdateScreen> {
 
           return Property(id: idCategory, name: pro);
         }).toList();
+        property.add(Property(id: -1, name: 'Not found'));
         setState(() {
           listOfCategory = property;
         });
@@ -447,6 +447,7 @@ class UpdateTasks extends State<UpdateScreen> {
       var embedded = jsonResponse['_embedded'];
       if (embedded != null) {
         var elements = embedded['elements'] as List;
+
         List<Property> property = elements.map((data) {
           String pro = data['name'];
 
@@ -456,6 +457,7 @@ class UpdateTasks extends State<UpdateScreen> {
         }).toList();
         setState(() {
           listOfVersion = property;
+          property.add(Property(id: -1, name: 'No version'));
         });
       }
     }
@@ -498,8 +500,17 @@ class UpdateTasks extends State<UpdateScreen> {
     getAll();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.lightBlue,
         title: Text(name, style: const TextStyle(color: Colors.white)),
+        leading: IconButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context,
+                MaterialPageRoute(builder: (context) => StateDetail(id, name)));
+            setState(() {});
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
