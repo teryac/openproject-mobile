@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/Project.dart';
+import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -21,8 +22,9 @@ class Login extends State<LoginScreen> {
   TextEditingController apiKey = TextEditingController();
   TextEditingController enteredToken = TextEditingController();
   List<Project> data = [];
-  late String name;
-  late int id;
+  late String name, user = "";
+  late int id, idUser;
+  List<Property> listOfUser = [];
   late var description;
   String? apikey;
   String? token;
@@ -95,10 +97,27 @@ class Login extends State<LoginScreen> {
     }
   }
 
+  void getUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    apikey = prefs.getString('apikey');
+    token = prefs.getString('password');
+    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
+    Response r = await get(Uri.parse("https://op.yaman-ka.com/api/v3/users/me"),
+        headers: <String, String>{'authorization': basicAuth});
+    if (r.statusCode == 200) {
+      var jsonResponse = jsonDecode(r.body);
+      user = jsonResponse['name'];
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    //getData();
+    getUser();
     getProjects();
   }
 
@@ -127,11 +146,11 @@ class Login extends State<LoginScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 8.0, left: 8.0),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, left: 8.0),
                   child: Text(
-                    "Hi Shaaban",
-                    style: TextStyle(
+                    'Hi $user',
+                    style: const TextStyle(
                         fontSize: 20,
                         color: Colors.cyan,
                         fontWeight: FontWeight.bold),
@@ -168,7 +187,7 @@ class Login extends State<LoginScreen> {
                     id = data[index].id;
                     return Card(
                         borderOnForeground: true,
-                        color: Colors.white,
+                        color: Colors.grey[50],
                         elevation: 3.0,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
