@@ -54,7 +54,7 @@ class AddTask extends State<AddScreen> {
   TextEditingController desc = TextEditingController();
   TextEditingController nameOfTask = TextEditingController();
   TextEditingController percent = TextEditingController();
-  var startdate;
+  var startdate, urlCategory, urlVersion;
   var duedate;
   DateTime? hours, sDate, dDate;
   DateTime updateTime = DateTime.now();
@@ -211,9 +211,11 @@ class AddTask extends State<AddScreen> {
 
           return Property(id: idStatus, name: pro);
         }).toList();
-        setState(() {
-          listOfStatus = property;
-        });
+        if (mounted) {
+          setState(() {
+            listOfStatus = property;
+          });
+        }
       }
     }
   }
@@ -249,10 +251,10 @@ class AddTask extends State<AddScreen> {
       "href": "/api/v3/projects/$id",\n        
       "title": "$name"\n    },\n    
       "version": {\n        
-      "href": "/api/v3/versions/$idVersion",\n        
+      "href": $urlVersion,\n        
       "title": $version\n    },\n    
       "category": {\n        
-      "href": "/api/v3/categories/$idCategory",\n        
+      "href": $urlCategory,\n        
       "title": $category\n},\n  
       "startDate": $startdate,\n    
       "dueDate": $duedate,\n    
@@ -289,7 +291,7 @@ class AddTask extends State<AddScreen> {
     return Scaffold(
       backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.lightBlue,
         title: Text(name, style: const TextStyle(color: Colors.white)),
         leading: IconButton(
           color: Colors.white,
@@ -1056,6 +1058,8 @@ class AddTask extends State<AddScreen> {
                                         setState(() {
                                           category = value!.name;
                                           idCategory = value.id;
+                                          urlCategory =
+                                              "/api/v3/categories/$idCategory";
                                           selectedCategory = value;
                                         });
                                       },
@@ -1166,6 +1170,8 @@ class AddTask extends State<AddScreen> {
                                         setState(() {
                                           version = value!.name;
                                           idVersion = value.id;
+                                          urlVersion =
+                                              "/api/v3/versions/$idVersion";
                                           selectedVersion = value;
                                         });
                                       },
