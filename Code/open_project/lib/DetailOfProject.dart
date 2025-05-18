@@ -130,7 +130,7 @@ class Detail extends State<StateDetail> {
         color: Colors.lightBlue,
         items: const [
           CurvedNavigationBarItem(
-            child: Icon(Icons.add, color: Colors.white),
+            child: Icon(Icons.add, color: Color(0xfff8f8f8)),
             label: 'Add task',
             labelStyle: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
@@ -172,6 +172,7 @@ class Detail extends State<StateDetail> {
                       return Card(
                         borderOnForeground: true,
                         elevation: 3.0,
+                        color: Colors.grey[50],
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -256,7 +257,13 @@ class Detail extends State<StateDetail> {
                                           id, dataOfSubject[index].id, name)),
                                 );
                               },
-                            )
+                            ),
+                            /*Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("data,"),
+                              ],
+                            ),*/
                           ],
                         ),
                       );
