@@ -10,8 +10,8 @@ import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
+import 'package:open_project/GetStart.dart';
 import 'package:open_project/Property.dart';
-import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -435,6 +435,7 @@ class UpdateTasks extends State<UpdateScreen> {
 
           return Property(id: idUser, name: pro, color: "");
         }).toList();
+        property.add(Property(id: -1, name: 'Not found', color: ""));
         if (mounted) {
           setState(() {
             listOfUser = property;
@@ -465,29 +466,6 @@ class UpdateTasks extends State<UpdateScreen> {
         });
       }
     }
-    //Status
-    /*Response rStatus = await get(
-        Uri.parse("https://op.yaman-ka.com/api/v3/statuses"),
-        headers: <String, String>{'authorization': basicAuth});
-    if (rStatus.statusCode == 200) {
-      var jsonResponse = jsonDecode(rStatus.body);
-      var embedded = jsonResponse['_embedded'];
-      if (embedded != null) {
-        var elements = embedded['elements'] as List;
-        List<Property> property = elements.map((data) {
-          String pro = data['name'];
-
-          int idStatus = data['id'];
-
-          return Property(id: idStatus, name: pro);
-        }).toList();
-        if (mounted) {
-          setState(() {
-            listOfStatus = property;
-          });
-        }
-      }
-    }*/
   }
 
   Color getColorFromHex(String hexColor) {

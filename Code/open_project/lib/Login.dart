@@ -93,7 +93,7 @@ class Login extends State<LoginScreen> {
         data = projects;
       });
     } else {
-      Fluttertoast.showToast(msg: 'You dont sign up');
+      Fluttertoast.showToast(msg: 'HTTP Error ${r.statusCode}: ${r.body}');
     }
   }
 
@@ -141,8 +141,11 @@ class Login extends State<LoginScreen> {
       ),
       body: data.isEmpty
           ? const Center(
-              child: Text('No projects available...',
-                  style: TextStyle(fontSize: 20.0)))
+              child: Text(
+                'No projects available...',
+                style: TextStyle(fontSize: 20.0),
+              ),
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -204,7 +207,12 @@ class Login extends State<LoginScreen> {
                                   icon: const Icon(Icons.arrow_forward_sharp),
                                   onPressed: () {
                                     setState(() {
-                                      //data.removeAt(index);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => StateDetail(
+                                                  data[index].id,
+                                                  data[index].name)));
                                     });
                                   },
                                 ),
