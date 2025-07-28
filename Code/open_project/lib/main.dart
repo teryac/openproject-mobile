@@ -1,25 +1,14 @@
-import 'dart:math';
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:open_project/Login.dart';
+import 'package:open_project/GetStart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Project.dart';
+import 'package:http/http.dart';
 
 void main() {
   runApp(const MyApp());
-}
-
-ButtonStyle button() {
-  ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Colors.lightBlue,
-    elevation: 10,
-    minimumSize: const Size(327, 50),
-    padding: const EdgeInsets.symmetric(horizontal: 35),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(50)),
-    ),
-  );
-
-  return raisedButtonStyle;
 }
 
 class MyApp extends StatelessWidget {
@@ -42,9 +31,10 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> {
   TextEditingController apiKey = TextEditingController();
   TextEditingController enteredToken = TextEditingController();
+
   List<Project> data = [];
   late String name;
   late int id;
@@ -52,10 +42,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
 
-  late AnimationController _controller, _controller2;
-  late Animation<double> _rotation, _randomOffset;
-  double _opacity = 1.0;
-  double _offsetY = 50.0;
+  String? token;
+  String? apikey;
 
   /* void getData() {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
@@ -71,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         data = projects.toList();
       });
     });
-  }
+  }*/
 
   void getProjects() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -89,24 +77,29 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       var jsonResponse = jsonDecode(r.body);
       var embedded = jsonResponse['_embedded'];
       var elements = embedded['elements'] as List;
-      //var description = jsonResponse['description'];
-      //var raw = description['raw'];
       setState(() {
-        Iterable<Project> projects = elements.map((data) =>
-            Project(description: data['description'], name: data['name']));
+        Iterable<Project> projects = elements.map((data) => Project(
+            description: data['description'],
+            name: data['name'],
+            id: data['id']));
         data = projects.toList();
       });
     } else {
       Fluttertoast.showToast(msg: 'You dont sign up');
     }
-  }*/
+  }
 
   @override
   void initState() {
     super.initState();
+    Timer(const Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const StartScreen()));
+    });
+
     //getData();
     //getProjects();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _offsetY = 0.0; // Move to the original position
         _opacity = 1.0; // Make it fully visible
@@ -128,34 +121,38 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     )..repeat();
     _randomOffset = Tween<double>(begin: -5, end: 5).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _controller2.dispose(); // Dispose of the controller when done
-    super.dispose();
+    );*/
+    //initialization();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    double? circleSize = screenSize.width;
-    return Scaffold(
-      backgroundColor: const Color(0xfff8f8f8),
-      appBar: AppBar(
+    //final screenSize = MediaQuery.of(context).size;
+    //double? circleSize = screenSize.width;
+    return const Scaffold(
+      backgroundColor: Color(0xfff8f8f8),
+      /*appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         title: const Center(
           child: Text("Open project",
               style: TextStyle(fontSize: 25, color: Colors.white)),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: circleSize * 0.3),
+      ),*/
+      body: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage('images/openproject.png'),
+              width: 75,
+              height: 75,
+            ),
+            Image(
+              image: AssetImage('images/op.png'),
+              width: 150,
+              height: 125,
+            ),
+            /*SizedBox(height: circleSize * 0.3),
               SizedBox(
                 height: circleSize * 0.6,
                 child: Stack(
@@ -340,175 +337,147 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 },
               ),
               SizedBox(height: circleSize * 0.01),
-              AnimatedOpacity(
-                opacity: _opacity,
-                duration: const Duration(milliseconds: 1500), // Smooth fade-in
-                child: AnimatedContainer(
-                  duration: const Duration(
-                      milliseconds: 1500), // Smooth upward motion
-                  curve: Curves.easeOut, // Ease-out curve for natural motion
-                  transform: Matrix4.translationValues(0, _offsetY, 0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ), //this right here
-                              child: SizedBox(
-                                height: 300,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      TextField(
-                                        controller: apiKey,
-                                        autofocus: true,
-                                        decoration: const InputDecoration(
-                                          prefixIcon: Icon(Icons.api_sharp),
-                                          suffixIcon: Icon(
-                                            Icons.email,
-                                          ),
-                                          labelText: "Enter Api key",
-                                          border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                            Radius.circular(15),
-                                          )),
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 1500), // Smooth fade-in
+              child: AnimatedContainer(
+                duration:
+                    const Duration(milliseconds: 1500), // Smooth upward motion
+                curve: Curves.easeOut, // Ease-out curve for natural motion
+                transform: Matrix4.translationValues(0, _offsetY, 0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ), //this right here
+                            child: SizedBox(
+                              height: 300,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextField(
+                                      controller: apiKey,
+                                      autofocus: true,
+                                      decoration: const InputDecoration(
+                                        prefixIcon: Icon(Icons.api_sharp),
+                                        suffixIcon: Icon(
+                                          Icons.email,
                                         ),
+                                        labelText: "Enter Api key",
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                          Radius.circular(15),
+                                        )),
                                       ),
-                                      const SizedBox(height: 10.0),
-                                      TextField(
-                                        controller: enteredToken,
-                                        decoration: const InputDecoration(
-                                          prefixIcon: Icon(Icons.token),
-                                          suffixIcon:
-                                              Icon(Icons.remove_red_eye_sharp),
-                                          labelText: "Enter token",
-                                          border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                            Radius.circular(15),
-                                          )),
-                                        ),
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    TextField(
+                                      controller: enteredToken,
+                                      decoration: const InputDecoration(
+                                        prefixIcon: Icon(Icons.token),
+                                        suffixIcon:
+                                            Icon(Icons.remove_red_eye_sharp),
+                                        labelText: "Enter token",
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                          Radius.circular(15),
+                                        )),
                                       ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: TextButton(
-                                            onPressed: () {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "Contact by support !!!");
-                                            },
-                                            child:
-                                                const Text('Forget password?')),
-                                      ),
-                                      SizedBox(
-                                        width: 320.0,
-                                        child: ElevatedButton(
-                                          style: button(),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextButton(
                                           onPressed: () {
-                                            if (apiKey.text == username &&
-                                                enteredToken.text == password) {
-                                              apiKey.text = "";
-                                              enteredToken.text = "";
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    duration: Duration(
-                                                        milliseconds: 500),
-                                                    content: Text(
-                                                        "Login successful",
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            color:
-                                                                Colors.white))),
-                                              );
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const LoginScreen()));
-                                              setState(() {});
-                                            } else {
-                                              apiKey.text = "";
-                                              enteredToken.text = "";
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                    backgroundColor: Colors.red,
-                                                    duration: Duration(
-                                                        milliseconds: 500),
-                                                    content: Text(
-                                                        "Login failed",
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            color:
-                                                                Colors.white))),
-                                              );
-                                              Navigator.pop(context);
-                                              setState(() {});
-                                            }
+                                            Fluttertoast.showToast(
+                                                msg: "Contact by support !!!");
                                           },
-                                          child: const Text(
-                                            "Login",
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                color: Colors.white),
-                                          ),
+                                          child:
+                                              const Text('Forget password?')),
+                                    ),
+                                    SizedBox(
+                                      width: 320.0,
+                                      child: ElevatedButton(
+                                        style: button(),
+                                        onPressed: () {
+                                          if (apiKey.text == username &&
+                                              enteredToken.text == password) {
+                                            /*prefs.setString(
+                                                  'apikey', username);
+                                              prefs.setString(
+                                                  'password', password);*/
+                                            apiKey.text = "";
+                                            enteredToken.text = "";
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  backgroundColor: Colors.green,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  content: Text(
+                                                      "Login successful",
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color:
+                                                              Colors.white))),
+                                            );
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen()));
+                                            setState(() {});
+                                          } else {
+                                            apiKey.text = "";
+                                            enteredToken.text = "";
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  backgroundColor: Colors.red,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  content: Text("Login failed",
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color:
+                                                              Colors.white))),
+                                            );
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          }
+                                        },
+                                        child: const Text(
+                                          "Login",
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              color: Colors.white),
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            );
-                          });
-                    },
-                    style: button(),
-                    child: const Text(
-                      'Get Started',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
+                            ),
+                          );
+                        });
+                  },
+                  style: button(),
+                  child: const Text(
+                    'Get Started',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),*/
+          ],
         ),
       ),
     );
-  }
-}
-
-class CircleTrackPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint trackPaint = Paint()
-      ..color = Colors.white // Track color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-
-    final Paint circle = Paint()
-      ..color = Colors.grey.withOpacity(0.1); // Track color
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    // Draw the circular track
-
-    canvas.drawCircle(center, radius + 10, circle);
-    canvas.drawCircle(center, radius - 30, trackPaint);
-    canvas.drawCircle(center, size.width - 220, trackPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true; // No need to repaint the static track
   }
 }
