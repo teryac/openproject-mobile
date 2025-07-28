@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/GetStart.dart';
 import 'package:open_project/Property.dart';
-import 'package:open_project/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
@@ -23,7 +22,7 @@ class AddScreen extends StatefulWidget {
   int id;
   String name;
 
-  AddScreen(this.id, this.name);
+  AddScreen(this.id, this.name, {super.key});
 
   @override
   State<AddScreen> createState() => AddTask(id, name);

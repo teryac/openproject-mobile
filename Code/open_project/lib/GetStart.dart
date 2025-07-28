@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:open_project/Login.dart';
+import 'package:open_project/GetServer.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -43,7 +42,7 @@ class Start extends State<StartScreen> {
               borderRadius: BorderRadius.all(Radius.circular(10)),
               image: DecorationImage(
                 image: AssetImage('images/emp.png'),
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.fill,
               ),
             ),
             child: Column(
@@ -79,7 +78,9 @@ class Start extends State<StartScreen> {
                         const SizedBox(height: 5.0),
                         ElevatedButton(
                           onPressed: () {
-                            showDialog(
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const GetServer()));
+                            /*showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return Dialog(
@@ -209,6 +210,7 @@ class Start extends State<StartScreen> {
                                 );
                               },
                             );
+                          */
                           },
                           style: button(),
                           child: const Text(
