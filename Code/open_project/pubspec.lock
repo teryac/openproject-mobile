@@ -61,10 +61,10 @@ packages:
     dependency: "direct main"
     description:
       name: curved_labeled_navigation_bar
-      sha256: d2e7be0aea0221b0b3f4b22bb84a5f5cbf78c54d085436a173d58cdb7b052c0f
+      sha256: "936d8a34128478498e330588dbed3fdd7a6cc55ebada6e67340c080387e1a37e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.5"
+    version: "2.0.6"
   curved_navigation_bar:
     dependency: "direct main"
     description:
@@ -244,10 +244,10 @@ packages:
     dependency: "direct main"
     description:
       name: percent_indicator
-      sha256: "0d77d5c6fa9b7f60202cedf748b568ba9ba38d3f30405d6ceae4da76f5185462"
+      sha256: "157d29133bbc6ecb11f923d36e7960a96a3f28837549a20b65e5135729f0f9fd"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.4"
+    version: "4.2.5"
   platform:
     dependency: transitive
     description:
@@ -381,6 +381,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  universal_io:
+    dependency: transitive
+    description:
+      name: universal_io
+      sha256: "1722b2dcc462b4b2f3ee7d188dad008b6eb4c40bbd03a3de451d82c78bba9aad"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.2"
   vector_math:
     dependency: transitive
     description:
