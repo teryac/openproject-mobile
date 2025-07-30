@@ -1,5 +1,5 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
-import 'package:open_project/GetStart.dart';
 
 class GetServer extends StatefulWidget {
   const GetServer({super.key});
@@ -28,7 +28,7 @@ class Server extends State<GetServer> {
     final screenSize = MediaQuery.of(context).size;
     double? circleSize = screenSize.width;
     TextEditingController enteredServer = TextEditingController();
-    enteredServer.text = "http//:";
+    enteredServer.text = "https://";
     return Scaffold(
       backgroundColor: const Color(0xfff8f8f8),
       body: SingleChildScrollView(
@@ -90,8 +90,82 @@ class Server extends State<GetServer> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {},
-                child: const Text('Forget password?'),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        backgroundColor: Colors.white,
+                        child: SingleChildScrollView(
+                          //height: screenSize.height * 0.5,
+                          //width: screenSize.width * 0.3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        "How to get API tokens?",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topCenter,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(Icons.close),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Image(
+                                  image: AssetImage('images/token.png'),
+                                ),
+                                const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 5.0),
+                                    child: Text(
+                                      "Accessing Account Settings",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 5.0),
+                                  child: Text(
+                                    "To begin, navigate to the website and click on the profile icon. Next, select the 'My Account' tab as illustrated in the image above.Next, select the 'Access tokens' tab.",
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.black54),
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: const Text('How to get API tokens?'),
               ),
             ),
             SizedBox(

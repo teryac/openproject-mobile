@@ -131,13 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
     //double? circleSize = screenSize.width;
     return const Scaffold(
       backgroundColor: Color(0xfff8f8f8),
-      /*appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
-        title: const Center(
-          child: Text("Open project",
-              style: TextStyle(fontSize: 25, color: Colors.white)),
-        ),
-      ),*/
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
