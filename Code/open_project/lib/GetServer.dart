@@ -1,5 +1,11 @@
 // ignore_for_file: file_names
+import 'dart:async';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GetServer extends StatefulWidget {
   const GetServer({super.key});
@@ -23,12 +29,124 @@ ButtonStyle buttonServer() {
 }
 
 class Server extends State<GetServer> {
+  String? error;
+  var server;
+  TextEditingController enteredServer = TextEditingController();
+
+  Future<void> getServer() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      if (server == null) {
+        error = "Please enter a valid server URL.";
+        setState(() {});
+        return;
+      } else {
+        await prefs.setString('server', server);
+      }
+
+      if (server.startsWith("http://") || enteredServer.text.isEmpty) {
+        error = "Please enter a valid server URL starting with https.";
+        setState(() {});
+        return;
+      }
+      Uri uri = Uri.parse("$server/api/v3/projects");
+      Response response =
+          await http.get(uri).timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        error = null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            duration: Duration(milliseconds: 500),
+            content: Text(
+              "Connected :)",
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            duration: Duration(milliseconds: 500),
+            content: Text(
+              "Failed :(",
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+          ),
+        );
+      }
+    } on FormatException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          duration: Duration(milliseconds: 500),
+          content: Text(
+            "Invalid server URL format.",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      );
+    } on SocketException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          duration: Duration(milliseconds: 500),
+          content: Text(
+            "No internet connection or server unreachable.",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      );
+    } on TimeoutException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          duration: Duration(milliseconds: 500),
+          content: Text(
+            "Connection timed out.",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      );
+    } on ClientException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          duration: Duration(milliseconds: 500),
+          content: Text(
+            "Connection timed out.",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      );
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          duration: const Duration(milliseconds: 500),
+          content: Text(
+            "Error: ",
+            style: const TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      );
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    enteredServer.text = "https://";
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     double? circleSize = screenSize.width;
-    TextEditingController enteredServer = TextEditingController();
-    enteredServer.text = "https://";
+
     return Scaffold(
       backgroundColor: const Color(0xfff8f8f8),
       body: SingleChildScrollView(
@@ -76,15 +194,15 @@ class Server extends State<GetServer> {
                   const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
               child: TextField(
                 controller: enteredServer,
-                /*decoration: const InputDecoration(
+                maxLines: 1,
+                autofocus: true,
+                decoration: InputDecoration(
                   labelText: "Enter Server",
-                  //errorText: null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                ),*/
+                  errorText: error,
+                ),
+                onChanged: (value) {
+                  server = value;
+                },
               ),
             ),
             Align(
@@ -173,7 +291,9 @@ class Server extends State<GetServer> {
               child: ElevatedButton(
                 style: buttonServer(),
                 onPressed: () {
-                  if (enteredServer.text.isEmpty) {
+                  getServer();
+                  //enteredServer.text = "";
+                  /*if (enteredServer.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         backgroundColor: Colors.green,
@@ -199,7 +319,7 @@ class Server extends State<GetServer> {
                     );
                     Navigator.pop(context);
                     setState(() {});
-                  }
+                  }*/
                 },
                 child: const Text(
                   "Connect to Server",
@@ -207,9 +327,7 @@ class Server extends State<GetServer> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 5.0,
-            ),
+            const SizedBox(height: 5.0),
           ],
         ),
       ),
