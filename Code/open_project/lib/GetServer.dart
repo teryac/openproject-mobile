@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:open_project/GetToken.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GetServer extends StatefulWidget {
@@ -122,13 +123,14 @@ class Server extends State<GetServer> {
         ),
       );
     } catch (_) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
-          duration: const Duration(milliseconds: 500),
+          duration: Duration(milliseconds: 500),
           content: Text(
             "Error: ",
-            style: const TextStyle(fontSize: 20, color: Colors.white),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       );
@@ -148,7 +150,7 @@ class Server extends State<GetServer> {
     double? circleSize = screenSize.width;
 
     return Scaffold(
-      backgroundColor: const Color(0xfff8f8f8),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -205,7 +207,7 @@ class Server extends State<GetServer> {
                 },
               ),
             ),
-            Align(
+            /*Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
@@ -285,13 +287,16 @@ class Server extends State<GetServer> {
                 },
                 child: const Text('How to get API tokens?'),
               ),
-            ),
+            ),*/
+            const SizedBox(height: 10.0),
             SizedBox(
               width: 350.0,
               child: ElevatedButton(
                 style: buttonServer(),
                 onPressed: () {
                   getServer();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const GetToken()));
                   //enteredServer.text = "";
                   /*if (enteredServer.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
