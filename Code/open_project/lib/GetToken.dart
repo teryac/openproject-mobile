@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart';
 import 'package:open_project/GetServer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:open_project/ProToken.dart';
 
 class GetToken extends StatefulWidget {
   const GetToken({super.key});
@@ -28,43 +24,17 @@ ButtonStyle buttonToken() {
 }
 
 class Token extends State<GetToken> {
-  String apiKey = 'apikey';
-  String token =
-      '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
   TextEditingController enteredToken = TextEditingController();
-  String? error;
+  String? error, getToken;
+  ProToken token = ProToken();
 
-  void checkToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('apikey', apiKey);
-
-    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apiKey:$token'))}';
-
-    Response r = await get(Uri.parse('https://op.yaman-ka.com/api/v3/projects'),
-        headers: <String, String>{'authorization': basicAuth});
-    if (r.statusCode == 200) {
-      await prefs.setString('password', enteredToken.text);
-      /*var jsonResponse = jsonDecode(r.body);
-      var embedded = jsonResponse['_embedded'];
-      var elements = embedded['elements'] as List;
-      setState(() {
-        Iterable<Project> projects = elements.map((data) => Project(
-            description: data['description'],
-            name: data['name'],
-            id: data['id']));
-        data = projects.toList();
-      });*/
-      Fluttertoast.showToast(
-          msg: 'Done :)',
-          textColor: Colors.white,
-          backgroundColor: Colors.green);
-    } else {
-      Fluttertoast.showToast(
-          msg: 'You dont sign up',
-          textColor: Colors.white,
-          backgroundColor: Colors.red);
-    }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    /*if (getToken != null) {
+      enteredToken.text = getToken!;
+    }*/
   }
 
   @override
@@ -134,13 +104,15 @@ class Token extends State<GetToken> {
               padding: const EdgeInsets.only(left: 15.0, right: 15.0),
               child: TextField(
                 controller: enteredToken,
-                maxLines: 2,
+                //maxLines: 2,
                 autofocus: true,
                 decoration: InputDecoration(
                   labelText: "API Token",
                   errorText: error,
                 ),
-                onChanged: (value) {},
+                onChanged: (value) {
+                  enteredToken.text = value;
+                },
               ),
             ),
             Align(
@@ -230,14 +202,15 @@ class Token extends State<GetToken> {
                 style: buttonServer(),
                 onPressed: () {
                   if (enteredToken.text.isNotEmpty) {
-                    checkToken();
+                    token.checkToken(enteredToken.text);
                     enteredToken.text = "";
-                    error = "";
+                    error = null;
                     setState(() {});
                   } else {
                     error = "Enter API Token.";
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                     setState(() {});
+                    return;
                   }
                 },
                 child: const Text(
