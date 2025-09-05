@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:open_project/GetStart.dart';
+import 'package:open_project/GetToken.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Project.dart';
-import 'package:http/http.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,19 +29,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController apiKey = TextEditingController();
-  TextEditingController enteredToken = TextEditingController();
-
-  List<Project> data = [];
-  late String name;
-  late int id;
-  String username = 'apikey';
-  String password =
-      '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
-
-  String? token;
-  String? apikey;
-
   /* void getData() {
     Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
 
@@ -59,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         data = projects.toList();
       });
     });
-  }*/
+  }
 
   void getProjects() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -87,16 +71,26 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       Fluttertoast.showToast(msg: 'You dont sign up');
     }
+  }*/
+
+  void checkServer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? server = prefs.getString('server');
+    Timer(const Duration(seconds: 2), () {
+      if (server == null) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const StartScreen()));
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const GetToken()));
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const StartScreen()));
-    });
-
+    checkServer();
     //getData();
     //getProjects();
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
