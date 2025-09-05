@@ -42,8 +42,6 @@ class Server extends State<GetServer> {
         error = "Please enter a valid server URL.";
         setState(() {});
         return;
-      } else {
-        await prefs.setString('server', server);
       }
 
       if (server.startsWith("http://") || enteredServer.text.isEmpty) {
@@ -55,6 +53,7 @@ class Server extends State<GetServer> {
       Response response =
           await http.get(uri).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
+        await prefs.setString('server', server);
         error = null;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
