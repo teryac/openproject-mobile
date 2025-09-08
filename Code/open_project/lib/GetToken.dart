@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_project/GetServer.dart';
-import 'package:open_project/ProToken.dart';
+import 'package:open_project/TokenProcessing.dart';
 
 class GetToken extends StatefulWidget {
   const GetToken({super.key});
@@ -26,7 +26,7 @@ ButtonStyle buttonToken() {
 class Token extends State<GetToken> {
   TextEditingController enteredToken = TextEditingController();
   String? error, getToken;
-  ProToken token = ProToken();
+  TokenProcessing token = TokenProcessing();
 
   @override
   void initState() {
@@ -82,20 +82,18 @@ class Token extends State<GetToken> {
             const SizedBox(height: 15),
             const Padding(
               padding: EdgeInsets.only(left: 20.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Enter Your API token",
-                  style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
+              child: Text(
+                "Enter Your API token",
+                style: TextStyle(
+                    fontSize: 28,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             const Padding(
               padding: EdgeInsets.only(left: 20.0),
               child: Text(
+                textAlign: TextAlign.center,
                 "To get your API token, go to account settings on the website. For help, see the guide below.",
                 style: TextStyle(fontSize: 18, color: Colors.black54),
               ),

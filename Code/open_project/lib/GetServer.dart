@@ -1,12 +1,8 @@
 // ignore_for_file: file_names
-import 'dart:async';
-import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:open_project/GetToken.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:open_project/ProcessingServer.dart';
 
 class GetServer extends StatefulWidget {
   const GetServer({super.key});
@@ -33,109 +29,7 @@ class Server extends State<GetServer> {
   String? error;
   var server;
   TextEditingController enteredServer = TextEditingController();
-
-  Future<void> getServer() async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      if (server == null) {
-        error = "Please enter a valid server URL.";
-        setState(() {});
-        return;
-      }
-
-      if (server.startsWith("http://") || enteredServer.text.isEmpty) {
-        error = "Please enter a valid server URL starting with https.";
-        setState(() {});
-        return;
-      }
-      Uri uri = Uri.parse("$server/api/v3/projects");
-      Response response =
-          await http.get(uri).timeout(const Duration(seconds: 10));
-      if (response.statusCode == 200) {
-        await prefs.setString('server', server);
-        error = null;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            duration: Duration(milliseconds: 500),
-            content: Text(
-              "Connected :)",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.red,
-            duration: Duration(milliseconds: 500),
-            content: Text(
-              "Failed :(",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-          ),
-        );
-      }
-    } on FormatException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 500),
-          content: Text(
-            "Invalid server URL format.",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
-      );
-    } on SocketException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 500),
-          content: Text(
-            "No internet connection or server unreachable.",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
-      );
-    } on TimeoutException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 500),
-          content: Text(
-            "Connection timed out.",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
-      );
-    } on ClientException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 500),
-          content: Text(
-            "Connection timed out.",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
-      );
-    } catch (_) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 500),
-          content: Text(
-            "Error: ",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
-      );
-    }
-    setState(() {});
-  }
+  ProcessingServer ser = ProcessingServer();
 
   @override
   void initState() {
@@ -293,9 +187,51 @@ class Server extends State<GetServer> {
               child: ElevatedButton(
                 style: buttonServer(),
                 onPressed: () {
-                  getServer();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const GetToken()));
+                  server = ser.getServer(enteredServer.text);
+                  if (server == null || enteredServer.text.isEmpty) {
+                    error = "Please enter a valid server URL.";
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.redAccent,
+                        duration: Duration(milliseconds: 500),
+                        content: Text(
+                          "Failure :(",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+                    );
+                    setState(() {});
+                    return;
+                  } else if (server.startsWith("http://")) {
+                    error =
+                        "Please enter a valid server URL starting with https.";
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 500),
+                        content: Text(
+                          "Failure :(",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+                    );
+                    setState(() {});
+                    return;
+                  } else {
+                    error = null;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.green,
+                        duration: Duration(milliseconds: 500),
+                        content: Text(
+                          "Connected :)",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+                    );
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const GetToken()));
+                  }
                   //enteredServer.text = "";
                   /*if (enteredServer.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(

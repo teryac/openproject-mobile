@@ -10,7 +10,7 @@ class StartScreen extends StatefulWidget {
 
 ButtonStyle button() {
   ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Color.fromARGB(255, 243, 233, 233),
+    backgroundColor: const Color.fromARGB(255, 243, 233, 233),
     elevation: 10,
     minimumSize: const Size(360, 50),
     padding: const EdgeInsets.symmetric(horizontal: 35),
@@ -23,14 +23,6 @@ ButtonStyle button() {
 }
 
 class Start extends State<StartScreen> {
-  String username = 'apikey';
-  String password =
-      '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
-  TextEditingController apiKey = TextEditingController();
-  TextEditingController enteredToken = TextEditingController();
-  String? token;
-  String? apikey;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

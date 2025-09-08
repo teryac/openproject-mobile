@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProToken {
+class TokenProcessing {
   String? getToken;
   String apiKey = 'apikey';
 

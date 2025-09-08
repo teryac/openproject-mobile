@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:open_project/AddTask.dart';
-import 'package:open_project/Login.dart';
+import 'package:open_project/ShowProjects.dart';
 import 'package:open_project/UpdateTask.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart' as badges;
@@ -117,7 +117,7 @@ class Detail extends State<StateDetail> {
           color: Colors.white,
           onPressed: () {
             Navigator.pop(context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()));
+                MaterialPageRoute(builder: (context) => const ShowScreen()));
             setState(() {});
           },
           icon: const Icon(Icons.arrow_back),
