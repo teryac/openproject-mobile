@@ -10,7 +10,7 @@ class ProcessingServer {
         await http.get(uri).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
-      await prefs.setString('server', server);
+      await prefs.setString('Server', server);
       return server;
     } else {
       return null;

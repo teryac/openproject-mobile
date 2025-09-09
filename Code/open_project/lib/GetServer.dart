@@ -229,37 +229,12 @@ class Server extends State<GetServer> {
                         ),
                       ),
                     );
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const GetToken()));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const GetToken(),
+                      ),
+                    );
                   }
-                  //enteredServer.text = "";
-                  /*if (enteredServer.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.green,
-                        duration: Duration(milliseconds: 500),
-                        content: Text(
-                          "Login successful",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ),
-                    );
-
-                    setState(() {});
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        duration: Duration(milliseconds: 500),
-                        content: Text(
-                          "Login failed",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ),
-                    );
-                    Navigator.pop(context);
-                    setState(() {});
-                  }*/
                 },
                 child: const Text(
                   "Connect to Server",

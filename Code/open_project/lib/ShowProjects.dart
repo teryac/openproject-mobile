@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
+import 'package:open_project/GetProjects.dart';
 import 'package:open_project/Project.dart';
 import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 class ShowScreen extends StatefulWidget {
   const ShowScreen({super.key});
@@ -31,32 +30,7 @@ class Login extends State<ShowScreen> {
   String username = 'apikey';
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
-
-  void getData() async {
-    Uri uri = Uri.parse("https://op.yaman-ka.com/api/v3/projects");
-
-    http.get(uri).then((response) {
-      var jsonResponse = jsonDecode(response.body);
-      var embedded = jsonResponse['_embedded'];
-      var elements = embedded['elements'] as List;
-
-// Loop through the elements to extract 'description' -> 'raw'
-      List<Project> projects = elements.map((data) {
-        // Safely access the raw field
-        String rawDescription =
-            data['description']?['raw'] ?? 'No description available';
-        String name = data['name'];
-        id = data['id'];
-
-        return Project(description: rawDescription, name: name, id: id);
-      }).toList();
-
-      setState(() {
-        data = projects;
-      });
-    });
-  }
-
+  GetProjects projects = GetProjects();
   void getProjects() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -118,7 +92,8 @@ class Login extends State<ShowScreen> {
   void initState() {
     super.initState();
     getUser();
-    getProjects();
+    //getProjects();
+    data = projects.getData();
   }
 
   @override
