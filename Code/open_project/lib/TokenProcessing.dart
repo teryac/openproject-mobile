@@ -14,7 +14,7 @@ class TokenProcessing {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await prefs.setString('apikey', apiKey);
-    String? server = prefs.getString('server');
+    String? server = prefs.getString('Server');
     String basicAuth = 'Basic ${base64.encode(utf8.encode('$apiKey:$token'))}';
 
     Response r = await get(Uri.parse('$server/api/v3/projects'),

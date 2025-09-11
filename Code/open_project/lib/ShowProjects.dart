@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
-import 'package:open_project/GetProjects.dart';
+import 'package:open_project/ProcessingProjects.dart';
 import 'package:open_project/Project.dart';
 import 'package:open_project/Property.dart';
 import 'package:open_project/main.dart';
@@ -14,10 +14,10 @@ class ShowScreen extends StatefulWidget {
   const ShowScreen({super.key});
 
   @override
-  State<ShowScreen> createState() => Login();
+  State<ShowScreen> createState() => Show();
 }
 
-class Login extends State<ShowScreen> {
+class Show extends State<ShowScreen> {
   TextEditingController apiKey = TextEditingController();
   TextEditingController enteredToken = TextEditingController();
   List<Project> data = [];
@@ -30,7 +30,7 @@ class Login extends State<ShowScreen> {
   String username = 'apikey';
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
-  GetProjects projects = GetProjects();
+  ProcessingProjects projects = ProcessingProjects();
   void getProjects() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -93,11 +93,23 @@ class Login extends State<ShowScreen> {
     super.initState();
     getUser();
     //getProjects();
-    data = projects.getData();
+    //fetchProjects();
+  }
+
+  void fetchProjects() async {
+    try {
+      List<Project> project = await projects.getData();
+      setState(() {
+        data = project;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    fetchProjects();
     return Scaffold(
       backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(

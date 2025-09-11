@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_project/GetServer.dart';
+import 'package:open_project/ShowProjects.dart';
 import 'package:open_project/TokenProcessing.dart';
 
 class GetToken extends StatefulWidget {
@@ -203,6 +204,11 @@ class Token extends State<GetToken> {
                     token.checkToken(enteredToken.text);
                     enteredToken.text = "";
                     error = null;
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ShowScreen(),
+                      ),
+                    );
                     setState(() {});
                   } else {
                     error = "Enter API Token.";
