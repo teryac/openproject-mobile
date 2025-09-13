@@ -6,8 +6,7 @@ class ProcessingServer {
   Future<String?> getServer(String server) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Uri uri = Uri.parse("$server/api/v3/projects");
-    Response response =
-        await http.get(uri).timeout(const Duration(seconds: 10));
+    Response response = await http.get(uri);
 
     if (response.statusCode == 200) {
       await prefs.setString('Server', server);

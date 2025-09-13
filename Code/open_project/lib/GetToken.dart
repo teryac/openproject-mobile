@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_project/GetServer.dart';
+import 'package:open_project/ProcessingToken.dart';
 import 'package:open_project/ShowProjects.dart';
-import 'package:open_project/TokenProcessing.dart';
 
 class GetToken extends StatefulWidget {
   const GetToken({super.key});
@@ -27,7 +27,7 @@ ButtonStyle buttonToken() {
 class Token extends State<GetToken> {
   TextEditingController enteredToken = TextEditingController();
   String? error, getToken;
-  TokenProcessing token = TokenProcessing();
+  ProcessingToken token = ProcessingToken();
 
   @override
   void initState() {

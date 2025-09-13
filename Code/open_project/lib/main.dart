@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void checkServer() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? server = prefs.getString('server');
+    String? server = prefs.getString('Server');
     Timer(const Duration(seconds: 2), () {
       if (server == null) {
         Navigator.of(context).pushReplacement(
@@ -91,8 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     checkServer();
-    //getData();
-    //getProjects();
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _offsetY = 0.0; // Move to the original position

@@ -6,8 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TokenProcessing {
-  String? getToken;
+class ProcessingToken {
   String apiKey = 'apikey';
 
   void checkToken(String token) async {
@@ -21,7 +20,7 @@ class TokenProcessing {
         headers: <String, String>{'authorization': basicAuth});
     if (r.statusCode == 200) {
       await prefs.setString('password', token);
-      getToken = prefs.getString('password');
+      //getToken = prefs.getString('password');
       /*var jsonResponse = jsonDecode(r.body);
       var embedded = jsonResponse['_embedded'];
       var elements = embedded['elements'] as List;

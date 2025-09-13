@@ -93,7 +93,7 @@ class Show extends State<ShowScreen> {
     super.initState();
     getUser();
     //getProjects();
-    //fetchProjects();
+    fetchProjects();
   }
 
   void fetchProjects() async {
@@ -109,7 +109,6 @@ class Show extends State<ShowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    fetchProjects();
     return Scaffold(
       backgroundColor: const Color(0xfff8f8f8),
       appBar: AppBar(
@@ -165,17 +164,16 @@ class Show extends State<ShowScreen> {
                 ),
                 const SizedBox(height: 5.0),
                 Expanded(
-                    child: ListView.builder(
-                  //shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: data.length,
-                  itemBuilder: (BuildContext ctx, int index) {
-                    name = data[index].name;
-                    description = data[index].description;
-
-                    id = data[index].id;
-                    return Card(
+                  child: ListView.builder(
+                    //shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext ctx, int index) {
+                      name = data[index].name;
+                      description = data[index].description;
+                      id = data[index].id;
+                      return Card(
                         borderOnForeground: true,
                         color: Colors.grey[50],
                         elevation: 3.0,
@@ -195,27 +193,29 @@ class Show extends State<ShowScreen> {
                                   onPressed: () {
                                     setState(() {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => StateDetail(
-                                                  data[index].id,
-                                                  data[index].name)));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => StateDetail(
+                                              data[index].id, data[index].name),
+                                        ),
+                                      );
                                     });
                                   },
                                 ),
                                 onTap: () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => StateDetail(
-                                              data[index].id,
-                                              data[index].name)));
-                                  //Fluttertoast.showToast(msg: data[index].name);
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => StateDetail(
+                                            data[index].id, data[index].name)),
+                                  );
                                 })
                           ],
-                        ));
-                  },
-                )),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
     );

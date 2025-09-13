@@ -12,7 +12,7 @@ class ProcessingProjects {
     var server = prefs.getString('Server');
     Uri uri = Uri.parse("$server/api/v3/projects");
 
-    http.get(uri).then((response) {
+    await http.get(uri).then((response) {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         var embedded = jsonResponse['_embedded'];
