@@ -1,15 +1,10 @@
-import 'dart:convert';
-
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:open_project/AddTask.dart';
+import 'package:open_project/ProcessingTasks.dart';
 import 'package:open_project/ShowProjects.dart';
 import 'package:open_project/UpdateTask.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart' as badges;
 
 import 'Subjects.dart';
@@ -19,7 +14,7 @@ class StateDetail extends StatefulWidget {
   int id;
   String name;
 
-  StateDetail(this.id, this.name);
+  StateDetail(this.id, this.name, {super.key});
 
   @override
   State<StateDetail> createState() => Detail(id, name);
@@ -28,81 +23,27 @@ class StateDetail extends StatefulWidget {
 class Detail extends State<StateDetail> {
   String name;
   int id;
-  late var description;
   List<Subjects> dataOfSubject = [];
-  String? apikey;
-  String? token;
 
   Detail(this.id, this.name);
 
-  void deleteTask(int id) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    apikey = prefs.getString('apikey');
-    token = prefs.getString('password');
-    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
-
-    await http.delete(
-      Uri.parse("https://op.yaman-ka.com/api/v3/work_packages/$id"),
-      headers: <String, String>{
-        'content-type': 'application/json; charset=UTF-8',
-        'authorization': basicAuth
-      },
-    ).then((response) {
-      print(id);
-      print(response.body);
-      if (response.statusCode == 204) {
-        getTask();
-        Fluttertoast.showToast(msg: 'task of $id has been deleted');
-      } else {
-        Fluttertoast.showToast(msg: 'you cannot delete task of $id');
-      }
-    });
-  }
-
-  void getTask() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    apikey = prefs.getString('apikey');
-    token = prefs.getString('password');
-    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
-
-    Response r = await get(
-        Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages"),
-        headers: <String, String>{'authorization': basicAuth});
-
-    if (r.statusCode == 200) {
-      var jsonResponse = jsonDecode(r.body);
-      var embedded = jsonResponse['_embedded'];
-      if (embedded != null) {
-        var elements = embedded['elements'] as List;
-        List<Subjects> subjects = elements.map((data) {
-          // Safely access the raw field
-          String rawDescription =
-              data['description']?['raw'] ?? 'No description available';
-          String sub = data['subject'];
-
-          int idTask = data['id'];
-          String status =
-              data['_links']?['status']?['title'] ?? 'No Status available';
-
-          return Subjects(
-              id: idTask,
-              subject: sub,
-              description: rawDescription,
-              status: status);
-        }).toList();
-
-        setState(() {
-          dataOfSubject = subjects;
-        });
-      }
-    }
-  }
+  ProcessingTasks tasks = ProcessingTasks();
 
   @override
   void initState() {
     super.initState();
-    getTask();
+    fetchTasks();
+  }
+
+  void fetchTasks() async {
+    try {
+      List<Subjects> project = await tasks.getTask(id);
+      setState(() {
+        dataOfSubject = project;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override
@@ -222,7 +163,7 @@ class Detail extends State<StateDetail> {
                                             TextButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    deleteTask(
+                                                    tasks.deleteTask(
                                                         dataOfSubject[index]
                                                             .id);
                                                     Navigator.pop(context);
@@ -258,12 +199,6 @@ class Detail extends State<StateDetail> {
                                 );
                               },
                             ),
-                            /*Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("data,"),
-                              ],
-                            ),*/
                           ],
                         ),
                       );
