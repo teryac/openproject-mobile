@@ -1,7 +1,6 @@
 // ignore: file_names
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:open_project/DetailOfProject.dart';
 import 'package:open_project/ProcessingProjects.dart';
@@ -31,45 +30,6 @@ class Show extends State<ShowScreen> {
   String password =
       '6905fd9498adf5f3f7024adac280c2d45fd042622094484cc56dc77aed52773e';
   ProcessingProjects projects = ProcessingProjects();
-  void getProjects() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('apikey', username);
-    await prefs.setString('password', password);
-
-    apikey = prefs.getString('apikey');
-    token = prefs.getString('password');
-    String basicAuth = 'Basic ${base64.encode(utf8.encode('$apikey:$token'))}';
-
-    Response r = await get(Uri.parse('https://op.yaman-ka.com/api/v3/projects'),
-        headers: <String, String>{'authorization': basicAuth});
-    if (r.statusCode == 200) {
-      var jsonResponse = jsonDecode(r.body);
-
-      // Access the '_embedded' object
-      var embedded = jsonResponse['_embedded'];
-
-      // Access the 'elements' list
-      var elements = embedded['elements'] as List;
-
-      // Loop through the elements to extract 'description' -> 'raw'
-      List<Project> projects = elements.map((data) {
-        // Safely access the raw field
-        String rawDescription =
-            data['description']?['raw'] ?? 'No description available';
-        String name = data['name'];
-        id = data['id'];
-
-        return Project(description: rawDescription, name: name, id: id);
-      }).toList();
-
-      setState(() {
-        data = projects;
-      });
-    } else {
-      Fluttertoast.showToast(msg: 'HTTP Error ${r.statusCode}: ${r.body}');
-    }
-  }
 
   void getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -96,9 +56,20 @@ class Show extends State<ShowScreen> {
     fetchProjects();
   }
 
-  void fetchProjects() async {
+  void fetchPublicProjects() async {
     try {
       List<Project> project = await projects.getData();
+      setState(() {
+        data = project;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  void fetchProjects() async {
+    try {
+      List<Project> project = await projects.getProjects();
       setState(() {
         data = project;
       });
@@ -138,7 +109,7 @@ class Show extends State<ShowScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, left: 8.0),
                   child: Text(
-                    'Hi $user',
+                    'Hello $user',
                     style: const TextStyle(
                         fontSize: 20,
                         color: Colors.cyan,
@@ -175,7 +146,7 @@ class Show extends State<ShowScreen> {
                       id = data[index].id;
                       return Card(
                         borderOnForeground: true,
-                        color: Colors.grey[50],
+                        color: Colors.grey[100],
                         elevation: 3.0,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -188,7 +159,7 @@ class Show extends State<ShowScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Text(description),
-                                trailing: IconButton(
+                                /*trailing: IconButton(
                                   icon: const Icon(Icons.arrow_forward_sharp),
                                   onPressed: () {
                                     setState(() {
@@ -201,7 +172,7 @@ class Show extends State<ShowScreen> {
                                       );
                                     });
                                   },
-                                ),
+                                ),*/
                                 onTap: () {
                                   Navigator.push(
                                     context,

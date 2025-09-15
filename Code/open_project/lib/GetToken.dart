@@ -81,22 +81,26 @@ class Token extends State<GetToken> {
               ),
             ),
             const SizedBox(height: 15),
-            const Padding(
-              padding: EdgeInsets.only(left: 20.0),
-              child: Text(
-                "Enter Your API token",
-                style: TextStyle(
-                    fontSize: 28,
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20.0),
+                child: Text(
+                  "Enter Your API token",
+                  style: TextStyle(
+                    fontSize: 23,
                     color: Colors.black,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             const Padding(
               padding: EdgeInsets.only(left: 20.0),
               child: Text(
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 "To get your API token, go to account settings on the website. For help, see the guide below.",
-                style: TextStyle(fontSize: 18, color: Colors.black54),
+                style: TextStyle(fontSize: 15, color: Colors.black54),
               ),
             ),
             Padding(
@@ -192,7 +196,10 @@ class Token extends State<GetToken> {
                     },
                   );
                 },
-                child: const Text('How to get API tokens?'),
+                child: const Text(
+                  'How to get API tokens?',
+                  style: TextStyle(color: Colors.blue),
+                ),
               ),
             ),
             SizedBox(
