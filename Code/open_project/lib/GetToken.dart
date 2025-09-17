@@ -52,13 +52,13 @@ class Token extends State<GetToken> {
               child: Row(
                 children: [
                   Image(
-                    image: const AssetImage('images/list.png'),
+                    image: const AssetImage('assets/imageslist.png'),
                     width: circleSize * 0.42,
                     height: screenSize.height * 0.4,
                   ),
                   SizedBox(width: circleSize * 0.03),
                   Image(
-                    image: const AssetImage('images/user.png'),
+                    image: const AssetImage('assets/imagesuser.png'),
                     width: circleSize * 0.5,
                     height: screenSize.height * 0.4,
                   ),
@@ -164,7 +164,7 @@ class Token extends State<GetToken> {
                                   ],
                                 ),
                                 const Image(
-                                  image: AssetImage('images/token.png'),
+                                  image: AssetImage('assets/imagestoken.png'),
                                 ),
                                 const Align(
                                   alignment: Alignment.centerLeft,

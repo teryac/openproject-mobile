@@ -33,7 +33,7 @@ class Start extends State<StartScreen> {
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               image: DecorationImage(
-                image: AssetImage('images/emp.png'),
+                image: AssetImage('assets/imagesemp.png'),
                 fit: BoxFit.fill,
               ),
             ),
@@ -232,13 +232,13 @@ class Start extends State<StartScreen> {
                 children: [
                   Image(
                     color: Colors.white,
-                    image: AssetImage('images/openproject.png'),
+                    image: AssetImage('assets/imagesopenproject.png'),
                     width: 40,
                     height: 40,
                   ),
                   Image(
                     color: Colors.white,
-                    image: AssetImage('images/op.png'),
+                    image: AssetImage('assets/imagesop.png'),
                     width: 70,
                     height: 70,
                   ),
