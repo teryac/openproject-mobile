@@ -48,7 +48,7 @@ class Server extends State<GetServer> {
         child: Column(
           children: [
             Image(
-              image: const AssetImage('images/Server.png'),
+              image: const AssetImage('assets/imagesServer.png'),
               width: circleSize,
               height: screenSize.height * 0.4,
               fit: BoxFit.contain,
