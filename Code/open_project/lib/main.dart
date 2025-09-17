@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/GetStart.dart';
 import 'package:open_project/GetToken.dart';
+import 'package:open_project/core/util/bloc_observer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  _attachBlocObserver();
+
   runApp(const MyApp());
 }
 
@@ -128,12 +132,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              image: AssetImage('images/openproject.png'),
+              image: AssetImage('assets/imagesopenproject.png'),
               width: 75,
               height: 75,
             ),
             Image(
-              image: AssetImage('images/op.png'),
+              image: AssetImage('assets/imagesop.png'),
               width: 150,
               height: 125,
             ),
@@ -152,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ClipOval(
                         child: Image(
                           color: Colors.blueAccent,
-                          image: AssetImage('images/openproject.png'),
+                          image: AssetImage('assets/imagesopenproject.png'),
                           width: 155,
                           height: 155,
                         ),
@@ -465,4 +469,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+void _attachBlocObserver() {
+  Bloc.observer = AppBlocObserver();
 }
