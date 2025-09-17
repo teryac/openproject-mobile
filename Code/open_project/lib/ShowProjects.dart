@@ -136,7 +136,7 @@ class Show extends State<ShowScreen> {
                 const SizedBox(height: 5.0),
                 Expanded(
                   child: ListView.builder(
-                    //shrinkWrap: true,
+                    shrinkWrap: true,
                     scrollDirection: Axis.vertical,
                     padding: const EdgeInsets.all(8.0),
                     itemCount: data.length,
