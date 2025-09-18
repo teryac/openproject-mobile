@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/GetStart.dart';
 import 'package:open_project/GetToken.dart';
+import 'package:open_project/core/navigation/router.dart';
+import 'package:open_project/core/styles/themes.dart';
 import 'package:open_project/core/util/bloc_observer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   _attachBlocObserver();
-
-  runApp(const MyApp());
+  runApp(DevicePreview(builder: (context) => const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    SharedPreferences.getInstance().then(
+      (value) => value.clear(),
+    );
+    return MaterialApp.router(
+      routerConfig: getAppRouter(),
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: Colors.blue, useMaterial3: true),
-      home: const MyHomePage(),
+      theme: AppTheme.lightTheme,
     );
   }
 }
@@ -132,12 +137,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              image: AssetImage('assets/imagesopenproject.png'),
+              image: AssetImage('assets/images/openproject.png'),
               width: 75,
               height: 75,
             ),
             Image(
-              image: AssetImage('assets/imagesop.png'),
+              image: AssetImage('assets/images/op.png'),
               width: 150,
               height: 125,
             ),
@@ -156,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ClipOval(
                         child: Image(
                           color: Colors.blueAccent,
-                          image: AssetImage('assets/imagesopenproject.png'),
+                          image: AssetImage('assets/images/openproject.png'),
                           width: 155,
                           height: 155,
                         ),

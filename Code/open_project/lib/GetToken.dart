@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_project/GetServer.dart';
 import 'package:open_project/ProcessingToken.dart';
 import 'package:open_project/ShowProjects.dart';
+import 'package:open_project/core/widgets/app_button.dart';
 
 class GetToken extends StatefulWidget {
   const GetToken({super.key});
@@ -52,13 +53,13 @@ class Token extends State<GetToken> {
               child: Row(
                 children: [
                   Image(
-                    image: const AssetImage('assets/imageslist.png'),
+                    image: const AssetImage('assets/images/list.png'),
                     width: circleSize * 0.42,
                     height: screenSize.height * 0.4,
                   ),
                   SizedBox(width: circleSize * 0.03),
                   Image(
-                    image: const AssetImage('assets/imagesuser.png'),
+                    image: const AssetImage('assets/images/user.png'),
                     width: circleSize * 0.5,
                     height: screenSize.height * 0.4,
                   ),
@@ -118,87 +119,88 @@ class Token extends State<GetToken> {
                 },
               ),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        backgroundColor: Colors.white,
-                        child: SingleChildScrollView(
-                          //height: screenSize.height * 0.5,
-                          //width: screenSize.width * 0.3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Align(
-                                      alignment: Alignment.topLeft,
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 24, right: 20),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: AppTextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          backgroundColor: Colors.white,
+                          child: SingleChildScrollView(
+                            //height: screenSize.height * 0.5,
+                            //width: screenSize.width * 0.3,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          "How to get API tokens?",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          },
+                                          icon: const Icon(Icons.close),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Image(
+                                    image:
+                                        AssetImage('assets/images/token.png'),
+                                  ),
+                                  const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 5.0),
                                       child: Text(
-                                        "How to get API tokens?",
+                                        "Accessing Account Settings",
                                         style: TextStyle(
                                             fontSize: 20,
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    Align(
-                                      alignment: Alignment.topCenter,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          setState(() {});
-                                        },
-                                        icon: const Icon(Icons.close),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Image(
-                                  image: AssetImage('assets/imagestoken.png'),
-                                ),
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
+                                  ),
+                                  const Padding(
                                     padding: EdgeInsets.only(left: 5.0),
                                     child: Text(
-                                      "Accessing Account Settings",
+                                      "To begin, navigate to the website and click on the profile icon. Next, select the 'My Account' tab as illustrated in the image above.Next, select the 'Access tokens' tab.",
                                       style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 15, color: Colors.black54),
                                     ),
                                   ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 5.0),
-                                  child: Text(
-                                    "To begin, navigate to the website and click on the profile icon. Next, select the 'My Account' tab as illustrated in the image above.Next, select the 'Access tokens' tab.",
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.black54),
-                                  ),
-                                ),
-                                const SizedBox(height: 5.0),
-                              ],
+                                  const SizedBox(height: 5.0),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: const Text(
-                  'How to get API tokens?',
-                  style: TextStyle(color: Colors.blue),
+                        );
+                      },
+                    );
+                  },
+                  text: 'How to get API tokens?',
                 ),
               ),
             ),
