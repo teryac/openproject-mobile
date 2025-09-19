@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_project/GetServer.dart';
+import 'package:open_project/auth/GetServer.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});

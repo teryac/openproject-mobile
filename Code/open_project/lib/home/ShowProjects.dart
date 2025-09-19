@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:open_project/DetailOfProject.dart';
+import 'package:open_project/work_packages/DetailOfProject.dart';
 import 'package:open_project/ProcessingProjects.dart';
 import 'package:open_project/Project.dart';
 import 'package:open_project/Property.dart';

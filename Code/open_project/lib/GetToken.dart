@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:open_project/GetServer.dart';
+import 'package:open_project/auth/GetServer.dart';
 import 'package:open_project/ProcessingToken.dart';
-import 'package:open_project/ShowProjects.dart';
+import 'package:open_project/home/ShowProjects.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 
 class GetToken extends StatefulWidget {
