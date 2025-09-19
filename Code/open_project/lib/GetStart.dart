@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:open_project/GetServer.dart';
 
@@ -43,7 +45,7 @@ class Start extends State<StartScreen> {
                 // Bottom container (existing content)
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(25),
                     ),
@@ -224,7 +226,7 @@ class Start extends State<StartScreen> {
             left: 140,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(),
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
               ),
               child: const Row(

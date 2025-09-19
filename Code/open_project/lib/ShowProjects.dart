@@ -1,4 +1,5 @@
-// ignore: file_names
+// ignore_for_file: file_names, prefer_typing_uninitialized_variables
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -57,25 +58,17 @@ class Show extends State<ShowScreen> {
   }
 
   void fetchPublicProjects() async {
-    try {
-      List<Project> project = await projects.getData();
-      setState(() {
-        data = project;
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
+    List<Project> project = await projects.getData();
+    setState(() {
+      data = project;
+    });
   }
 
   void fetchProjects() async {
-    try {
-      List<Project> project = await projects.getProjects();
-      setState(() {
-        data = project;
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
+    List<Project> project = await projects.getProjects();
+    setState(() {
+      data = project;
+    });
   }
 
   @override
