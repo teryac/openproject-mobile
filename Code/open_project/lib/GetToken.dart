@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:open_project/auth/GetServer.dart';
 import 'package:open_project/ProcessingToken.dart';
@@ -32,7 +33,6 @@ class Token extends State<GetToken> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     /*if (getToken != null) {
       enteredToken.text = getToken!;
