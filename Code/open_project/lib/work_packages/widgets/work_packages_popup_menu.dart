@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
-import 'package:open_project/core/widgets/popup_menu.dart';
+import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 
 class WorkPackagesPopupMenu extends StatelessWidget {
   final void Function(bool visible) toggleMenu;
@@ -22,30 +22,37 @@ class WorkPackagesPopupMenu extends StatelessWidget {
                 offset: Offset(0, 49),
                 color: Color(0x00363636)),
             BoxShadow(
-                blurRadius: 12,
-                offset: Offset(0, 31),
-                color: Color(0x03363636)),
+              blurRadius: 12,
+              offset: Offset(0, 31),
+              color: Color(0x03363636),
+            ),
             BoxShadow(
-                blurRadius: 11,
-                offset: Offset(0, 18),
-                color: Color(0x0A363636)),
+              blurRadius: 11,
+              offset: Offset(0, 18),
+              color: Color(0x0A363636),
+            ),
             BoxShadow(
-                blurRadius: 8, offset: Offset(0, 8), color: Color(0x12363636)),
+              blurRadius: 8,
+              offset: Offset(0, 8),
+              color: Color(0x12363636),
+            ),
             BoxShadow(
-                blurRadius: 4, offset: Offset(0, 2), color: Color(0x14363636)),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+              color: Color(0x14363636),
+            ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppMenuItem(
+            AppMenuItem.first(
               icon: SvgPicture.asset(
                 AppIcons.edit,
                 // ignore: deprecated_member_use
                 color: AppColors.primaryText,
               ),
               text: "Edit task",
-              color: AppColors.primaryText,
               onTap: () {
                 debugPrint('0');
                 toggleMenu(false);
@@ -71,14 +78,14 @@ class WorkPackagesPopupMenu extends StatelessWidget {
                 thickness: 1,
               ),
             ),
-            AppMenuItem(
+            AppMenuItem.last(
               icon: SvgPicture.asset(
                 AppIcons.trash,
                 // ignore: deprecated_member_use
                 color: AppColors.red,
               ),
               text: "Delete task",
-              color: Colors.red,
+              foregroundColor: Colors.red,
               onTap: () {
                 debugPrint('2');
                 toggleMenu(false);
