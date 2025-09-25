@@ -52,9 +52,13 @@ class ReadyWidgetsSheet extends StatelessWidget {
                     // height: 100,
                     // disableTextScaling: true,
                   ),
-                  const SizedBox(
-                    height: 16,
+                  const SizedBox(height: 16),
+                  AppButton.white(
+                    text: 'Get started',
+                    onPressed: () {},
+                    blur: true,
                   ),
+                  const SizedBox(height: 16),
                   AppTextButton(
                     text: 'How to get API token?',
                     onPressed: () {},
@@ -96,6 +100,9 @@ class ReadyWidgetsSheet extends StatelessWidget {
                     child: (toggleMenu) {
                       return InkWell(
                         borderRadius: BorderRadius.circular(12),
+                        splashColor: AppColors.primaryText.withAlpha(50),
+                        highlightColor:
+                            Colors.transparent, // Removes gray overlay
                         onLongPress: () => toggleMenu(true),
                         child: Container(
                           width: double.infinity,
@@ -118,6 +125,33 @@ class ReadyWidgetsSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   const AppTextFormField(hint: 'URL Link'),
+                  const SizedBox(height: 16),
+                  AppTextFormField(
+                    hint: 'URL Link',
+                    disableLabel: true,
+                    contentPadding: const EdgeInsets.only(top: 18),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        bottom: 8,
+                        right: 8,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.border,
+                        ),
+                        child: Text(
+                          'https://',
+                          style: AppTextStyles.small.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.highContrastCursor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   AppTextFormField.filled(
                     hint: 'Search for Projects..',
@@ -154,12 +188,12 @@ class ReadyWidgetsSheet extends StatelessWidget {
                         (fullName: 'Majd Haj Hmidi', color: Colors.deepOrange),
                         (fullName: 'Yaman Kalaji', color: Colors.deepPurple),
                         (fullName: 'Shaaban Shaheen', color: Colors.teal),
-                        (fullName: 'Shaaban Shaheen', color: Colors.black),
-                        (fullName: 'Shaaban Shaheen', color: Colors.black),
-                        (fullName: 'Shaaban Shaheen', color: Colors.black),
+                        (fullName: 'Test Name', color: Colors.black),
+                        (fullName: 'Test Name', color: Colors.red),
+                        (fullName: 'Test Name', color: Colors.blue),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

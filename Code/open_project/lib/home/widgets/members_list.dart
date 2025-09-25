@@ -17,7 +17,8 @@ class MembersList extends StatelessWidget {
         // Iterate throught list with a max of 3
         for (int i = 0; i < min(members.length, 3); i++)
           Transform.translate(
-            offset: Offset(i * -12, 0),
+            offset: Offset(
+                i * (-12) * MediaQuery.textScalerOf(context).scale(1), 0),
             child: _MemberWidget(
               fullName: members[i].fullName,
               color: members[i].color,
@@ -44,6 +45,7 @@ class _MemberWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nameWords = fullName.split(' ');
+    final containerRadius = 45 * MediaQuery.textScalerOf(context).scale(1);
 
     String getFirstCharacter(String? word) {
       return word?.split('').firstOrNull ?? '?';
@@ -52,8 +54,8 @@ class _MemberWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 45,
-          height: 45,
+          width: containerRadius,
+          height: containerRadius,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -75,13 +77,14 @@ class _MemberWidget extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
               child: Container(
-                width: 45,
-                height: 45,
+                width: containerRadius,
+                height: containerRadius,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0x80505358),
-                  border: Border.all(color: AppColors.projectBackground, width: 2),
+                  border:
+                      Border.all(color: AppColors.projectBackground, width: 2),
                 ),
                 child: Text(
                   '+$extraMembersOverlayCount',

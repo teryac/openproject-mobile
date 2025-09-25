@@ -27,6 +27,7 @@ class AppTextFormField extends StatelessWidget {
   final bool readOnly;
   final bool autofocus;
   final String? errorText;
+  final bool disableLabel;
 
   final _TextFieldStyle _style;
 
@@ -49,6 +50,7 @@ class AppTextFormField extends StatelessWidget {
     this.errorText,
     this.prefixIcon,
     this.onPrefixIconPressed,
+    this.disableLabel = false,
   })  : borderRadius = null,
         _style = _TextFieldStyle.normal;
 
@@ -72,6 +74,7 @@ class AppTextFormField extends StatelessWidget {
     this.errorText,
     this.prefixIcon,
     this.onPrefixIconPressed,
+    this.disableLabel = false,
   }) : _style = _TextFieldStyle.outlined;
 
   const AppTextFormField.filled({
@@ -94,7 +97,10 @@ class AppTextFormField extends StatelessWidget {
     this.errorText,
     this.prefixIcon,
     this.onPrefixIconPressed,
+    this.disableLabel = false,
   }) : _style = _TextFieldStyle.filled;
+
+  bool get _filled => _style == _TextFieldStyle.filled;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +108,7 @@ class AppTextFormField extends StatelessWidget {
       controller: controller,
       validator: validator,
       onChanged: onChanged,
-      style: _style == _TextFieldStyle.filled
+      style: _filled
           ? AppTextStyles.small.copyWith(
               color: AppColors.primaryText,
             )
@@ -117,11 +123,16 @@ class AppTextFormField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       keyboardType: keyboardType,
+      cursorColor: AppColors.primaryText,
       decoration: InputDecoration(
         contentPadding: contentPadding,
-        hintText: hint,
-        errorText: errorText,
-        hintStyle: _style == _TextFieldStyle.filled
+        labelText: (_filled || disableLabel) ? null : hint,
+        labelStyle: AppTextStyles.medium.copyWith(
+          color: AppColors.descriptiveText,
+          fontWeight: FontWeight.w400,
+        ),
+        hintText: (_filled || disableLabel) ? hint : null,
+        hintStyle: _filled
             ? AppTextStyles.small.copyWith(
                 color: AppColors.descriptiveText,
               )
@@ -129,11 +140,10 @@ class AppTextFormField extends StatelessWidget {
                 color: AppColors.descriptiveText,
                 fontWeight: FontWeight.w400,
               ),
-        filled: _style == _TextFieldStyle.filled,
-        fillColor: _style == _TextFieldStyle.filled
-            ? AppColors.searchBarBackground
-            : null,
-        enabledBorder: _style == _TextFieldStyle.filled
+        errorText: errorText,
+        filled: _filled,
+        fillColor: _filled ? AppColors.searchBarBackground : null,
+        enabledBorder: _filled
             ? OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius ?? 360),
                 borderSide: BorderSide.none,
@@ -141,7 +151,7 @@ class AppTextFormField extends StatelessWidget {
             : const UnderlineInputBorder(
                 borderSide: BorderSide(width: 1, color: AppColors.border),
               ),
-        focusedBorder: _style == _TextFieldStyle.filled
+        focusedBorder: _filled
             ? OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius ?? 360),
                 borderSide: BorderSide.none,
@@ -152,7 +162,7 @@ class AppTextFormField extends StatelessWidget {
                   color: AppColors.primaryText,
                 ),
               ),
-        errorBorder: _style == _TextFieldStyle.filled
+        errorBorder: _filled
             ? OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius ?? 360),
                 borderSide: BorderSide(
@@ -163,7 +173,7 @@ class AppTextFormField extends StatelessWidget {
             : const UnderlineInputBorder(
                 borderSide: BorderSide(width: 1, color: AppColors.red),
               ),
-        focusedErrorBorder: _style == _TextFieldStyle.filled
+        focusedErrorBorder: _filled
             ? OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius ?? 360),
                 borderSide: const BorderSide(color: AppColors.red, width: 2),
@@ -173,10 +183,18 @@ class AppTextFormField extends StatelessWidget {
               ),
         suffixIcon: suffixIcon == null
             ? null
-            : GestureDetector(
-                onTap: onSuffixIconPressed,
-                child: suffixIcon,
+            : ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minWidth: 0,
+                  minHeight: 0,
+                ),
+                child: GestureDetector(
+                  onTap: onSuffixIconPressed,
+                  child: suffixIcon,
+                ),
               ),
+        prefixIconConstraints: const BoxConstraints(minHeight: 0, minWidth: 0),
+        suffixIconConstraints: const BoxConstraints(minHeight: 0, minWidth: 0),
         prefixIcon: prefixIcon == null
             ? null
             : GestureDetector(
