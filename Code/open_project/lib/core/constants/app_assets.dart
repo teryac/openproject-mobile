@@ -5,6 +5,7 @@ class AppIcons {
   static const task = '${_directory}task$_fileType';
   static const trash = '${_directory}trash$_fileType';
   static const edit = '${_directory}edit$_fileType';
+  static const search = '${_directory}search$_fileType';
 }
 
 class AppImages {

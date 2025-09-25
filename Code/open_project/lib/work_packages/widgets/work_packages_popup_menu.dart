@@ -4,9 +4,16 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 
-class WorkPackagesPopupMenu extends StatelessWidget {
+class WorkPackagesPopupMenu extends StatefulWidget {
   final void Function(bool visible) toggleMenu;
   const WorkPackagesPopupMenu({super.key, required this.toggleMenu});
+
+  @override
+  State<WorkPackagesPopupMenu> createState() => _WorkPackagesPopupMenuState();
+}
+
+class _WorkPackagesPopupMenuState extends State<WorkPackagesPopupMenu> {
+  bool _disableInteraction = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +25,10 @@ class WorkPackagesPopupMenu extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           boxShadow: const [
             BoxShadow(
-                blurRadius: 14,
-                offset: Offset(0, 49),
-                color: Color(0x00363636)),
+              blurRadius: 14,
+              offset: Offset(0, 49),
+              color: Color(0x00363636),
+            ),
             BoxShadow(
               blurRadius: 12,
               offset: Offset(0, 31),
@@ -54,8 +62,12 @@ class WorkPackagesPopupMenu extends StatelessWidget {
               ),
               text: "Edit task",
               onTap: () {
+                if (_disableInteraction) return;
+
                 debugPrint('0');
-                toggleMenu(false);
+
+                _disableInteraction = true;
+                widget.toggleMenu(false);
               },
             ),
             AppMenuItem(
@@ -66,8 +78,12 @@ class WorkPackagesPopupMenu extends StatelessWidget {
               ),
               text: "Mark as finished",
               onTap: () {
+                if (_disableInteraction) return;
+
                 debugPrint('1');
-                toggleMenu(false);
+
+                _disableInteraction = true;
+                widget.toggleMenu(false);
               },
             ),
             const Padding(
@@ -87,8 +103,12 @@ class WorkPackagesPopupMenu extends StatelessWidget {
               text: "Delete task",
               foregroundColor: Colors.red,
               onTap: () {
+                if (_disableInteraction) return;
+
                 debugPrint('2');
-                toggleMenu(false);
+
+                _disableInteraction = true;
+                widget.toggleMenu(false);
               },
             ),
           ],

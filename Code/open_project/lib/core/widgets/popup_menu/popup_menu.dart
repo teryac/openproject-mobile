@@ -215,7 +215,7 @@ class AppMenuItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: borderRadius,
-        splashColor: AppColors.primaryText.withAlpha(50),
+        splashColor: (foregroundColor ?? AppColors.primaryText).withAlpha(50),
         highlightColor: Colors.transparent, // removes the gray overlay
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
