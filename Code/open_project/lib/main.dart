@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences.getInstance().then(
+    /*SharedPreferences.getInstance().then(
       (value) => value.clear(),
-    );
+    );*/
     return MaterialApp.router(
       routerConfig: getAppRouter(),
       debugShowCheckedModeBanner: false,
