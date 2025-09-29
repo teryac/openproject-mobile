@@ -1,13 +1,13 @@
 // ignore_for_file: file_names, prefer_typing_uninitialized_variables
 
 class Project {
-  var description;
+  String description;
   String name;
   int id;
 
   Project({required this.description, required this.name, required this.id});
 
-  static fromJson(Map<String, dynamic> parsedJson) {
+  static Project fromJson(Map<String, dynamic> parsedJson) {
     var description = parsedJson['description'];
     var raw = description['raw'];
     return Project(

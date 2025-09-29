@@ -1,8 +1,8 @@
 // ignore_for_file: file_names, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
-import 'package:open_project/GetToken.dart';
-import 'package:open_project/ProcessingServer.dart';
+import 'package:open_project/get_token.dart';
+import 'package:open_project/processing_server.dart';
 
 class GetServer extends StatefulWidget {
   const GetServer({super.key});
@@ -27,7 +27,7 @@ ButtonStyle buttonServer() {
 
 class Server extends State<GetServer> {
   String? error;
-  var server;
+  var server = "";
   TextEditingController enteredServer = TextEditingController();
   ProcessingServer ser = ProcessingServer();
 
@@ -106,7 +106,7 @@ class Server extends State<GetServer> {
               child: ElevatedButton(
                 style: buttonServer(),
                 onPressed: () {
-                  if (server == null || enteredServer.text.isEmpty) {
+                  if (server.isEmpty || enteredServer.text.isEmpty) {
                     error = "Please enter a valid server URL.";
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

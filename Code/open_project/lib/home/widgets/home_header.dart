@@ -55,7 +55,10 @@ class HomeHeader extends StatelessWidget {
                 AppIcons.arrowUp,
                 width: 16.0,
                 height: 16.0,
-                color: AppColors.iconSecondary,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.iconSecondary,
+                  BlendMode.srcIn,
+                ),
               ),
             ],
           ),

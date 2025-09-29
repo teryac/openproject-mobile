@@ -3,7 +3,7 @@
 class Subjects {
   int id;
   String subject;
-  var description;
+  String description;
   String status;
 
   Subjects(
@@ -12,7 +12,7 @@ class Subjects {
       required this.description,
       required this.status});
 
-  static fromJson(Map<String, dynamic> parsedJson) {
+  static Subjects fromJson(Map<String, dynamic> parsedJson) {
     var description = parsedJson['description'];
     var raw = description['raw'];
     return Subjects(
