@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_project/auth/GetServer.dart';
 import 'package:open_project/ProcessingToken.dart';
+import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/home/ShowProjects.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 
@@ -28,15 +29,12 @@ ButtonStyle buttonToken() {
 
 class Token extends State<GetToken> {
   TextEditingController enteredToken = TextEditingController();
-  String? error, getToken;
+  String? error;
   ProcessingToken token = ProcessingToken();
 
   @override
   void initState() {
     super.initState();
-    /*if (getToken != null) {
-      enteredToken.text = getToken!;
-    }*/
   }
 
   @override
@@ -53,13 +51,13 @@ class Token extends State<GetToken> {
               child: Row(
                 children: [
                   Image(
-                    image: const AssetImage('assets/images/list.png'),
+                    image: const AssetImage(AppImages.list),
                     width: circleSize * 0.42,
                     height: screenSize.height * 0.4,
                   ),
                   SizedBox(width: circleSize * 0.03),
                   Image(
-                    image: const AssetImage('assets/images/user.png'),
+                    image: const AssetImage(AppImages.user),
                     width: circleSize * 0.5,
                     height: screenSize.height * 0.4,
                   ),

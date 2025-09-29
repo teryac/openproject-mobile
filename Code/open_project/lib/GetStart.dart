@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:open_project/auth/GetServer.dart';
+import 'package:open_project/core/constants/app_assets.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -35,7 +36,7 @@ class Start extends State<StartScreen> {
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               image: DecorationImage(
-                image: AssetImage('assets/images/emp.png'),
+                image: AssetImage(AppImages.emp),
                 fit: BoxFit.fill,
               ),
             ),
@@ -234,13 +235,13 @@ class Start extends State<StartScreen> {
                 children: [
                   Image(
                     color: Colors.white,
-                    image: AssetImage('assets/images/openproject.png'),
+                    image: AssetImage(AppImages.openProject),
                     width: 40,
                     height: 40,
                   ),
                   Image(
                     color: Colors.white,
-                    image: AssetImage('assets/images/op.png'),
+                    image: AssetImage(AppImages.op),
                     width: 70,
                     height: 70,
                   ),

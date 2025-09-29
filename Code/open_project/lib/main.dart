@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/GetStart.dart';
 import 'package:open_project/GetToken.dart';
+import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/themes.dart';
 import 'package:open_project/core/util/bloc_observer.dart';
@@ -19,9 +20,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*SharedPreferences.getInstance().then(
-      (value) => value.clear(),
-    );*/
     return MaterialApp.router(
       routerConfig: getAppRouter(),
       debugShowCheckedModeBanner: false,
@@ -137,12 +135,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              image: AssetImage('assets/images/openproject.png'),
+              image: AssetImage(AppImages.openProject),
               width: 75,
               height: 75,
             ),
             Image(
-              image: AssetImage('assets/images/op.png'),
+              image: AssetImage(AppImages.op),
               width: 150,
               height: 125,
             ),
