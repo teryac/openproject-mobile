@@ -3,10 +3,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:open_project/work_packages/DetailOfProject.dart';
-import 'package:open_project/ProcessingProjects.dart';
-import 'package:open_project/Project.dart';
-import 'package:open_project/Property.dart';
+import 'package:open_project/models/project.dart';
+import 'package:open_project/models/property.dart';
+import 'package:open_project/work_packages/detail_of_project.dart';
+import 'package:open_project/processing_projects.dart';
 import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +24,7 @@ class Show extends State<ShowScreen> {
   late String name, user = "";
   late int id, idUser;
   List<Property> listOfUser = [];
-  late var description;
+  late String description;
   String? apikey;
   String? token;
   String username = 'apikey';

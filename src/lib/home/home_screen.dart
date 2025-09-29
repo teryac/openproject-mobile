@@ -51,8 +51,11 @@ class HomeScreen extends StatelessWidget {
                   SvgPicture.asset(
                     AppIcons.arrowUp,
                     width: 24.0,
-                    height: 24,
-                    color: AppColors.iconPrimary,
+                    height: 24.0,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.iconPrimary,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ],
               ),

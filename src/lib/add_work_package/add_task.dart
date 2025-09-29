@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, no_logic_in_create_state, file_names
+// ignore_for_file: must_be_immutable, no_logic_in_create_state, file_names, prefer_typing_uninitialized_variables, strict_top_level_inference
 
 import 'dart:convert';
 
@@ -8,9 +8,9 @@ import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:open_project/work_packages/DetailOfProject.dart';
-import 'package:open_project/GetStart.dart';
-import 'package:open_project/Property.dart';
+import 'package:open_project/models/property.dart';
+import 'package:open_project/work_packages/detail_of_project.dart';
+import 'package:open_project/get_start.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 
@@ -262,7 +262,6 @@ class AddTask extends State<AddScreen> {
       "customField1": "Custom Value",\n    
       "customField2": 123,\n    
       "percentageDone": "$percentageDone"\n}""";
-    print(newTask);
     await http.post(
       Uri.parse("https://op.yaman-ka.com/api/v3/projects/$id/work_packages"),
       body: newTask,
@@ -271,7 +270,6 @@ class AddTask extends State<AddScreen> {
         'authorization': basicAuth
       },
     ).then((response) {
-      print(response.body);
       if (response.statusCode == 201) {
         Fluttertoast.showToast(msg: 'Task has been added');
       } else {
@@ -425,9 +423,8 @@ class AddTask extends State<AddScreen> {
                               ),
                               scrollbarTheme: ScrollbarThemeData(
                                 radius: const Radius.circular(40),
-                                thickness: MaterialStateProperty.all(6),
-                                thumbVisibility:
-                                    MaterialStateProperty.all(true),
+                                thickness: WidgetStateProperty.all(6),
+                                thumbVisibility: WidgetStateProperty.all(true),
                               ),
                             ),
                             menuItemStyleData: const MenuItemStyleData(
@@ -535,8 +532,8 @@ class AddTask extends State<AddScreen> {
                           ),
                           scrollbarTheme: ScrollbarThemeData(
                             radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
+                            thickness: WidgetStateProperty.all(6),
+                            thumbVisibility: WidgetStateProperty.all(true),
                           ),
                         ),
                         menuItemStyleData: const MenuItemStyleData(
@@ -735,9 +732,9 @@ class AddTask extends State<AddScreen> {
                                 ),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
+                                  thickness: WidgetStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -830,9 +827,9 @@ class AddTask extends State<AddScreen> {
                                 ),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
+                                  thickness: WidgetStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -1125,10 +1122,9 @@ class AddTask extends State<AddScreen> {
                                         //offset: const Offset(0, 0),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(40),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
+                                          thickness: WidgetStateProperty.all(6),
                                           thumbVisibility:
-                                              MaterialStateProperty.all(true),
+                                              WidgetStateProperty.all(true),
                                         ),
                                       ),
                                       menuItemStyleData:
@@ -1237,10 +1233,9 @@ class AddTask extends State<AddScreen> {
                                         //offset: const Offset(0, 0),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(40),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
+                                          thickness: WidgetStateProperty.all(6),
                                           thumbVisibility:
-                                              MaterialStateProperty.all(true),
+                                              WidgetStateProperty.all(true),
                                         ),
                                       ),
                                       menuItemStyleData:
@@ -1342,9 +1337,9 @@ class AddTask extends State<AddScreen> {
                                 //offset: const Offset(0, 0),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
+                                  thickness: WidgetStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(

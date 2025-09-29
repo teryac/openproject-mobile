@@ -3,7 +3,7 @@
 class Property {
   String name;
   int id;
-  var color;
+  String color;
   Property({required this.id, required this.name, required this.color});
 
   @override

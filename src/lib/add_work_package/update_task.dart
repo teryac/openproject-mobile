@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, no_logic_in_create_state
 
 import 'dart:convert';
 
@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
-import 'package:open_project/work_packages/DetailOfProject.dart';
-import 'package:open_project/GetStart.dart';
-import 'package:open_project/Property.dart';
+import 'package:open_project/models/property.dart';
+import 'package:open_project/work_packages/detail_of_project.dart';
+import 'package:open_project/get_start.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +22,7 @@ class UpdateScreen extends StatefulWidget {
   int idProject;
   String name;
 
-  UpdateScreen(this.idProject, this.id, this.name);
+  UpdateScreen(this.idProject, this.id, this.name, {super.key});
 
   @override
   State<UpdateScreen> createState() => UpdateTasks(idProject, id, name);
@@ -587,8 +587,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: getColorFromHex(
-                                              item.color ?? '#000000'),
+                                          color: getColorFromHex(item.color),
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -702,8 +701,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: getColorFromHex(
-                                                item.color ?? '#000000'),
+                                            color: getColorFromHex(item.color),
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1496,8 +1494,7 @@ class UpdateTasks extends State<UpdateScreen> {
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: getColorFromHex(
-                                                item.color ?? '#000000'),
+                                            color: getColorFromHex(item.color),
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),

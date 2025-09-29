@@ -103,7 +103,10 @@ class ProjectTile extends StatelessWidget {
                             AppIcons.arrowRight,
                             width: 14.0,
                             height: 20,
-                            color: AppColors.iconSecondary,
+                            colorFilter: const ColorFilter.mode(
+                              AppColors.iconSecondary,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ],
                       ),
@@ -200,7 +203,10 @@ class ProjectTile extends StatelessWidget {
                         AppIcons.arrowRight,
                         width: 14.0,
                         height: 20,
-                        color: AppColors.iconSecondary,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.iconSecondary,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ],
                   ),

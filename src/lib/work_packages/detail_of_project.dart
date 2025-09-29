@@ -1,13 +1,11 @@
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
-import 'package:open_project/add_work_package/AddTask.dart';
-import 'package:open_project/ProcessingTasks.dart';
-import 'package:open_project/home/ShowProjects.dart';
-import 'package:open_project/add_work_package/UpdateTask.dart';
-import 'package:badges/badges.dart' as badges;
-
-import '../Subjects.dart';
+import 'package:open_project/models/subjects.dart';
+import 'package:open_project/add_work_package/add_task.dart';
+import 'package:open_project/processing_tasks.dart';
+import 'package:open_project/home/show_projects.dart';
+import 'package:open_project/add_work_package/update_task.dart';
 
 // ignore: must_be_immutable
 class StateDetail extends StatefulWidget {
@@ -17,6 +15,7 @@ class StateDetail extends StatefulWidget {
   StateDetail(this.id, this.name, {super.key});
 
   @override
+  // ignore: no_logic_in_create_state
   State<StateDetail> createState() => Detail(id, name);
 }
 
@@ -36,14 +35,10 @@ class Detail extends State<StateDetail> {
   }
 
   void fetchTasks() async {
-    try {
-      List<Subjects> project = await tasks.getTask(id);
-      setState(() {
-        dataOfSubject = project;
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
+    List<Subjects> project = await tasks.getTask(id);
+    setState(() {
+      dataOfSubject = project;
+    });
   }
 
   @override
@@ -122,7 +117,7 @@ class Detail extends State<StateDetail> {
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold)),
                               subtitle: Text(desc),
-                              trailing: badges.Badge(
+                              /*trailing: badges.Badge(
                                 badgeContent: Text(
                                   dataOfSubject[index].status,
                                   style: const TextStyle(
@@ -140,7 +135,7 @@ class Detail extends State<StateDetail> {
                                   borderRadius: BorderRadius.circular(20.0),
                                   elevation: 0,
                                 ),
-                              ),
+                              ),*/
                               leading: CircleAvatar(
                                 backgroundColor: Colors.lightBlueAccent,
                                 child: Text(
