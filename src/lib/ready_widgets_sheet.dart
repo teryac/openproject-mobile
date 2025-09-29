@@ -1,11 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:open_project/auth/widgets/connection_state_widget.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/app_chip.dart';
+import 'package:open_project/core/widgets/app_gallery_widget.dart';
+import 'package:open_project/core/widgets/app_image.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/home/widgets/members_list.dart';
@@ -30,10 +35,10 @@ class ReadyWidgetsSheet extends StatelessWidget {
           wrapContent: true,
           onPressed: () {},
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -153,6 +158,10 @@ class ReadyWidgetsSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  const Placeholder(
+                    fallbackHeight: 75,
+                  ),
+                  const SizedBox(height: 16),
                   AppTextFormField.filled(
                     hint: 'Search for Projects..',
                     prefixIcon: Padding(
@@ -171,8 +180,57 @@ class ReadyWidgetsSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
+                    'Page View',
+                    style: AppTextStyles.extraLarge,
+                  ),
+                  const SizedBox(height: 24),
+                  AspectRatio(
+                    aspectRatio: 1.423, // Based on aspect ratio of used images
+                    child: AppGalleryWidget(
+                      itemCount: 3,
+                      itemBuilder: (index) {
+                        return AppAssetImage(
+                          assetPath: AppImages.howToGetApiToken(index + 1),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Date Picker',
+                    style: AppTextStyles.extraLarge,
+                  ),
+                  const SizedBox(height: 24),
+                  const Placeholder(
+                    fallbackHeight: 200,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Tab Bar',
+                    style: AppTextStyles.extraLarge,
+                  ),
+                  const SizedBox(height: 24),
+                  const Placeholder(
+                    fallbackHeight: 200,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Progress Bar',
+                    style: AppTextStyles.extraLarge,
+                  ),
+                  const SizedBox(height: 24),
+                  const Placeholder(
+                    fallbackHeight: 200,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
                     'Miscellaneous',
                     style: AppTextStyles.extraLarge,
+                  ),
+                  const SizedBox(height: 24),
+                  const ConnectionStateWidget(
+                    connected: false,
                   ),
                   const SizedBox(height: 24),
                   Container(
@@ -194,6 +252,61 @@ class ReadyWidgetsSheet extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 24),
+                  Stack(
+                    children: [
+                      AppAssetImage(
+                        assetPath: AppImages.emp,
+                        clipBehavior: Clip.antiAlias,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      Positioned(
+                        top: 20,
+                        right: 0,
+                        left: 0,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: ClipRRect(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(360),
+                                  color: const Color(0x99262B2C),
+                                ),
+                                child: const SizedBox(
+                                  width: 140,
+                                  height: 45,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        child: ClipRRect(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: const Color(0x99262B2C),
+                              ),
+                              child: const SizedBox(
+                                width: double.infinity,
+                                height: 205,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

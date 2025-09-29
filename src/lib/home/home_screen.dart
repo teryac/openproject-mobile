@@ -6,12 +6,15 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/home/widgets/home_header.dart';
 import 'package:open_project/home/widgets/project_tile.dart';
+import 'package:open_project/ready_widgets_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return const ReadyWidgetsSheet();
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
