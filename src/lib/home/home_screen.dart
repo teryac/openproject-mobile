@@ -12,7 +12,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //List<Project> data = [Project(description: "No description", name: "Secrum", id: 1),Project(description: "No description", name: "Demo", id: 2),Project(description: "No description", name: "Secrum", id: 1),];
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -61,9 +60,6 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   itemCount: 1,
                   itemBuilder: (BuildContext ctx, int index) {
-                    /*name = data[index].name;
-                      description = data[index].description;
-                      id = data[index].id;*/
                     return const ProjectTile();
                   },
                 ),
@@ -92,9 +88,6 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   itemCount: 1,
                   itemBuilder: (BuildContext ctx, int index) {
-                    /*name = data[index].name;
-                      description = data[index].description;
-                      id = data[index].id;*/
                     return const ProjectTile();
                   },
                 ),
