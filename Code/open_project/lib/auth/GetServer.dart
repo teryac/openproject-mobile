@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:open_project/get_token.dart';
-import 'package:open_project/processing_server.dart';
+import 'package:open_project/work_packages/logic/processing_server.dart';
 
 class GetServer extends StatefulWidget {
   const GetServer({super.key});
