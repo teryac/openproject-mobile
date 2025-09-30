@@ -11,13 +11,42 @@ import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/app_chip.dart';
 import 'package:open_project/core/widgets/app_gallery_widget.dart';
 import 'package:open_project/core/widgets/app_image.dart';
+import 'package:open_project/core/widgets/app_progress_bar.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
+import 'package:open_project/core/widgets/bottom_tab_bar.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/home/widgets/members_list.dart';
 import 'package:open_project/work_packages/widgets/work_packages_popup_menu.dart';
 
-class ReadyWidgetsSheet extends StatelessWidget {
+class ReadyWidgetsSheet extends StatefulWidget {
   const ReadyWidgetsSheet({super.key});
+
+  @override
+  State<ReadyWidgetsSheet> createState() => _ReadyWidgetsSheetState();
+}
+
+class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
+  double progressBarValue = 0;
+  int tabBarIndex = 0;
+  bool isConnected = false;
+
+  void changeProgressBarValue(double value) {
+    setState(() {
+      progressBarValue = value;
+    });
+  }
+
+  void changeTabBarIndex(int index) {
+    setState(() {
+      tabBarIndex = index;
+    });
+  }
+
+  void toggleConnection() {
+    setState(() {
+      isConnected = !isConnected;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,8 +240,36 @@ class ReadyWidgetsSheet extends StatelessWidget {
                     style: AppTextStyles.extraLarge,
                   ),
                   const SizedBox(height: 24),
-                  const Placeholder(
-                    fallbackHeight: 200,
+                  Stack(
+                    children: [
+                      AppNetworkImage(
+                        imageUrl:
+                            'https://images.photowall.com/products/42556/summer-landscape-with-river.jpg?h=699&q=85',
+                        height: 100,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        right: 16,
+                        left: 16,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: BottomTabBar(
+                            index: tabBarIndex,
+                            items: const [
+                              'Overview',
+                              'People',
+                              'Schedule',
+                              'Properties',
+                            ],
+                            onTap: changeTabBarIndex,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -220,8 +277,10 @@ class ReadyWidgetsSheet extends StatelessWidget {
                     style: AppTextStyles.extraLarge,
                   ),
                   const SizedBox(height: 24),
-                  const Placeholder(
-                    fallbackHeight: 200,
+                  AppProgressBar(
+                    value: progressBarValue,
+                    onChanged: changeProgressBarValue,
+                    // showDivisions: false,
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -229,8 +288,11 @@ class ReadyWidgetsSheet extends StatelessWidget {
                     style: AppTextStyles.extraLarge,
                   ),
                   const SizedBox(height: 24),
-                  const ConnectionStateWidget(
-                    connected: false,
+                  GestureDetector(
+                    onTap: toggleConnection,
+                    child: ConnectionStateWidget(
+                      connected: isConnected,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Container(
@@ -267,7 +329,8 @@ class ReadyWidgetsSheet extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.center,
                           child: ClipRRect(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            clipBehavior: Clip.antiAlias,
+                            borderRadius: BorderRadius.circular(360),
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                               child: Container(
@@ -289,7 +352,8 @@ class ReadyWidgetsSheet extends StatelessWidget {
                         right: 0,
                         left: 0,
                         child: ClipRRect(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          clipBehavior: Clip.antiAlias,
+                          borderRadius: BorderRadius.circular(16),
                           child: BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                             child: Container(
