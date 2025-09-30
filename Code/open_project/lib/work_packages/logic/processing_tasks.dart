@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
-import 'package:open_project/Models/subjects.dart';
+import 'package:open_project/models/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
