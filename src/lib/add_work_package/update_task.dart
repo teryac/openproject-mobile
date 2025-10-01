@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, no_logic_in_create_state
+// ignore_for_file: must_be_immutable, no_logic_in_create_state, prefer_typing_uninitialized_variables, strict_top_level_inference
 
 import 'dart:convert';
 
@@ -146,7 +146,6 @@ class UpdateTasks extends State<UpdateScreen> {
             .toList()
             .cast<Property>();
 
-        print(statusList);
         if (mounted) {
           setState(() {
             listOfStatus = statusList;
@@ -210,8 +209,6 @@ class UpdateTasks extends State<UpdateScreen> {
         'authorization': basicAuth
       },
     ).then((response) {
-      print(newTask);
-      print(response.body);
       if (response.statusCode == 200) {
         getTask();
         Fluttertoast.showToast(msg: 'Task of $id has been updated');
@@ -629,9 +626,8 @@ class UpdateTasks extends State<UpdateScreen> {
                               ),
                               scrollbarTheme: ScrollbarThemeData(
                                 radius: const Radius.circular(40),
-                                thickness: MaterialStateProperty.all(6),
-                                thumbVisibility:
-                                    MaterialStateProperty.all(true),
+                                thickness: WidgetStateProperty.all(6),
+                                thumbVisibility: WidgetStateProperty.all(true),
                               ),
                             ),
                             menuItemStyleData: const MenuItemStyleData(
@@ -745,8 +741,8 @@ class UpdateTasks extends State<UpdateScreen> {
                             ),
                             scrollbarTheme: ScrollbarThemeData(
                               radius: const Radius.circular(40),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
+                              thickness: WidgetStateProperty.all(6),
+                              thumbVisibility: WidgetStateProperty.all(true),
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
@@ -947,9 +943,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                 ),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
+                                  thickness: WidgetStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -1042,9 +1038,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                 ),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
+                                  thickness: WidgetStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -1331,9 +1327,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                     //offset: const Offset(0, 0),
                                     scrollbarTheme: ScrollbarThemeData(
                                       radius: const Radius.circular(40),
-                                      thickness: MaterialStateProperty.all(6),
+                                      thickness: WidgetStateProperty.all(6),
                                       thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                          WidgetStateProperty.all(true),
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
@@ -1436,9 +1432,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                     //offset: const Offset(0, 0),
                                     scrollbarTheme: ScrollbarThemeData(
                                       radius: const Radius.circular(40),
-                                      thickness: MaterialStateProperty.all(6),
+                                      thickness: WidgetStateProperty.all(6),
                                       thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                          WidgetStateProperty.all(true),
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
@@ -1539,9 +1535,9 @@ class UpdateTasks extends State<UpdateScreen> {
                                 //offset: const Offset(0, 0),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
+                                  thickness: WidgetStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(

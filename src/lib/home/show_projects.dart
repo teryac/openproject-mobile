@@ -6,7 +6,7 @@ import 'package:http/http.dart';
 import 'package:open_project/models/project.dart';
 import 'package:open_project/models/property.dart';
 import 'package:open_project/work_packages/detail_of_project.dart';
-import 'package:open_project/processing_projects.dart';
+import 'package:open_project/work_packages/logic/processing_projects.dart';
 import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
