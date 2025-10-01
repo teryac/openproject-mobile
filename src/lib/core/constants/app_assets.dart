@@ -25,7 +25,7 @@ class AppImages {
   static const user = '${_directory}user$_fileType';
   static const profile = '${_directory}profile$_fileType';
 
-  static howToGetApiToken(int index) {
+  static String howToGetApiToken(int index) {
     return '${_directory}how_to_get_api_token_$index$_fileType';
   }
 }

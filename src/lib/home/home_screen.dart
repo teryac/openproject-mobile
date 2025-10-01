@@ -13,9 +13,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ReadyWidgetsSheet();
-
-    return Scaffold(
+    return ReadyWidgetsSheet();
+    /*return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -34,8 +33,10 @@ class HomeScreen extends StatelessWidget {
                     AppIcons.search,
                     width: 24,
                     height: 24,
-                    // ignore: deprecated_member_use
-                    color: AppColors.iconSecondary,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.iconSecondary,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
@@ -102,6 +103,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
+    );*/
   }
 }
