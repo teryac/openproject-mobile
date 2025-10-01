@@ -60,11 +60,10 @@ class _AppDropdownButtonState extends State<AppDropdownButton> {
               right: 4,
               left: 4,
             ),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color:
-                      isMenuVisible ? AppColors.primaryText : AppColors.border,
+                  color: AppColors.border,
                   width: 1,
                 ),
               ),
@@ -88,8 +87,8 @@ class _AppDropdownButtonState extends State<AppDropdownButton> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: AnimatedRotation(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.fastOutSlowIn,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOutCubic,
                       turns: isMenuVisible ? 0 : 0.5,
                       child: SvgPicture.asset(
                         AppIcons.arrowUp,
@@ -132,7 +131,7 @@ class _AppDropdownMenuState extends State<_AppDropdownMenu> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.background,
@@ -172,18 +171,18 @@ class _AppDropdownMenuState extends State<_AppDropdownMenu> {
             widget.items.length,
             (index) {
               final text = widget.items[index];
-              final style = AppTextStyles.small.copyWith(
-                fontWeight: FontWeight.w500,
+              final style = AppTextStyles.medium.copyWith(
+                fontWeight: FontWeight.w400,
               );
               final selected = widget.items[index] == widget.value;
-      
+
               onTap() {
                 if (_disableInteraction) return;
                 widget.onChanged(widget.items[index]);
                 _disableInteraction = true;
                 widget.toggleMenu(false);
               }
-      
+
               return Column(
                 children: [
                   Builder(

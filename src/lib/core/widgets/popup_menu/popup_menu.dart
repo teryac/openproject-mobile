@@ -141,7 +141,10 @@ class _AppPopupMenuState extends State<AppPopupMenu>
 
     if (widget.dropdown) {
       if (menuDirection == PopupMenuDirection.upwards) {
-        return (follower: Alignment.bottomCenter, target: Alignment.topCenter);
+        return (
+          follower: Alignment.bottomCenter,
+          target: Alignment.topCenter,
+        );
       } else {
         return (follower: Alignment.topCenter, target: Alignment.bottomCenter);
       }
@@ -255,7 +258,7 @@ class AppMenuItem extends StatelessWidget {
     );
 
     return Material(
-      color: selected ? AppColors.handle : AppColors.background,
+      color: selected ? AppColors.handle.withAlpha(150) : AppColors.background,
       borderRadius: borderRadius,
       child: InkWell(
         onTap: onTap,
