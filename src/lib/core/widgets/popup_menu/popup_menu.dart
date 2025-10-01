@@ -12,20 +12,26 @@ enum PopupMenuDirection {
   downwardsClipped, // Downwards from the bottom of the widget (for clipped widgets at the top)
 }
 
-class AppMenu extends StatefulWidget {
+class AppPopupMenu extends StatefulWidget {
   final Widget Function(void Function(bool) toggleMenu) child;
   final Widget Function(void Function(bool) toggleMenu) menu;
-  const AppMenu({
+  final void Function(bool visible)? onMenuToggled;
+  // Changes popup alignment behavior
+  final bool dropdown;
+  const AppPopupMenu({
     super.key,
     required this.child,
     required this.menu,
+    this.onMenuToggled,
+    this.dropdown = false,
   });
 
   @override
-  State<AppMenu> createState() => _AppMenuState();
+  State<AppPopupMenu> createState() => _AppPopupMenuState();
 }
 
-class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
+class _AppPopupMenuState extends State<AppPopupMenu>
+    with SingleTickerProviderStateMixin {
   bool _isMenuVisible = false;
   late PopupMenuAnimation _animationController;
   ({Alignment follower, Alignment target}) menuAlignment = (
@@ -59,8 +65,15 @@ class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
       setState(() {
         _isMenuVisible = visible;
       });
+      if (widget.onMenuToggled != null) {
+        widget.onMenuToggled!(visible);
+      }
     } else {
       _animationController.reverse();
+
+      if (widget.onMenuToggled != null) {
+        widget.onMenuToggled!(false);
+      }
 
       Future.delayed(
         _animationController.duration,
@@ -95,10 +108,13 @@ class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
     final screenBottom = screenSize.height - screenPadding.bottom;
     final usableScreenHeight = screenBottom - screenTop;
 
+    final tolerance = widget.dropdown ? 0.30 : 0.15;
+
     // Check if the widget is clipped at the top of the screen.
     final isClippedAtTop = widgetTopY <
         screenTop +
-            (usableScreenHeight * 0.15); // Use a 15% tolerance from the top.
+            (usableScreenHeight *
+                tolerance); // Use a x% tolerance from the top.
 
     if (isClippedAtTop) {
       // Case 1: Widget is at the very top and possibly clipped.
@@ -107,7 +123,7 @@ class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
     }
 
     // Calculate a threshold to determine if there's enough space below.
-    final threshold = screenBottom - (usableScreenHeight * 0.15);
+    final threshold = screenBottom - (usableScreenHeight * tolerance);
 
     if (widgetBottomY > threshold) {
       // Case 2: Widget is near the bottom of the screen.
@@ -122,6 +138,14 @@ class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
 
   ({Alignment follower, Alignment target}) _getMenuAlignment() {
     final menuDirection = _showMenuDirection();
+
+    if (widget.dropdown) {
+      if (menuDirection == PopupMenuDirection.upwards) {
+        return (follower: Alignment.bottomCenter, target: Alignment.topCenter);
+      } else {
+        return (follower: Alignment.topCenter, target: Alignment.bottomCenter);
+      }
+    }
 
     if (menuDirection == PopupMenuDirection.upwards) {
       return (follower: Alignment.bottomRight, target: Alignment.topRight);
@@ -150,10 +174,23 @@ class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
               follower: menuAlignment.follower,
               target: menuAlignment.target,
             ),
-            portalFollower: ScaleTransition(
-              scale: _animationController.scale,
-              child: widget.menu(_toggleMenu),
-            ),
+            portalFollower: Builder(builder: (context) {
+              return ScaleTransition(
+                scale: _animationController.scale,
+                alignment: () {
+                  if (widget.dropdown) {
+                    if (menuAlignment.target == Alignment.topCenter) {
+                      return Alignment.bottomCenter;
+                    } else {
+                      return Alignment.topCenter;
+                    }
+                  }
+
+                  return Alignment.center;
+                }(),
+                child: widget.menu(_toggleMenu),
+              );
+            }),
             child: widget.child(_toggleMenu),
           );
         },
@@ -163,36 +200,44 @@ class _AppMenuState extends State<AppMenu> with SingleTickerProviderStateMixin {
 }
 
 class AppMenuItem extends StatelessWidget {
-  final Widget icon;
   final String text;
+  final Widget? icon;
+  final TextStyle? style;
   final void Function() onTap;
+  final bool selected;
   final Color? foregroundColor;
   final bool _first;
   final bool _last;
 
   const AppMenuItem({
     super.key,
-    required this.icon,
+    this.icon,
     required this.text,
     required this.onTap,
+    this.selected = false,
+    this.style,
     this.foregroundColor,
   })  : _first = false,
         _last = false;
 
   const AppMenuItem.first({
     super.key,
-    required this.icon,
+    this.icon,
     required this.text,
     required this.onTap,
+    this.selected = false,
+    this.style,
     this.foregroundColor,
   })  : _first = true,
         _last = false;
 
   const AppMenuItem.last({
     super.key,
-    required this.icon,
+    this.icon,
     required this.text,
     required this.onTap,
+    this.selected = false,
+    this.style,
     this.foregroundColor,
   })  : _first = false,
         _last = true;
@@ -210,7 +255,7 @@ class AppMenuItem extends StatelessWidget {
     );
 
     return Material(
-      color: AppColors.background,
+      color: selected ? AppColors.handle : AppColors.background,
       borderRadius: borderRadius,
       child: InkWell(
         onTap: onTap,
@@ -222,14 +267,19 @@ class AppMenuItem extends StatelessWidget {
           width: double.infinity,
           child: Row(
             children: [
-              icon,
-              const SizedBox(width: 12),
+              if (icon != null) ...[
+                icon!,
+                const SizedBox(width: 12),
+              ],
               Text(
                 text,
-                style: AppTextStyles.extraSmall.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: foregroundColor ?? AppColors.primaryText,
-                ),
+                style: style?.copyWith(
+                      color: foregroundColor ?? AppColors.primaryText,
+                    ) ??
+                    AppTextStyles.extraSmall.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: foregroundColor ?? AppColors.primaryText,
+                    ),
               ),
             ],
           ),

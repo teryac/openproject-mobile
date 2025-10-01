@@ -9,6 +9,7 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/app_chip.dart';
+import 'package:open_project/core/widgets/app_dropdown/app_dropdown_button.dart';
 import 'package:open_project/core/widgets/app_gallery_widget.dart';
 import 'package:open_project/core/widgets/app_image.dart';
 import 'package:open_project/core/widgets/app_progress_bar.dart';
@@ -29,6 +30,13 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
   double progressBarValue = 0;
   int tabBarIndex = 0;
   bool isConnected = false;
+  String? selectedMember;
+  static const List<String> members = [
+    'Yaman Kalaji',
+    'Shaaban Shaheen',
+    'Majd Haj Hmidi',
+    'Mohammad Haj Hmidi',
+  ];
 
   void changeProgressBarValue(double value) {
     setState(() {
@@ -45,6 +53,12 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
   void toggleConnection() {
     setState(() {
       isConnected = !isConnected;
+    });
+  }
+
+  void changeSelectedMember(String member) {
+    setState(() {
+      selectedMember = member;
     });
   }
 
@@ -127,7 +141,7 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  AppMenu(
+                  AppPopupMenu(
                     menu: (toggleMenu) {
                       return WorkPackagesPopupMenu(toggleMenu: toggleMenu);
                     },
@@ -187,8 +201,11 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Placeholder(
-                    fallbackHeight: 75,
+                  AppDropdownButton(
+                    items: members,
+                    value: selectedMember,
+                    hint: 'Accountable',
+                    onChanged: changeSelectedMember,
                   ),
                   const SizedBox(height: 16),
                   AppTextFormField.filled(
