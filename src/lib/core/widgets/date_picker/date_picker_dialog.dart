@@ -1,10 +1,14 @@
 import 'dart:math' as math;
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/date_format.dart';
 
 // The M3 sizes are coming from the tokens, but are hand coded,
 // as the current token DB does not contain landscape versions.
@@ -1727,7 +1731,7 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
     }
 
     return Dialog(
-      insetPadding: insetPadding,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       backgroundColor:
           datePickerTheme.backgroundColor ?? defaults.backgroundColor,
       elevation: elevation,
@@ -1735,18 +1739,12 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
       surfaceTintColor: surfaceTintColor,
       shape: shape,
       clipBehavior: Clip.antiAlias,
-      child: AnimatedContainer(
-        width: size.width,
-        height: size.height,
-        duration: _dialogSizeAnimationDuration,
-        curve: Curves.easeIn,
-        child: MediaQuery.withClampedTextScaling(
-          maxScaleFactor: _kMaxRangeTextScaleFactor,
-          child: Builder(
-            builder: (BuildContext context) {
-              return contents;
-            },
-          ),
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: _kMaxRangeTextScaleFactor,
+        child: Builder(
+          builder: (BuildContext context) {
+            return contents;
+          },
         ),
       ),
     );
@@ -1794,8 +1792,7 @@ class _CalendarRangePickerDialog extends StatelessWidget {
     final Orientation orientation = MediaQuery.orientationOf(context);
     final DatePickerThemeData themeData = DatePickerTheme.of(context);
     final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
-    final Color? dialogBackground = themeData.rangePickerBackgroundColor ??
-        defaults.rangePickerBackgroundColor;
+    final Color? dialogBackground = AppColors.projectBackground;
     final Color? headerBackground =
         themeData.rangePickerHeaderBackgroundColor ??
             defaults.rangePickerHeaderBackgroundColor;
@@ -1835,93 +1832,87 @@ class _CalendarRangePickerDialog extends StatelessWidget {
     );
     final IconThemeData iconTheme = IconThemeData(color: headerForeground);
 
-    return SafeArea(
-      top: false,
-      left: false,
-      right: false,
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: iconTheme,
-          actionsIconTheme: iconTheme,
-          elevation: useMaterial3 ? 0 : null,
-          scrolledUnderElevation: useMaterial3 ? 0 : null,
-          backgroundColor: headerBackground,
-          leading: CloseButton(onPressed: onCancel),
-          actions: <Widget>[
-            if (orientation == Orientation.landscape && entryModeButton != null)
-              entryModeButton!,
-            TextButton(
-              style: buttonStyle,
-              onPressed: onConfirm,
-              child: Text(confirmText),
-            ),
-            const SizedBox(width: 8),
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size(double.infinity, 64),
-            child: Row(
-              children: <Widget>[
-                SizedBox(
-                    width: MediaQuery.sizeOf(context).width < 360 ? 42 : 72),
-                Expanded(
-                  child: Semantics(
-                    label: '$helpText $startDateText to $endDateText',
-                    excludeSemantics: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          helpText,
-                          style: headlineHelpStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              startDateText,
-                              style: startDateStyle,
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: iconTheme,
+        actionsIconTheme: iconTheme,
+        elevation: useMaterial3 ? 0 : null,
+        scrolledUnderElevation: useMaterial3 ? 0 : null,
+        backgroundColor: headerBackground,
+        leading: CloseButton(onPressed: onCancel),
+        actions: <Widget>[
+          if (orientation == Orientation.landscape && entryModeButton != null)
+            entryModeButton!,
+          TextButton(
+            style: buttonStyle,
+            onPressed: onConfirm,
+            child: Text(confirmText),
+          ),
+          const SizedBox(width: 8),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size(double.infinity, 64),
+          child: Row(
+            children: <Widget>[
+              SizedBox(width: MediaQuery.sizeOf(context).width < 360 ? 42 : 72),
+              Expanded(
+                child: Semantics(
+                  label: '$helpText $startDateText to $endDateText',
+                  excludeSemantics: true,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        helpText,
+                        style: headlineHelpStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            startDateText,
+                            style: startDateStyle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(' – ', style: startDateStyle),
+                          Flexible(
+                            child: Text(
+                              endDateText,
+                              style: endDateStyle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Text(' – ', style: startDateStyle),
-                            Flexible(
-                              child: Text(
-                                endDateText,
-                                style: endDateStyle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
-                if (orientation == Orientation.portrait &&
-                    entryModeButton != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: IconTheme(data: iconTheme, child: entryModeButton!),
-                  ),
-              ],
-            ),
+              ),
+              if (orientation == Orientation.portrait &&
+                  entryModeButton != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: IconTheme(data: iconTheme, child: entryModeButton!),
+                ),
+            ],
           ),
         ),
-        backgroundColor: dialogBackground,
-        body: _CalendarDateRangePicker(
-          initialStartDate: selectedStartDate,
-          initialEndDate: selectedEndDate,
-          firstDate: firstDate,
-          lastDate: lastDate,
-          currentDate: currentDate,
-          onStartDateChanged: onStartDateChanged,
-          onEndDateChanged: onEndDateChanged,
-          selectableDayPredicate: selectableDayPredicate,
-        ),
+      ),
+      backgroundColor: dialogBackground,
+      body: _CalendarDateRangePicker(
+        initialStartDate: selectedStartDate,
+        initialEndDate: selectedEndDate,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        currentDate: currentDate,
+        onStartDateChanged: onStartDateChanged,
+        onEndDateChanged: onEndDateChanged,
+        selectableDayPredicate: selectableDayPredicate,
       ),
     );
   }
@@ -2002,9 +1993,10 @@ class _CalendarDateRangePickerState extends State<_CalendarDateRangePicker> {
   DateTime? _startDate;
   DateTime? _endDate;
   int _initialMonthIndex = 0;
-  final _pageViewController = PageController();
+  late final PageController _pageViewController;
+  int _currentPage = 0;
   // late ScrollController _controller;
-  late bool _showWeekBottomDivider;
+  // late bool _showWeekBottomDivider;
 
   @override
   void initState() {
@@ -2023,13 +2015,45 @@ class _CalendarDateRangePickerState extends State<_CalendarDateRangePicker> {
       _initialMonthIndex = DateUtils.monthDelta(widget.firstDate, initialDate);
     }
 
-    _showWeekBottomDivider = _initialMonthIndex != 0;
+    _currentPage = _initialMonthIndex;
+    _pageViewController = PageController(initialPage: _currentPage);
+
+    // _showWeekBottomDivider = _initialMonthIndex != 0;
   }
 
   @override
   void dispose() {
     // _controller.dispose();
+    _pageViewController.dispose();
     super.dispose();
+  }
+
+  void _goToNextPage() {
+    if (_currentPage < _numberOfMonths - 1) {
+      setState(() {
+        ++_currentPage;
+      });
+
+      _pageViewController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _goToPreviousPage() {
+    if (_currentPage > 0) {
+      setState(() {
+        --_currentPage;
+      });
+
+      _pageViewController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   // void _scrollListener() {
@@ -2088,15 +2112,10 @@ class _CalendarDateRangePickerState extends State<_CalendarDateRangePicker> {
     });
   }
 
-  Widget _buildMonthItem(
-      BuildContext context, int index, bool beforeInitialMonth) {
-    final int monthIndex = beforeInitialMonth
-        ? _initialMonthIndex - index - 1
-        : _initialMonthIndex + index;
+  Widget _buildMonthItem(BuildContext context, int index) {
+    // The index from PageView.builder is all we need.
     final DateTime month =
-        DateUtils.addMonthsToMonthDate(widget.firstDate, monthIndex + 1
-            // ! Modifier added by `Majd` to normalize index
-            );
+        DateUtils.addMonthsToMonthDate(widget.firstDate, index);
     return _MonthItem(
       selectedDateStart: _startDate,
       selectedDateEnd: _endDate,
@@ -2109,88 +2128,175 @@ class _CalendarDateRangePickerState extends State<_CalendarDateRangePicker> {
     );
   }
 
+  DateTime _monthForIndex(int index) {
+    return DateUtils.addMonthsToMonthDate(widget.firstDate, index);
+  }
+
   @override
   Widget build(BuildContext context) {
     // const Key sliverAfterKey = Key('sliverAfterKey');
 
     return Column(
-      children: <Widget>[
+      mainAxisSize: MainAxisSize.min,
+      children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Month and Year Text
               Text(
-                'May 2025B',
+                MaterialLocalizations.of(context)
+                    .formatMonthYear(_monthForIndex(_currentPage)),
                 style: AppTextStyles.medium.copyWith(
                   color: AppColors.primaryText,
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  // _pageViewController.animateToPage(
-                  //   4,
-                  //   duration: const Duration(milliseconds: 300),
-                  //   curve: Curves.easeIn,
-                  // );
-                },
-                icon: const Icon(Icons.arrow_left),
-              )
+              // Navigation Buttons
+              Row(
+                children: List.generate(
+                  2,
+                  (index) {
+                    return InkWell(
+                      splashColor: AppColors.iconPrimary.withAlpha(38),
+                      highlightColor:
+                          Colors.transparent, // Removes gray overlay
+                      borderRadius: BorderRadius.circular(8),
+                      // Left arrow for PREVIOUS month
+                      onTap: index == 0 ? _goToPreviousPage : _goToNextPage,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Align(
+                          child: SvgPicture.asset(
+                            index == 0
+                                ? AppIcons.arrowLeft
+                                : AppIcons.arrowRight,
+                            // ignore: deprecated_member_use
+                            color: AppColors.iconPrimary,
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
         const _DayHeaders(),
-        // if (_showWeekBottomDivider) const Divider(height: 0),
-        Expanded(
-          child: _CalendarKeyboardNavigator(
-            firstDate: widget.firstDate,
-            lastDate: widget.lastDate,
-            initialFocusedDay:
-                _startDate ?? widget.initialStartDate ?? widget.currentDate,
-            child: PageView.builder(
-              controller: _pageViewController,
-              itemCount: _numberOfMonths,
-              itemBuilder: (context, index) {
-                return _buildMonthItem(
-                  context,
-                  index,
-                  index < _initialMonthIndex,
-                );
-              },
-            ),
-            // // In order to prevent performance issues when displaying the
-            // // correct initial month, 2 `SliverList`s are used to split the
-            // // months. The first item in the second SliverList is the initial
-            // // month to be displayed.
-            // child: CustomScrollView(
-            //   key: _scrollViewKey,
-            //   controller: _controller,
-            //   center: sliverAfterKey,
-            //   slivers: <Widget>[
-            //     SliverList(
-            //       delegate: SliverChildBuilderDelegate(
-            //         (BuildContext context, int index) =>
-            //             _buildMonthItem(context, index, true),
-            //         childCount: _initialMonthIndex,
-            //       ),
-            //     ),
-            //     SliverList(
-            //       key: sliverAfterKey,
-            //       delegate: SliverChildBuilderDelegate(
-            //         (BuildContext context, int index) =>
-            //             _buildMonthItem(context, index, false),
-            //         childCount: _numberOfMonths - _initialMonthIndex,
-            //       ),
-            //     ),
-            //   ],
-            // ),
+        _CalendarKeyboardNavigator(
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
+          initialFocusedDay:
+              _startDate ?? widget.initialStartDate ?? widget.currentDate,
+          child: ExpandablePageView.builder(
+            controller: _pageViewController,
+            itemCount: _numberOfMonths,
+            // REMOVED: reverse: true,
+            // ADDED: onPageChanged callback to sync state
+            onPageChanged: (int page) {
+              setState(() {
+                _currentPage = page;
+              });
+            },
+            itemBuilder: (BuildContext context, int index) {
+              // Call the simplified build method
+              return _buildMonthItem(context, index);
+            },
           ),
         ),
       ],
     );
+
+    // return Column(
+    //   children: <Widget>[
+    //     Padding(
+    //       padding: const EdgeInsets.symmetric(
+    //         horizontal: 16,
+    //         vertical: 16,
+    //       ),
+    //       child: Row(
+    //         children: [
+    //           Expanded(
+    //             flex: 3,
+    //             child: Text(
+    //               MaterialLocalizations.of(context)
+    //                   .formatMonthYear(_monthForIndex(_currentPage)),
+    //               style: AppTextStyles.medium.copyWith(
+    //                 color: AppColors.primaryText,
+    //                 fontWeight: FontWeight.w400,
+    //               ),
+    //             ),
+    //           ),
+    //           Flexible(
+    //             flex: 1,
+    //             child: Row(
+    //               children: [
+    //                 IconButton(
+    //                   // The pageview is reversed
+    //                   onPressed: _goToNextPage,
+    //                   icon: const Icon(Icons.arrow_left),
+    //                 ),
+    //                 IconButton(
+    //                   // The pageview is reversed
+    //                   onPressed: _goToPreviousPage,
+    //                   icon: const Icon(Icons.arrow_right),
+    //                 ),
+    //               ],
+    //             ),
+    //           )
+    //         ],
+    //       ),
+    //     ),
+    //     const _DayHeaders(),
+    //     // if (_showWeekBottomDivider) const Divider(height: 0),
+    //     Expanded(
+    //       child: _CalendarKeyboardNavigator(
+    //         firstDate: widget.firstDate,
+    //         lastDate: widget.lastDate,
+    //         initialFocusedDay:
+    //             _startDate ?? widget.initialStartDate ?? widget.currentDate,
+    //         child: PageView.builder(
+    //           controller: _pageViewController,
+    //           itemCount: _numberOfMonths,
+    //           // reverse: true,
+    //           itemBuilder: (context, index) {
+    //             return _buildMonthItem(context, index);
+    //           },
+    //         ),
+    //         // // In order to prevent performance issues when displaying the
+    //         // // correct initial month, 2 `SliverList`s are used to split the
+    //         // // months. The first item in the second SliverList is the initial
+    //         // // month to be displayed.
+    //         // child: CustomScrollView(
+    //         //   key: _scrollViewKey,
+    //         //   controller: _controller,
+    //         //   center: sliverAfterKey,
+    //         //   slivers: <Widget>[
+    //         //     SliverList(
+    //         //       delegate: SliverChildBuilderDelegate(
+    //         //         (BuildContext context, int index) =>
+    //         //             _buildMonthItem(context, index, true),
+    //         //         childCount: _initialMonthIndex,
+    //         //       ),
+    //         //     ),
+    //         //     SliverList(
+    //         //       key: sliverAfterKey,
+    //         //       delegate: SliverChildBuilderDelegate(
+    //         //         (BuildContext context, int index) =>
+    //         //             _buildMonthItem(context, index, false),
+    //         //         childCount: _numberOfMonths - _initialMonthIndex,
+    //         //       ),
+    //         //     ),
+    //         //   ],
+    //         // ),
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 }
 
@@ -2390,8 +2496,19 @@ class _DayHeaders extends StatelessWidget {
         result.length < DateTime.daysPerWeek;
         i = (i + 1) % DateTime.daysPerWeek) {
       final String weekday = localizations.narrowWeekdays[i];
-      result.add(ExcludeSemantics(
-          child: Center(child: Text(weekday, style: headerStyle))));
+      result.add(
+        ExcludeSemantics(
+          child: Center(
+            child: Text(
+              weekday,
+              style: AppTextStyles.small.copyWith(
+                color: AppColors.primaryText,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      );
     }
     return result;
   }
@@ -2811,25 +2928,6 @@ class _MonthItemState extends State<_MonthItem> {
     return Column(
       children: <Widget>[
         ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth)
-              .tighten(height: _monthItemHeaderHeight),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: ExcludeSemantics(
-                child: Text(
-                  localizations.formatMonthYear(widget.displayedMonth),
-                  style: AppTextStyles.medium.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.primaryText,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        ConstrainedBox(
           constraints:
               BoxConstraints(maxWidth: maxWidth, maxHeight: gridHeight),
           child: GridView.custom(
@@ -2923,7 +3021,10 @@ class _DayItemState extends State<_DayItem> {
     final Color highlightColor = widget.highlightColor;
 
     BoxDecoration? decoration;
-    TextStyle? itemStyle = textTheme.bodyMedium;
+    TextStyle? itemStyle = AppTextStyles.small.copyWith(
+      color: AppColors.primaryText,
+      fontWeight: FontWeight.w500,
+    );
 
     T? effectiveValue<T>(T? Function(DatePickerThemeData? theme) getProperty) {
       return getProperty(datePickerTheme) ?? getProperty(defaults);
