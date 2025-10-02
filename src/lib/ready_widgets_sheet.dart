@@ -15,6 +15,7 @@ import 'package:open_project/core/widgets/app_image.dart';
 import 'package:open_project/core/widgets/app_progress_bar.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/bottom_tab_bar.dart';
+import 'package:open_project/core/widgets/date_picker/date_picker_widget.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/home/widgets/members_list.dart';
 import 'package:open_project/work_packages/widgets/work_packages_popup_menu.dart';
@@ -31,6 +32,8 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
   int tabBarIndex = 0;
   bool isConnected = false;
   String? selectedMember;
+  DateTime? startDate;
+  DateTime? finishDate;
   static const List<String> members = [
     'Yaman Kalaji',
     'Shaaban Shaheen',
@@ -59,6 +62,13 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
   void changeSelectedMember(String member) {
     setState(() {
       selectedMember = member;
+    });
+  }
+
+  void changeDateRange(DateTime? startDate, DateTime? finishDate) {
+    setState(() {
+      this.startDate = startDate;
+      this.finishDate = finishDate;
     });
   }
 
@@ -248,8 +258,11 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     style: AppTextStyles.extraLarge,
                   ),
                   const SizedBox(height: 24),
-                  const Placeholder(
-                    fallbackHeight: 200,
+                  DatePickerWidget(
+                    startDate: startDate,
+                    finishDate: finishDate,
+                    onChanged: changeDateRange,
+                    // enabled: false,
                   ),
                   const SizedBox(height: 24),
                   Text(
