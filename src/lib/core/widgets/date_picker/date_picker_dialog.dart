@@ -1722,29 +1722,37 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
         shadowColor = datePickerTheme.shadowColor ?? defaults.shadowColor;
         surfaceTintColor =
             datePickerTheme.surfaceTintColor ?? defaults.surfaceTintColor;
-        shape = useMaterial3
-            ? datePickerTheme.shape ?? defaults.shape
-            : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape;
+        shape = const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(32.0),
+          ),
+        );
+
+        // useMaterial3
+        //     ? datePickerTheme.shape ?? defaults.shape
+        //     : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape;
 
         insetPadding =
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0);
     }
 
-    return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-      backgroundColor:
-          datePickerTheme.backgroundColor ?? defaults.backgroundColor,
-      elevation: elevation,
-      shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
-      shape: shape,
-      clipBehavior: Clip.antiAlias,
-      child: MediaQuery.withClampedTextScaling(
-        maxScaleFactor: _kMaxRangeTextScaleFactor,
-        child: Builder(
-          builder: (BuildContext context) {
-            return contents;
-          },
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+        backgroundColor: AppColors.projectBackground,
+        elevation: elevation,
+        shadowColor: shadowColor,
+        surfaceTintColor: surfaceTintColor,
+        // shape: shape,
+        // clipBehavior: Clip.antiAlias,
+        child: MediaQuery.withNoTextScaling(
+          // maxScaleFactor: _kMaxRangeTextScaleFactor,
+          child: Builder(
+            builder: (BuildContext context) {
+              return contents;
+            },
+          ),
         ),
       ),
     );
@@ -1832,88 +1840,91 @@ class _CalendarRangePickerDialog extends StatelessWidget {
     );
     final IconThemeData iconTheme = IconThemeData(color: headerForeground);
 
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: iconTheme,
-        actionsIconTheme: iconTheme,
-        elevation: useMaterial3 ? 0 : null,
-        scrolledUnderElevation: useMaterial3 ? 0 : null,
-        backgroundColor: headerBackground,
-        leading: CloseButton(onPressed: onCancel),
-        actions: <Widget>[
-          if (orientation == Orientation.landscape && entryModeButton != null)
-            entryModeButton!,
-          TextButton(
-            style: buttonStyle,
-            onPressed: onConfirm,
-            child: Text(confirmText),
-          ),
-          const SizedBox(width: 8),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size(double.infinity, 64),
-          child: Row(
-            children: <Widget>[
-              SizedBox(width: MediaQuery.sizeOf(context).width < 360 ? 42 : 72),
-              Expanded(
-                child: Semantics(
-                  label: '$helpText $startDateText to $endDateText',
-                  excludeSemantics: true,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        helpText,
-                        style: headlineHelpStyle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            startDateText,
-                            style: startDateStyle,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (orientation == Orientation.landscape && entryModeButton != null)
+              entryModeButton!,
+            TextButton(
+              style: buttonStyle,
+              onPressed: onConfirm,
+              child: Text(confirmText),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            SizedBox(width: MediaQuery.sizeOf(context).width < 360 ? 42 : 72),
+            Expanded(
+              child: Semantics(
+                label: '$helpText $startDateText to $endDateText',
+                excludeSemantics: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      helpText,
+                      style: headlineHelpStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          startDateText,
+                          style: startDateStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(' – ', style: startDateStyle),
+                        Flexible(
+                          child: Text(
+                            endDateText,
+                            style: endDateStyle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Text(' – ', style: startDateStyle),
-                          Flexible(
-                            child: Text(
-                              endDateText,
-                              style: endDateStyle,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
               ),
-              if (orientation == Orientation.portrait &&
-                  entryModeButton != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: IconTheme(data: iconTheme, child: entryModeButton!),
-                ),
-            ],
+            ),
+            if (orientation == Orientation.portrait && entryModeButton != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: IconTheme(data: iconTheme, child: entryModeButton!),
+              ),
+          ],
+        ),
+        MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          removeBottom: true,
+          child: SafeArea(
+            right: false,
+            left: false,
+            child: _CalendarDateRangePicker(
+              initialStartDate: selectedStartDate,
+              initialEndDate: selectedEndDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
+              currentDate: currentDate,
+              onStartDateChanged: onStartDateChanged,
+              onEndDateChanged: onEndDateChanged,
+              selectableDayPredicate: selectableDayPredicate,
+            ),
           ),
         ),
-      ),
-      backgroundColor: dialogBackground,
-      body: _CalendarDateRangePicker(
-        initialStartDate: selectedStartDate,
-        initialEndDate: selectedEndDate,
-        firstDate: firstDate,
-        lastDate: lastDate,
-        currentDate: currentDate,
-        onStartDateChanged: onStartDateChanged,
-        onEndDateChanged: onEndDateChanged,
-        selectableDayPredicate: selectableDayPredicate,
-      ),
+      ],
     );
   }
 }
@@ -1928,7 +1939,7 @@ const double _horizontalPadding = 8.0;
 const double _maxCalendarWidthLandscape = 384.0;
 const double _maxCalendarWidthPortrait = 480.0;
 
-/// Displays a scrollable calendar grid that allows a user to select a range
+/// Displays a pageview calendar grid that allows a user to select a range
 /// of dates.
 class _CalendarDateRangePicker extends StatefulWidget {
   /// Creates a scrollable calendar grid for picking date ranges.
