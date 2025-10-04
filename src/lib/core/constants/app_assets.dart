@@ -9,6 +9,8 @@ class AppIcons {
   static const search = '${_directory}search$_fileType';
   static const arrowUp = '${_directory}arrow-up$_fileType';
   static const arrowRight = '${_directory}arrow-right$_fileType';
+  static const arrowLeft = '${_directory}arrow-left$_fileType';
+  static const closeSquare = '${_directory}close-square$_fileType';
   static const link = '${_directory}link$_fileType';
 }
 
