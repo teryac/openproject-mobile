@@ -9,7 +9,7 @@ class AppTextStyles {
         fontWeight: FontWeight.w600,
         fontSize: 23,
         height: 1.2,
-        letterSpacing: -2,
+        letterSpacing: 0,
       );
 
   // Large

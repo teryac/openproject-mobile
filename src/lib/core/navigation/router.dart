@@ -4,6 +4,7 @@ import 'package:open_project/add_work_package/add_work_package_screen.dart';
 import 'package:open_project/auth/auth_screen.dart';
 import 'package:open_project/home/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
+import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/work_packages_screen.dart';
 
 enum AppRoutes {
@@ -11,7 +12,8 @@ enum AppRoutes {
   home(name: 'home', path: '/'),
   workPackages(name: 'workPackages', path: '/workPackges'),
   addWorkPackage(name: 'addWorkPackage', path: '/addWorkPackage'),
-  viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage');
+  viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage'),
+  welcome(name: 'welcome', path: '/welcome');
 
   const AppRoutes({required this.name, required this.path});
   final String name;
@@ -23,7 +25,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.home.path,
+      initialLocation: AppRoutes.welcome.path,
       redirect: (context, state) {
         /*
         Redirection logic:
@@ -77,6 +79,11 @@ GoRouter getAppRouter() => GoRouter(
           path: AppRoutes.viewWorkPackage.path,
           name: AppRoutes.viewWorkPackage.name,
           builder: (context, state) => const ViewWorkPackageScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.welcome.path,
+          name: AppRoutes.welcome.name,
+          builder: (context, state) => const WelcomeScreen(),
         ),
       ],
     );

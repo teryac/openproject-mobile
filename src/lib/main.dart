@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_project/get_start.dart';
 import 'package:open_project/get_token.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/themes.dart';
 import 'package:open_project/core/util/bloc_observer.dart';
+import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Timer(const Duration(seconds: 2), () {
       if (server == null) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const StartScreen()));
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()));
       } else {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const GetToken()));

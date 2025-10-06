@@ -12,6 +12,7 @@ class AppIcons {
   static const arrowLeft = '${_directory}arrow-left$_fileType';
   static const closeSquare = '${_directory}close-square$_fileType';
   static const link = '${_directory}link$_fileType';
+  static const logoWithName = '${_directory}logo-with-name$_fileType';
 }
 
 class AppImages {
@@ -27,6 +28,7 @@ class AppImages {
   static const user = '${_directory}user$_fileType';
   static const profile = '${_directory}profile$_fileType';
 
+  //logo-with-name.svg
   static String howToGetApiToken(int index) {
     return '${_directory}how_to_get_api_token_$index$_fileType';
   }

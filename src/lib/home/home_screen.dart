@@ -76,10 +76,10 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 ListView.separated(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.all(8.0),
                   itemCount: projects.length,
@@ -91,9 +91,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) =>
-                      SizedBox(
-                    height: 16.0,
-                  ),
+                      const SizedBox(height: 16.0),
                 ),
                 const SizedBox(height: 24.0),
                 Row(
