@@ -28,7 +28,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // return SearchResults();
     // return ServersDialog();
-    //return ReadyWidgetsSheet();
+    return const ReadyWidgetsSheet();
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(

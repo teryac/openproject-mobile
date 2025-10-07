@@ -19,6 +19,7 @@ class AppButton extends StatelessWidget {
   final TextStyle? textStyle;
   final bool wrapContent;
   final bool blur;
+  final bool semiTransparent;
   final _ButtonStyle _style;
 
   const AppButton({
@@ -34,6 +35,7 @@ class AppButton extends StatelessWidget {
     this.textStyle,
     this.wrapContent = false,
     this.blur = false,
+    this.semiTransparent = false,
   }) : _style = _ButtonStyle.normal;
 
   const AppButton.outlined({
@@ -49,6 +51,7 @@ class AppButton extends StatelessWidget {
     this.textStyle,
     this.wrapContent = false,
     this.blur = false,
+    this.semiTransparent = false,
   }) : _style = _ButtonStyle.outlined;
 
   const AppButton.caution({
@@ -64,6 +67,7 @@ class AppButton extends StatelessWidget {
     this.textStyle,
     this.wrapContent = false,
     this.blur = false,
+    this.semiTransparent = false,
   }) : _style = _ButtonStyle.caution;
 
   const AppButton.white({
@@ -79,6 +83,7 @@ class AppButton extends StatelessWidget {
     this.textStyle,
     this.wrapContent = false,
     this.blur = false,
+    this.semiTransparent = false,
   }) : _style = _ButtonStyle.white;
 
   Color _getBackgroundColor(BuildContext context) {
@@ -124,9 +129,10 @@ class AppButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       color: _getBackgroundColor(context).withAlpha(
         // ignore: deprecated_member_use
-        blur ? 190 : _getBackgroundColor(context).alpha,
+        semiTransparent ? 190 : _getBackgroundColor(context).alpha,
       ),
       child: ClipRRect(
+        clipBehavior: Clip.antiAlias,
         borderRadius: BorderRadius.circular(8),
         child: BackdropFilter(
           filter: ImageFilter.blur(

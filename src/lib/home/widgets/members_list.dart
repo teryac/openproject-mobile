@@ -11,22 +11,24 @@ class MembersList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 0,
-      children: [
-        // Iterate throught list with a max of 3
-        for (int i = 0; i < min(members.length, 3); i++)
-          Transform.translate(
-            offset: Offset(
-                i * (-12) * MediaQuery.textScalerOf(context).scale(1), 0),
-            child: _MemberWidget(
-              fullName: members[i].fullName,
-              color: members[i].color,
-              extraMembersOverlayCount:
-                  (members.length > 3 && i == 2) ? members.length - 3 : null,
-            ),
-          )
-      ],
+    return MediaQuery.withNoTextScaling(
+      child: Row(
+        spacing: 0,
+        children: [
+          // Iterate throught list with a max of 3
+          for (int i = 0; i < min(members.length, 3); i++)
+            Transform.translate(
+              offset: Offset(
+                  i * (-12) * MediaQuery.textScalerOf(context).scale(1), 0),
+              child: _MemberWidget(
+                fullName: members[i].fullName,
+                color: members[i].color,
+                extraMembersOverlayCount:
+                    (members.length > 3 && i == 2) ? members.length - 3 : null,
+              ),
+            )
+        ],
+      ),
     );
   }
 }

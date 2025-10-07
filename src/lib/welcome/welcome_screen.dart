@@ -106,7 +106,8 @@ class Start extends State<WelcomeScreen> {
                               onPressed: () {
                                 context.goNamed(AppRoutes.auth.name);
                               },
-                              blur: true,
+                              semiTransparent: true,
+                              // blur: true,
                             ),
                           ],
                         ),

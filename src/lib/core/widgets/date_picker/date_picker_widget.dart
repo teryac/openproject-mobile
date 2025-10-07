@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
-import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
+import 'package:open_project/core/util/date_range.dart';
 import './date_picker_dialog.dart' as custom_date_picker;
 import 'package:open_project/core/util/date_format.dart';
 
@@ -93,7 +93,7 @@ class DatePickerWidget extends StatelessWidget {
                           enabled ? 132 : 104,
                         ),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
+                          horizontal: 6,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
@@ -185,9 +185,7 @@ Future<({DateTime? startDate, DateTime? finishDate})> _showDateRangePicker({
     context: context,
     firstDate: DateTime(DateTime.now().year - 100),
     lastDate: DateTime(DateTime.now().year + 100),
-    initialDateRange: (startDate != null && finishDate != null)
-        ? DateTimeRange(start: startDate, end: finishDate)
-        : null,
+    initialDateRange: DateRange(startDate: startDate, endDate: finishDate),
     helpText: 'Set your timeline',
   );
 
@@ -195,5 +193,5 @@ Future<({DateTime? startDate, DateTime? finishDate})> _showDateRangePicker({
     return (startDate: startDate, finishDate: finishDate);
   }
 
-  return (startDate: result.start, finishDate: result.end);
+  return (startDate: result.startDate, finishDate: result.endDate);
 }
