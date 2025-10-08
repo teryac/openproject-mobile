@@ -5,6 +5,7 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:open_project/auth/widgets/connection_state_widget.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_button.dart';
@@ -240,17 +241,40 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     style: AppTextStyles.extraLarge,
                   ),
                   const SizedBox(height: 24),
-                  AspectRatio(
-                    aspectRatio: 1.423, // Based on aspect ratio of used images
-                    child: AppGalleryWidget(
-                      itemCount: 3,
-                      itemBuilder: (index) {
-                        return AppAssetImage(
-                          assetPath: AppImages.howToGetApiToken(index + 1),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                  AppGalleryWidget(
+                    itemCount: 3,
+                    itemBuilder: (index) {
+                      final instruction = AppConstants.getApiTokenInstructions(index);
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AspectRatio(
+                            aspectRatio:
+                                1.423, // Based on aspect ratio of used images
+                            child: AppAssetImage(
+                              assetPath: AppImages.howToGetApiToken(index + 1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            instruction.title,
+                            style: AppTextStyles.medium.copyWith(
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            instruction.body,
+                            style: AppTextStyles.small.copyWith(
+                              color: AppColors.descriptiveText,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   Text(

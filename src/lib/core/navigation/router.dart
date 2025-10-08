@@ -27,7 +27,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.welcome.path,
+      initialLocation: AppRoutes.home.path,
       redirect: (context, state) async {
         // Check for authentication state
         final prefs = await SharedPreferences.getInstance();

@@ -1,3 +1,4 @@
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:open_project/core/util/periodic_timer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -62,16 +63,14 @@ class _HomeImageCarouselState extends State<AppGalleryWidget> {
         height: widget.height,
         child: Column(
           children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: widget.borderRadius ?? BorderRadius.zero,
-                child: PageView(
-                  controller: pageController,
-                  children: List.generate(
-                    widget.itemCount,
-                    (index) => widget.itemBuilder(index),
-                  ).toList(),
-                ),
+            ClipRRect(
+              borderRadius: widget.borderRadius ?? BorderRadius.zero,
+              child: ExpandablePageView(
+                controller: pageController,
+                children: List.generate(
+                  widget.itemCount,
+                  (index) => widget.itemBuilder(index),
+                ).toList(),
               ),
             ),
             const SizedBox(height: 8),
