@@ -17,7 +17,7 @@ class HomeHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Hello Muhammad",
+              "Hello Mohammad",
               style: AppTextStyles.large.copyWith(color: AppColors.primaryText),
             ),
             const SizedBox(

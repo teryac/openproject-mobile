@@ -1,0 +1,163 @@
+// ignore_for_file: file_names, prefer_typing_uninitialized_variables
+
+import 'package:flutter/material.dart';
+import 'package:open_project/work_packages/logic/processing_server.dart';
+
+class GetServer extends StatefulWidget {
+  final void Function() navigateToNextPageHandler;
+  const GetServer({
+    super.key,
+    required this.navigateToNextPageHandler,
+  });
+
+  @override
+  State<StatefulWidget> createState() => Server();
+}
+
+ButtonStyle buttonServer() {
+  ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: Colors.blue,
+    elevation: 10,
+    minimumSize: const Size(360, 50),
+    padding: const EdgeInsets.symmetric(horizontal: 35),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+    ),
+  );
+
+  return raisedButtonStyle;
+}
+
+class Server extends State<GetServer> {
+  String? error;
+  var server = "";
+  TextEditingController enteredServer = TextEditingController();
+  ProcessingServer ser = ProcessingServer();
+
+  @override
+  void initState() {
+    super.initState();
+    enteredServer.text = "https://";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    double? circleSize = screenSize.width;
+
+    return Column(
+      children: [
+        Image(
+          image: const AssetImage('assets/images/Server.png'),
+          width: circleSize,
+          height: screenSize.height * 0.4,
+          fit: BoxFit.contain,
+        ),
+        const Text(
+          "Your projects, One link away",
+          style: TextStyle(
+              fontSize: 28, color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(left: 20.0),
+          child: Text(
+            "Enter the server URL to connect with your team’s workspace and access your ongoing projects.",
+            style: TextStyle(fontSize: 18, color: Colors.black54),
+          ),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        const Text(
+          "Enter the URL of your project host",
+          style: TextStyle(
+              fontSize: 23, color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(left: 20.0),
+          child: Text(
+            "You can copy the URL link of the website of your OpenProject from the browser, and paste it here.",
+            style: TextStyle(fontSize: 18, color: Colors.black54),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+          child: TextField(
+            controller: enteredServer,
+            maxLines: 1,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: "Enter Server",
+              errorText: error,
+            ),
+            onChanged: (value) {
+              server = value;
+            },
+          ),
+        ),
+        const SizedBox(height: 10.0),
+        SizedBox(
+          width: 350.0,
+          child: ElevatedButton(
+            style: buttonServer(),
+            onPressed: () {
+              if (server.isEmpty || enteredServer.text.isEmpty) {
+                error = "Please enter a valid server URL.";
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.redAccent,
+                    duration: Duration(milliseconds: 500),
+                    content: Text(
+                      "Failure :(",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                );
+                setState(() {});
+                return;
+              } else if (enteredServer.text.trim().startsWith("http://")) {
+                error = "Please enter a valid server URL starting with https.";
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    duration: Duration(milliseconds: 500),
+                    content: Text(
+                      "Failure :(",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                );
+                setState(() {});
+                return;
+              } else {
+                error = null;
+                ser.getServer(enteredServer.text);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.green,
+                    duration: Duration(milliseconds: 500),
+                    content: Text(
+                      "Connected :)",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                );
+                widget.navigateToNextPageHandler();
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => const GetToken(),
+                //   ),
+                // );
+              }
+            },
+            child: const Text(
+              "Connect to Server",
+              style: TextStyle(fontSize: 25, color: Colors.white),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16.0),
+      ],
+    );
+  }
+}

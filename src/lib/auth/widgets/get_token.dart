@@ -1,6 +1,6 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
-import 'package:open_project/auth/GetServer.dart';
+import 'package:open_project/auth/widgets/GetServer.dart';
 import 'package:open_project/work_packages/logic/processing_token.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/home/show_projects.dart';

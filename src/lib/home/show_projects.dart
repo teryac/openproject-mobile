@@ -7,7 +7,6 @@ import 'package:open_project/models/project.dart';
 import 'package:open_project/models/property.dart';
 import 'package:open_project/work_packages/detail_of_project.dart';
 import 'package:open_project/work_packages/logic/processing_projects.dart';
-import 'package:open_project/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowScreen extends StatefulWidget {
@@ -81,8 +80,8 @@ class Show extends State<ShowScreen> {
         leading: IconButton(
           color: Colors.white,
           onPressed: () {
-            Navigator.pop(context,
-                MaterialPageRoute(builder: (context) => const MyHomePage()));
+            // Navigator.pop(context,
+            //     MaterialPageRoute(builder: (context) => const MyHomePage()));
           },
           icon: const Icon(Icons.arrow_back),
         ),

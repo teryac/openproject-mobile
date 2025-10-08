@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
 
   static const List<ProjectModel> projects = [
     ProjectModel(
-        projectName: "Secrum project",
+        projectName: "Scrum project",
         status: "On track",
         statusColor: "#2EAC5D"),
     ProjectModel(
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // return SearchResults();
     // return ServersDialog();
-    return const ReadyWidgetsSheet();
+    // return const ReadyWidgetsSheet();
 
     return Scaffold(
       body: SingleChildScrollView(
