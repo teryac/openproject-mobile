@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/add_work_package/add_work_package_screen.dart';
 import 'package:open_project/auth/screens/auth_screen.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/home/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/work_packages_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppRoutes {
   auth(name: 'auth', path: '/auth'),
@@ -25,33 +27,32 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.auth.path,
-      redirect: (context, state) {
-        /*
-        Redirection logic:
-        final isLoggedIn = AuthRepo().getAuthState();
+      initialLocation: AppRoutes.welcome.path,
+      redirect: (context, state) async {
+        // Check for authentication state
+        final prefs = await SharedPreferences.getInstance();
+        final cachedServer =
+            prefs.getString(AppConstants.sharedPreferencesServerKey);
+        final isLoggedIn = cachedServer != null && cachedServer.isNotEmpty;
 
-        List of auth-related screens
+        // List of auth-related screens
         final isAuthRoute = [
+          AppRoutes.welcome.path,
           AppRoutes.auth.path,
-          other auth screens here...
         ].any((path) => state.uri.path == path);
 
-        While not authenticated:
-        redirect to auth screen unless currently in an auth-related screen
+        // While not authenticated:
+        // redirect to welcome screen unless currently in an auth-related screen
         if (!isLoggedIn && !isAuthRoute) {
-          return AppRoutes.auth.path;
+          return AppRoutes.welcome.path;
         }
 
-        If tried to access auth screen while already authenticated, redirect to home
+        // If tried to access auth screen while already authenticated, redirect to home
         if (isLoggedIn && isAuthRoute) {
           return AppRoutes.home.path;
         }
 
-        Otherwise
-        return null;
-        */
-
+        // Otherwise, do nothing
         return null;
       },
       routes: [
