@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:open_project/auth/widgets/connection_state_widget.dart';
+import 'package:open_project/auth/widgets/server_input_screen/connection_state_widget.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';

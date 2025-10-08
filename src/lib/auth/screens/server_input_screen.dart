@@ -1,12 +1,137 @@
-// ignore_for_file: file_names, prefer_typing_uninitialized_variables
-
 import 'package:flutter/material.dart';
-import 'package:open_project/work_packages/logic/processing_server.dart';
+import 'package:open_project/auth/widgets/server_input_screen/connection_state_widget.dart';
+import 'package:open_project/auth/widgets/server_input_screen/server_globe_header.dart';
+import 'package:open_project/core/styles/colors.dart';
+import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/widgets/app_button.dart';
+import 'package:open_project/core/widgets/app_text_field.dart';
+// import 'package:open_project/core/constants/app_assets.dart';
+// import 'package:open_project/core/widgets/app_image.dart';
+// import 'package:open_project/work_packages/logic/processing_server.dart';
 
-class GetServer extends StatefulWidget {
+class ServerInputScreen extends StatefulWidget {
   final void Function() navigateToNextPageHandler;
-  const GetServer({
+  const ServerInputScreen({
     super.key,
+    required this.navigateToNextPageHandler,
+  });
+
+  @override
+  State<ServerInputScreen> createState() => _ServerInputScreenState();
+}
+
+class _ServerInputScreenState extends State<ServerInputScreen> {
+  bool hasConnectedToServer = false;
+
+  void connectToServer() {
+    setState(() {
+      hasConnectedToServer = true;
+    });
+
+    const connectionAnimationDuration = ConnectionStateWidget.animationDuration;
+    const extraDuration = Duration(milliseconds: 400);
+
+    Future.delayed(
+      connectionAnimationDuration + extraDuration,
+      widget.navigateToNextPageHandler,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ServerGlobeHeader(
+          hasConnectedToServer: hasConnectedToServer,
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Text(
+                'Your projects, One link away',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.extraLarge.copyWith(
+                  color: AppColors.primaryText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Enter the server URL to connect with your team’s workspace and access your ongoing projects.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.small.copyWith(
+                  color: AppColors.descriptiveText,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Enter the URL of your project host',
+                style: AppTextStyles.large.copyWith(
+                  color: AppColors.primaryText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'You can copy the URL link of the website of your OpenProject from the browser, and paste it here.',
+                style: AppTextStyles.small.copyWith(
+                  color: AppColors.descriptiveText,
+                ),
+              ),
+              const SizedBox(height: 24),
+              AppTextFormField(
+                hint: 'URL Link',
+                disableLabel: true,
+                contentPadding: const EdgeInsets.only(top: 18),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                    bottom: 8,
+                    right: 8,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.border,
+                    ),
+                    child: Text(
+                      'https://',
+                      style: AppTextStyles.small.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.highContrastCursor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              AppButton(
+                text: 'Connect to Server',
+                onPressed: connectToServer,
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/*
+class _ServerInputScreen extends StatefulWidget {
+  final void Function() navigateToNextPageHandler;
+  const _ServerInputScreen({
     required this.navigateToNextPageHandler,
   });
 
@@ -28,7 +153,7 @@ ButtonStyle buttonServer() {
   return raisedButtonStyle;
 }
 
-class Server extends State<GetServer> {
+class Server extends State<_ServerInputScreen> {
   String? error;
   var server = "";
   TextEditingController enteredServer = TextEditingController();
@@ -161,3 +286,4 @@ class Server extends State<GetServer> {
     );
   }
 }
+*/

@@ -8,6 +8,10 @@ class ConnectionStateWidget extends StatefulWidget {
   final bool connected;
   const ConnectionStateWidget({super.key, required this.connected});
 
+  // This is static to be used in other widgets to wait for this
+  // duration before running other tasks, see: server_input_screen.dart
+  static const animationDuration = Duration(milliseconds: 600);
+
   @override
   State<ConnectionStateWidget> createState() => _ConnectionStateWidgetState();
 }
@@ -22,7 +26,7 @@ class _ConnectionStateWidgetState extends State<ConnectionStateWidget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: ConnectionStateWidget.animationDuration,
     );
 
     _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(

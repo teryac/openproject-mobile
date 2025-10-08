@@ -1,14 +1,12 @@
-// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_project/auth/widgets/get_server.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/work_packages/logic/processing_token.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 
-class GetToken extends StatefulWidget {
-  const GetToken({super.key});
+class TokenInputScreen extends StatefulWidget {
+  const TokenInputScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => Token();
@@ -28,7 +26,7 @@ ButtonStyle buttonToken() {
   return raisedButtonStyle;
 }
 
-class Token extends State<GetToken> {
+class Token extends State<TokenInputScreen> {
   TextEditingController enteredToken = TextEditingController();
   String? error;
   ProcessingToken token = ProcessingToken();
@@ -200,7 +198,15 @@ class Token extends State<GetToken> {
         SizedBox(
           width: 350.0,
           child: ElevatedButton(
-            style: buttonServer(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              elevation: 10,
+              minimumSize: const Size(360, 50),
+              padding: const EdgeInsets.symmetric(horizontal: 35),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
+            ),
             onPressed: () {
               if (enteredToken.text.isNotEmpty) {
                 token.checkToken(enteredToken.text);

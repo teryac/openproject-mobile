@@ -27,6 +27,7 @@ class AppImages {
   static const token = '${_directory}token$_fileType';
   static const user = '${_directory}user$_fileType';
   static const profile = '${_directory}profile$_fileType';
+  static const globe = '${_directory}globe$_fileType';
 
   //logo-with-name.svg
   static String howToGetApiToken(int index) {

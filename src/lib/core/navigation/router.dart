@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/add_work_package/add_work_package_screen.dart';
 import 'package:open_project/auth/screens/auth_screen.dart';
-import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/home/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/work_packages_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:open_project/core/constants/app_constants.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppRoutes {
   auth(name: 'auth', path: '/auth'),
@@ -27,8 +27,9 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.home.path,
+      initialLocation: AppRoutes.auth.path,
       redirect: (context, state) async {
+        /*
         // Check for authentication state
         final prefs = await SharedPreferences.getInstance();
         final cachedServer =
@@ -53,6 +54,10 @@ GoRouter getAppRouter() => GoRouter(
         }
 
         // Otherwise, do nothing
+        return null;
+        */
+
+        // Disabled redirection until app auth logic is solid
         return null;
       },
       routes: [
