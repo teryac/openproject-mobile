@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_project/auth/widgets/GetServer.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';

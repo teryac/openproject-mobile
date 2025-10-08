@@ -7,9 +7,9 @@ import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/home/models/project_model.dart';
 import 'package:open_project/home/widgets/home_header.dart';
 import 'package:open_project/home/widgets/project_tile.dart';
-import 'package:open_project/home/widgets/search_results.dart';
-import 'package:open_project/home/widgets/servers_dialog.dart';
-import 'package:open_project/ready_widgets_sheet.dart';
+// import 'package:open_project/home/widgets/search_results.dart';
+// import 'package:open_project/home/widgets/servers_dialog.dart';
+// import 'package:open_project/ready_widgets_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -111,11 +111,11 @@ class HomeScreen extends StatelessWidget {
                     ),*/
                   ],
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 ListView.separated(
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(8.0),
                   itemCount: projects.length,
                   itemBuilder: (BuildContext ctx, int index) {
@@ -126,7 +126,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) =>
-                      SizedBox(
+                      const SizedBox(
                     height: 16.0,
                   ),
                 ),

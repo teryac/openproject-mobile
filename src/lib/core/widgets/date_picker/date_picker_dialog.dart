@@ -20,7 +20,6 @@ const Size _calendarLandscapeDialogSize = Size(496.0, 346.0);
 const Size _inputPortraitDialogSizeM2 = Size(330.0, 270.0);
 const Size _inputPortraitDialogSizeM3 = Size(328.0, 270.0);
 const Size _inputLandscapeDialogSize = Size(496, 160.0);
-const Size _inputRangeLandscapeDialogSize = Size(496, 164.0);
 const Duration _dialogSizeAnimationDuration = Duration(milliseconds: 200);
 const double _inputFormPortraitHeight = 98.0;
 const double _inputFormLandscapeHeight = 108.0;
@@ -1024,7 +1023,6 @@ class _DatePickerHeader extends StatelessWidget {
                   if (entryModeButton != null)
                     Padding(
                       padding: theme.useMaterial3
-                          // TODO(TahaTesser): This is an eye-balled M3 entry mode button padding
                           // from https://m3.material.io/components/date-pickers/specs#c16c142b-4706-47f3-9400-3cde654b9aa8.
                           // Update this value to use tokens when available.
                           ? const EdgeInsetsDirectional.only(
@@ -1605,9 +1603,6 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
     setState(() => _selectedEnd.value = date);
   }
 
-  bool get _hasSelectedDateRange =>
-      _selectedStart.value != null && _selectedEnd.value != null;
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -1619,12 +1614,9 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
     final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
 
     final Widget contents;
-    final Size size;
     final double? elevation;
     final Color? shadowColor;
     final Color? surfaceTintColor;
-    final ShapeBorder? shape;
-    final EdgeInsets insetPadding;
     final bool showEntryModeButton =
         _entryMode.value == DatePickerEntryMode.calendar ||
             _entryMode.value == DatePickerEntryMode.input;
@@ -1653,15 +1645,13 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
                   ? localizations.dateRangePickerHelpText
                   : localizations.dateRangePickerHelpText.toUpperCase()),
         );
-        size = MediaQuery.sizeOf(context);
-        insetPadding = EdgeInsets.zero;
+
         elevation = datePickerTheme.rangePickerElevation ??
             defaults.rangePickerElevation!;
         shadowColor = datePickerTheme.rangePickerShadowColor ??
             defaults.rangePickerShadowColor!;
         surfaceTintColor = datePickerTheme.rangePickerSurfaceTintColor ??
             defaults.rangePickerSurfaceTintColor!;
-        shape = datePickerTheme.rangePickerShape ?? defaults.rangePickerShape;
 
       case DatePickerEntryMode.input:
       case DatePickerEntryMode.inputOnly:
@@ -1726,29 +1716,16 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog>
                   : localizations.dateRangePickerHelpText.toUpperCase()),
         );
         final DialogThemeData dialogTheme = theme.dialogTheme;
-        size = orientation == Orientation.portrait
-            ? (useMaterial3
-                ? _inputPortraitDialogSizeM3
-                : _inputPortraitDialogSizeM2)
-            : _inputRangeLandscapeDialogSize;
         elevation = useMaterial3
             ? datePickerTheme.elevation ?? defaults.elevation!
             : datePickerTheme.elevation ?? dialogTheme.elevation ?? 24;
         shadowColor = datePickerTheme.shadowColor ?? defaults.shadowColor;
         surfaceTintColor =
             datePickerTheme.surfaceTintColor ?? defaults.surfaceTintColor;
-        shape = const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(32.0),
-          ),
-        );
 
-        // useMaterial3
-        //     ? datePickerTheme.shape ?? defaults.shape
-        //     : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape;
-
-        insetPadding =
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0);
+      // useMaterial3
+      //     ? datePickerTheme.shape ?? defaults.shape
+      //     : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape;
     }
 
     return ClipRRect(
@@ -1867,6 +1844,7 @@ class _CalendarRangePickerDialogState
                     onTap: widget.onCancel,
                     child: SvgPicture.asset(
                       AppIcons.closeSquare,
+                      // ignore: deprecated_member_use
                       color: AppColors.iconSecondary,
                       width: 32,
                       height: 32,
@@ -2051,7 +2029,6 @@ class _CalendarRangePickerDialogState
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
 
-const double _monthItemHeaderHeight = 58.0;
 const double _monthItemFooterHeight = 12.0;
 const double _monthItemRowHeight = 46.0;
 const double _monthItemSpaceBetweenRows = 8.0;
@@ -2835,7 +2812,7 @@ class _MonthSliverGridLayout extends SliverGridLayout {
 /// the week.
 class _MonthItem extends StatefulWidget {
   /// Creates a month item.
-  _MonthItem({
+  const _MonthItem({
     required this.selectedDateStart,
     required this.selectedDateEnd,
     required this.currentDate,
@@ -3179,6 +3156,7 @@ class _DayItem extends StatefulWidget {
 }
 
 class _DayItemState extends State<_DayItem> {
+  // ignore: deprecated_member_use
   final MaterialStatesController _statesController = MaterialStatesController();
 
   @override
@@ -3191,7 +3169,6 @@ class _DayItemState extends State<_DayItem> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
     final MaterialLocalizations localizations =
         MaterialLocalizations.of(context);
     final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
@@ -3210,8 +3187,10 @@ class _DayItemState extends State<_DayItem> {
     }
 
     T? resolve<T>(
+      // ignore: deprecated_member_use
       MaterialStateProperty<T>? Function(DatePickerThemeData? theme)
           getProperty,
+      // ignore: deprecated_member_use
       Set<MaterialState> states,
     ) {
       return effectiveValue((DatePickerThemeData? theme) {
@@ -3219,9 +3198,12 @@ class _DayItemState extends State<_DayItem> {
       });
     }
 
+    // ignore: deprecated_member_use
     final Set<MaterialState> states = <MaterialState>{
+      // ignore: deprecated_member_use
       if (widget.isDisabled) MaterialState.disabled,
       if (widget.isSelectedDayStart || widget.isSelectedDayEnd)
+        // ignore: deprecated_member_use
         MaterialState.selected,
     };
 
@@ -3235,8 +3217,11 @@ class _DayItemState extends State<_DayItem> {
       (DatePickerThemeData? theme) => theme?.dayBackgroundColor,
       states,
     );
+    // ignore: deprecated_member_use
     final MaterialStateProperty<Color?> dayOverlayColor =
+        // ignore: deprecated_member_use
         MaterialStateProperty.resolveWith<Color?>(
+      // ignore: deprecated_member_use
       (Set<MaterialState> states) => effectiveValue(
         (DatePickerThemeData? theme) => widget.isInRange
             ? theme?.rangeSelectionOverlayColor?.resolve(states)
@@ -3249,7 +3234,7 @@ class _DayItemState extends State<_DayItem> {
     if (widget.isSelectedDayStart || widget.isSelectedDayEnd) {
       // The selected start and end dates gets a circle background
       // highlight, and a contrasting text color.
-      itemStyle = itemStyle?.apply(color: dayForegroundColor);
+      itemStyle = itemStyle.apply(color: dayForegroundColor);
       decoration = BoxDecoration(
         color: dayBackgroundColor,
         borderRadius: BorderRadius.circular(8),
@@ -3274,15 +3259,17 @@ class _DayItemState extends State<_DayItem> {
       );
       if (widget.isDisabled) {
         itemStyle =
-            itemStyle?.apply(color: colorScheme.onSurface.withOpacity(0.38));
+            // ignore: deprecated_member_use
+            itemStyle.apply(color: colorScheme.onSurface.withOpacity(0.38));
       }
     } else if (widget.isDisabled) {
       itemStyle =
-          itemStyle?.apply(color: colorScheme.onSurface.withOpacity(0.38));
+          // ignore: deprecated_member_use
+          itemStyle.apply(color: colorScheme.onSurface.withOpacity(0.38));
     } else if (widget.isToday) {
       // The current day gets a different text color and a circle stroke
       // border.
-      itemStyle = itemStyle?.apply(color: colorScheme.primary);
+      itemStyle = itemStyle.apply(color: colorScheme.primary);
       decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(8),
       );
