@@ -96,7 +96,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 const SliverIndent(height: 20),
                 SliverFillRemaining(
-                  hasScrollBody: false,
                   child: PageView(
                     controller: _pageViewController,
                     children: [

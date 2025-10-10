@@ -1,12 +1,196 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
-import 'package:open_project/work_packages/logic/processing_token.dart';
+import 'package:open_project/core/styles/colors.dart';
+import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/widgets/app_gallery_widget.dart';
+import 'package:open_project/core/widgets/app_image.dart';
+import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 
-class TokenInputScreen extends StatefulWidget {
+class TokenInputScreen extends StatelessWidget {
   const TokenInputScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Padding(
+          padding:
+              EdgeInsets.only(bottom: 32.0, left: 20.0, right: 20.0, top: 20.0),
+          child: AppAssetImage(
+            assetPath: AppImages.overview,
+            height: 217.0,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Text(
+                'Step into your workspace',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.extraLarge.copyWith(
+                  color: AppColors.primaryText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Enter your API token to edit tasks, access private projects, and collaborate with your team.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.small.copyWith(
+                  color: AppColors.descriptiveText,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Enter Your API token',
+                style: AppTextStyles.large.copyWith(
+                  color: AppColors.primaryText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'To get your API token, go to account settings on the website. For help, see the guide below.',
+                style: AppTextStyles.small.copyWith(
+                  color: AppColors.descriptiveText,
+                ),
+              ),
+              const SizedBox(height: 24),
+              const AppTextFormField(hint: 'API Token'),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: AppTextButton(
+                  text: 'How to get API token?',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        insetPadding:
+                            const EdgeInsets.symmetric(horizontal: 20.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "How to get API tokens?",
+                                      style: AppTextStyles.large.copyWith(
+                                          color: AppColors.primaryText),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: SvgPicture.asset(
+                                        AppIcons.closeSquare,
+                                        width: 24.0,
+                                        height: 24.0,
+                                        colorFilter: const ColorFilter.mode(
+                                          AppColors.iconSecondary,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 24.0,
+                              ),
+                              AppGalleryWidget(
+                                itemCount: 3,
+                                itemBuilder: (index) {
+                                  final instruction =
+                                      AppConstants.getApiTokenInstructions(
+                                          index);
+
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AspectRatio(
+                                        aspectRatio:
+                                            1.423, // Based on aspect ratio of used images
+                                        child: AppAssetImage(
+                                          assetPath: AppImages.howToGetApiToken(
+                                              index + 1),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        instruction.title,
+                                        style: AppTextStyles.medium.copyWith(
+                                          color: AppColors.primaryText,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        instruction.body,
+                                        style: AppTextStyles.small.copyWith(
+                                          color: AppColors.descriptiveText,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 24),
+              AppButton(
+                text: 'Access Workspace',
+                onPressed: () {
+                  context.goNamed(AppRoutes.home.name);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/*class TempTokenScreem extends StatefulWidget {
+  const TempTokenScreem({super.key});
 
   @override
   State<StatefulWidget> createState() => Token();
@@ -26,7 +210,7 @@ ButtonStyle buttonToken() {
   return raisedButtonStyle;
 }
 
-class Token extends State<TokenInputScreen> {
+class Token extends State<TempTokenScreem> {
   TextEditingController enteredToken = TextEditingController();
   String? error;
   ProcessingToken token = ProcessingToken();
@@ -189,7 +373,7 @@ class Token extends State<TokenInputScreen> {
                       ),
                     );
                   },
-                );
+               // );
               },
               text: 'How to get API tokens?',
             ),
@@ -237,3 +421,4 @@ class Token extends State<TokenInputScreen> {
     );
   }
 }
+*/
