@@ -4,14 +4,12 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_project/auth/screens/server_input_screen.dart';
-import 'package:open_project/auth/screens/token_input_screen.dart';
-import 'package:open_project/core/constants/app_assets.dart';
-import 'package:open_project/core/navigation/router.dart';
-import 'package:open_project/core/styles/colors.dart';
-import 'package:open_project/core/styles/text_styles.dart';
-import 'package:open_project/core/widgets/sliver_util.dart';
-import 'package:sliver_fill_remaining_box_adapter/sliver_fill_remaining_box_adapter.dart';
+import 'server_input_screen.dart';
+import 'token_input_screen.dart';
+import '../../core/constants/app_assets.dart';
+import '../../core/navigation/router.dart';
+import '../../core/styles/colors.dart';
+import '../../core/styles/text_styles.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class AuthScreen extends StatefulWidget {
