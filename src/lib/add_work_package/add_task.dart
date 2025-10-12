@@ -10,7 +10,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:open_project/models/property.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
-import 'package:open_project/work_packages/detail_of_project.dart';
+import 'package:open_project/work_packages/old_work_packages.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 

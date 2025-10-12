@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/themes.dart';
 import 'package:open_project/core/util/bloc_observer.dart';
+import 'package:open_project/core/util/dependency_injection.dart';
 
 void main() {
   _attachBlocObserver();
+  setupDependencyInjection();
   runApp(DevicePreview(builder: (context) => const MyApp()));
 }
 

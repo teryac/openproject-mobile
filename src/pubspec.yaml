@@ -55,6 +55,7 @@ dependencies:
   flutter_portal: ^1.1.4
   smooth_page_indicator: ^1.2.1
   expandable_page_view: ^1.0.17
+  get_it: ^8.2.0
 
 dev_dependencies:
   flutter_test:

@@ -27,7 +27,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.auth.path,
+      initialLocation: AppRoutes.workPackages.path,
       redirect: (context, state) async {
         /*
         // Check for authentication state
@@ -79,7 +79,9 @@ GoRouter getAppRouter() => GoRouter(
         GoRoute(
           path: AppRoutes.workPackages.path,
           name: AppRoutes.workPackages.name,
-          builder: (context, state) => const WorkPackagesScreen(),
+          builder: (context, state) {
+            return const WorkPackagesScreen();
+          },
         ),
         GoRoute(
           path: AppRoutes.addWorkPackage.path,

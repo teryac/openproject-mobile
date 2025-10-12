@@ -76,13 +76,38 @@ class AppChipList extends StatelessWidget {
   final List<AppChip> chips;
   const AppChipList({super.key, required this.chips});
 
+  // For LTR locales, the first element has a 32px left padding, while RTL only 8, and the opposite for right padding
+  // Same goes for the last element
+  EdgeInsets getItemPadding(BuildContext context, int index, int listLength) {
+    if (index == 0) {
+      return const EdgeInsets.only(
+        left: 20,
+        right: 12,
+      );
+    } else if (index == listLength - 1) {
+      return const EdgeInsets.only(
+        right: 20,
+        left: 12,
+      );
+    }
+
+    return const EdgeInsets.only(right: 12, left: 12);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        spacing: 12,
-        children: [...chips],
+        children: List.generate(
+          chips.length,
+          (index) {
+            return Padding(
+              padding: getItemPadding(context, index, chips.length),
+              child: chips[index],
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/home/widgets/members_list.dart';
@@ -16,12 +18,19 @@ class ProjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
+    return Material(
+      color: AppColors.projectBackground,
+      borderRadius: BorderRadius.circular(16.0),
+      child: InkWell(
+        splashColor: AppColors.primaryText.withAlpha(38),
+        highlightColor: Colors.transparent,
+        borderRadius: BorderRadius.circular(16.0),
+        onTap: () {
+          context.pushNamed(AppRoutes.workPackages.name);
+        },
+        child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: AppColors.projectBackground,
             border: Border.all(color: AppColors.border, width: 1.0),
             borderRadius: BorderRadius.circular(16.0),
           ),
@@ -125,7 +134,7 @@ class ProjectTile extends StatelessWidget {
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

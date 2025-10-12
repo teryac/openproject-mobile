@@ -13,6 +13,8 @@ class AppIcons {
   static const closeSquare = '${_directory}close-square$_fileType';
   static const link = '${_directory}link$_fileType';
   static const logoWithName = '${_directory}logo-with-name$_fileType';
+  static const clock = '${_directory}clock$_fileType';
+  static const profile = '${_directory}profile$_fileType';
 }
 
 class AppImages {
