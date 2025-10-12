@@ -48,6 +48,7 @@ class WorkPackageTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  spacing: 12,
                   children: [
                     Flexible(
                       flex: 6,

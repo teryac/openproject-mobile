@@ -10,6 +10,7 @@ import 'package:open_project/core/widgets/app_chip.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/custom_app_bar.dart';
 import 'package:open_project/work_packages/models/work_package_model.dart';
+// import 'package:open_project/work_packages/widgets/search_results_dialog.dart';
 import 'package:open_project/work_packages/widgets/work_package_tile.dart';
 
 class WorkPackagesScreen extends StatelessWidget {
@@ -17,6 +18,44 @@ class WorkPackagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return const Scaffold(
+    //   backgroundColor: Colors.amber,
+    //   body: Center(
+    //     child: Padding(
+    //       padding: EdgeInsets.symmetric(horizontal: 20),
+    //       child: SearchResultsDialog(
+    //         workPackages: [
+    //           (
+    //             name: 'Set date and location of project',
+    //             type: 'Task',
+    //             typeColor: '#2392D4',
+    //           ),
+    //           (
+    //             name: 'Send invitation to Shaaban',
+    //             type: 'Milestone',
+    //             typeColor: '#2EAC5D',
+    //           ),
+    //           (
+    //             name: 'Password not protected',
+    //             type: 'Bug',
+    //             typeColor: '#F84616',
+    //           ),
+    //           (
+    //             name: 'Release v1.1',
+    //             type: 'Milestone',
+    //             typeColor: '#2EAC5D',
+    //           ),
+    //           (
+    //             name: 'Release v1.0',
+    //             type: 'Milestone',
+    //             typeColor: '#2EAC5D',
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
+
     const workPackages = [
       WorkPackageModel(
         title: 'Organize open source',

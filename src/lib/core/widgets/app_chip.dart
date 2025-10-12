@@ -82,16 +82,16 @@ class AppChipList extends StatelessWidget {
     if (index == 0) {
       return const EdgeInsets.only(
         left: 20,
-        right: 12,
+        right: 6,
       );
     } else if (index == listLength - 1) {
       return const EdgeInsets.only(
         right: 20,
-        left: 12,
+        left: 6,
       );
     }
 
-    return const EdgeInsets.only(right: 12, left: 12);
+    return const EdgeInsets.only(right: 6, left: 6);
   }
 
   @override
