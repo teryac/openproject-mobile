@@ -25,7 +25,7 @@ class AppProgressBar extends StatelessWidget {
       children: [
         Container(
           // `Slider` enforces some padding at the top more than the bottom
-          padding: const EdgeInsets.only(top: 5, left: 4, right: 4, bottom: 4),
+          padding: const EdgeInsets.only(top: 5, left: 4, right: 4, bottom: 7),
           decoration: BoxDecoration(
             color: inactiveTrackColor,
             borderRadius: BorderRadius.circular(360),

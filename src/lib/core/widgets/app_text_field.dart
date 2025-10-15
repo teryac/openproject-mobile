@@ -28,6 +28,7 @@ class AppTextFormField extends StatelessWidget {
   final bool autofocus;
   final String? errorText;
   final bool disableLabel;
+  final int? maxLines;
 
   final _TextFieldStyle _style;
 
@@ -51,6 +52,7 @@ class AppTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.onPrefixIconPressed,
     this.disableLabel = false,
+    this.maxLines = 1,
   })  : borderRadius = null,
         _style = _TextFieldStyle.normal;
 
@@ -75,6 +77,7 @@ class AppTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.onPrefixIconPressed,
     this.disableLabel = false,
+    this.maxLines = 1,
   }) : _style = _TextFieldStyle.outlined;
 
   const AppTextFormField.filled({
@@ -98,6 +101,7 @@ class AppTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.onPrefixIconPressed,
     this.disableLabel = false,
+    this.maxLines = 1,
   }) : _style = _TextFieldStyle.filled;
 
   bool get _filled => _style == _TextFieldStyle.filled;
@@ -117,6 +121,7 @@ class AppTextFormField extends StatelessWidget {
             ),
       focusNode: focusNode,
       obscureText: obscure,
+      maxLines: maxLines,
       readOnly: readOnly,
       autofocus: autofocus,
       textInputAction: textInputAction,

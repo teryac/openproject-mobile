@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/padding_util.dart';
 
 class AppChip extends StatelessWidget {
   final String text;
@@ -76,24 +77,6 @@ class AppChipList extends StatelessWidget {
   final List<AppChip> chips;
   const AppChipList({super.key, required this.chips});
 
-  // For LTR locales, the first element has a 32px left padding, while RTL only 8, and the opposite for right padding
-  // Same goes for the last element
-  EdgeInsets getItemPadding(BuildContext context, int index, int listLength) {
-    if (index == 0) {
-      return const EdgeInsets.only(
-        left: 20,
-        right: 6,
-      );
-    } else if (index == listLength - 1) {
-      return const EdgeInsets.only(
-        right: 20,
-        left: 6,
-      );
-    }
-
-    return const EdgeInsets.only(right: 6, left: 6);
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -103,7 +86,13 @@ class AppChipList extends StatelessWidget {
           chips.length,
           (index) {
             return Padding(
-              padding: getItemPadding(context, index, chips.length),
+              padding: getScrollableRowPadding(
+                context: context,
+                index: index,
+                listLength: chips.length,
+                itemPadding: 12, 
+                marginalPadding: 28
+              ),
               child: chips[index],
             );
           },
