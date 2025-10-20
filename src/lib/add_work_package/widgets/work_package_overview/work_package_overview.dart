@@ -13,7 +13,7 @@ class WorkPackageOverview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Task overview',
+          'Work package overview',
           style: AppTextStyles.large.copyWith(
             color: AppColors.primaryText,
           ),
@@ -24,7 +24,7 @@ class WorkPackageOverview extends StatelessWidget {
             WorkPackageTypePicker(),
             SizedBox(width: 12),
             Expanded(
-              child: AppTextFormField(hint: 'Task title'),
+              child: AppTextFormField(hint: 'Work Package title'),
             ),
           ],
         ),

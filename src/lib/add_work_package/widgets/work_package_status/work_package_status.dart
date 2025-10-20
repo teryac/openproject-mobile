@@ -15,7 +15,7 @@ class WorkPackageStatus extends StatelessWidget {
         Padding(
           padding: screenPadding,
           child: Text(
-            'Task status',
+            'Work package status',
             style: AppTextStyles.medium.copyWith(
               color: AppColors.primaryText,
             ),

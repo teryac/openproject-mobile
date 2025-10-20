@@ -18,7 +18,7 @@ class WorkPackagePriority extends StatelessWidget {
         Padding(
           padding: screenPadding,
           child: Text(
-            'Task Priority',
+            'Work pacakge priority',
             style: AppTextStyles.medium.copyWith(
               color: AppColors.primaryText,
             ),
