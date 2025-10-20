@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/add_work_package/add_work_package_screen.dart';
 import 'package:open_project/auth/screens/auth_screen.dart';
+import 'package:open_project/bloc_tutorial/application/bloc_tutorial_controller.dart';
+import 'package:open_project/bloc_tutorial/data/bloc_tutorial_repo.dart';
+import 'package:open_project/bloc_tutorial/presentation/cubits/counter_cubit.dart';
+import 'package:open_project/bloc_tutorial/presentation/cubits/projects_cubit.dart';
+import 'package:open_project/bloc_tutorial/presentation/cubits/work_packages_cubit.dart';
+import 'package:open_project/bloc_tutorial/presentation/screens/bloc_tutorial_screen.dart';
 import 'package:open_project/home/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
@@ -15,7 +22,9 @@ enum AppRoutes {
   workPackages(name: 'workPackages', path: '/workPackges'),
   addWorkPackage(name: 'addWorkPackage', path: '/addWorkPackage'),
   viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage'),
-  welcome(name: 'welcome', path: '/welcome');
+  welcome(name: 'welcome', path: '/welcome'),
+  // TODO: Remove temp route once it's not needed
+  blocTutorial(name: 'blocTutorial', path: '/blocTutorial');
 
   const AppRoutes({required this.name, required this.path});
   final String name;
@@ -27,7 +36,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.welcome.path,
+      initialLocation: AppRoutes.blocTutorial.path,
       redirect: (context, state) async {
         /*
         // Check for authentication state
@@ -92,6 +101,41 @@ GoRouter getAppRouter() => GoRouter(
           path: AppRoutes.viewWorkPackage.path,
           name: AppRoutes.viewWorkPackage.name,
           builder: (context, state) => const ViewWorkPackageScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.blocTutorial.path,
+          name: AppRoutes.blocTutorial.name,
+          builder: (context, state) => MultiBlocProvider(
+            providers: [
+              RepositoryProvider(
+                create: (_) => BlocTutorialRepo(),
+              ),
+              BlocProvider(
+                create: (_) => CounterCubit(),
+              ),
+              BlocProvider(
+                create: (context) =>
+                    ProjectsCubit(repo: context.read<BlocTutorialRepo>()),
+              ),
+              BlocProvider(
+                create: (context) =>
+                    WorkPackagesCubit(repo: context.read<BlocTutorialRepo>()),
+              ),
+              RepositoryProvider(
+                lazy: false,
+                create: (context) {
+                  final projectsCubit = context.read<ProjectsCubit>();
+                  final workPackagesCubit = context.read<WorkPackagesCubit>();
+
+                  return BlocTutorialController(
+                    projectsCubit: projectsCubit,
+                    workPackagesCubit: workPackagesCubit,
+                  );
+                },
+              ),
+            ],
+            child: const BlocTutorialScreen(),
+          ),
         ),
       ],
     );
