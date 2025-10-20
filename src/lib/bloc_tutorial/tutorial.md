@@ -162,7 +162,7 @@ There is another case, where two cubits need to be linked to each other, here's 
 class HomeController {
   final CubitA cubitA;
   final CubitB cubitB;
-  BlocTutorialController({
+  ExampleController({
     required this.cubitA,
     required this.cubitB,
   }) {
