@@ -81,7 +81,7 @@ class WorkPackagesScreen extends StatelessWidget {
       child: Scaffold(
         appBar: const CustomAppBar(text: 'Scrum Project'),
         floatingActionButton: AppButton(
-          text: 'Add Task',
+          text: 'Add Work Package',
           prefixIcon: SvgPicture.asset(
             AppIcons.task,
             width: 20,

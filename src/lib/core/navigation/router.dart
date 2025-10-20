@@ -36,7 +36,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.blocTutorial.path,
+      initialLocation: AppRoutes.welcome.path,
       redirect: (context, state) async {
         /*
         // Check for authentication state
