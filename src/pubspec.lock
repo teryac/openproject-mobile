@@ -222,6 +222,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_async_value:
+    dependency: "direct main"
+    description:
+      name: flutter_async_value
+      sha256: dc6792ec52a41abe7d26815ab007931e195349fa339f16d5c4bfe207dbf18851
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.3"
   flutter_bloc:
     dependency: "direct main"
     description:

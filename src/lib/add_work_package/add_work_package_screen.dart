@@ -21,7 +21,7 @@ class AddWorkPackageScreen extends StatelessWidget {
     return const Portal(
       child: Scaffold(
         // TODO: Change to 'Edit task' in edit mode
-        appBar: CustomAppBar(text: 'Create a task'),
+        appBar: CustomAppBar(text: 'Create a work pacakge'),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Column(
@@ -71,7 +71,7 @@ class AddWorkPackageScreen extends StatelessWidget {
                       WorkPackageProgress(),
                       SizedBox(height: 32),
                       AppButton(
-                        text: 'Create task',
+                        text: 'Create work package',
                         onPressed: null,
                       ),
                       SizedBox(height: 12),
