@@ -18,6 +18,13 @@ class CacheHelper {
     await _storage.write(key: key, value: value);
   }
 
+  /// Save multiple key-value pairs securely
+  Future<void> saveAll(Map<String, String?> data) async {
+    for (final entry in data.entries) {
+      await _storage.write(key: entry.key, value: entry.value);
+    }
+  }
+
   /// Read a value
   Future<String?> getData(String key) async {
     return await _storage.read(key: key);

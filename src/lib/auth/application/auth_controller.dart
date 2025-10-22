@@ -4,7 +4,9 @@ import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
 import 'package:open_project/auth/presentation/widgets/server_input_screen/connection_state_widget.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
+import 'package:open_project/core/util/cache_helper.dart';
 import 'package:open_project/core/util/dependency_injection.dart';
 
 class AuthController {
@@ -76,7 +78,11 @@ class AuthController {
         // When the state is success, cache user data, then
         // navigate to home screen
 
-        cacheUserData();
+        cacheUserData(
+          userFirstName: state.data!.firstName,
+          userAvatar: state.data!.avatar,
+          userEmail: state.data!.email,
+        );
 
         serviceLocator<GoRouter>().goNamed(AppRoutes.home.name);
       },
@@ -110,10 +116,23 @@ class AuthController {
   }
 
   void cacheServerUrl() {
-    // TODO: Implement
+    serviceLocator<CacheHelper>().saveData(
+      key: AppConstants.serverUrlCacheKey,
+      value: 'https://${serverUrlTextController.text}',
+    );
   }
 
-  void cacheUserData() {
-    // TODO: Implement
+  void cacheUserData({
+    required String userFirstName,
+    required String userAvatar,
+    required String? userEmail,
+  }) {
+    final cacheMap = {
+      AppConstants.apiTokenCacheKey: tokenTextController.text,
+      AppConstants.userFirstNameCacheKey: userFirstName,
+      AppConstants.userAvatarCacheKey: userAvatar,
+      AppConstants.userEmailCacheKey: userEmail,
+    };
+    serviceLocator<CacheHelper>().saveAll(cacheMap);
   }
 }
