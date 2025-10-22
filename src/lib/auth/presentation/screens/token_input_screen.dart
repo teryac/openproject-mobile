@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:open_project/core/constants/app_constants.dart';
-import 'package:open_project/core/navigation/router.dart';
+import 'package:flutter_async_value/flutter_async_value.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_project/auth/application/auth_controller.dart';
+import 'package:open_project/auth/models/user.dart';
+import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
+import 'package:open_project/auth/presentation/widgets/token_input_screen/api_token_instructions_dialog.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
-import 'package:open_project/core/widgets/app_gallery_widget.dart';
+import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_image.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/constants/app_assets.dart';
@@ -70,7 +72,11 @@ class TokenInputScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const AppTextFormField(hint: 'API Token'),
+              AppTextFormField(
+                hint: 'API Token',
+                controller: context.read<AuthController>().tokenTextController,
+                obscure: true,
+              ),
               const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
@@ -79,105 +85,21 @@ class TokenInputScreen extends StatelessWidget {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => Dialog(
-                        insetPadding:
-                            const EdgeInsets.symmetric(horizontal: 20.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.0),
-                        ),
-                        backgroundColor: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      "How to get API tokens?",
-                                      style: AppTextStyles.large.copyWith(
-                                          color: AppColors.primaryText),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      icon: SvgPicture.asset(
-                                        AppIcons.closeSquare,
-                                        width: 24.0,
-                                        height: 24.0,
-                                        colorFilter: const ColorFilter.mode(
-                                          AppColors.iconSecondary,
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 24.0,
-                              ),
-                              AppGalleryWidget(
-                                itemCount: 3,
-                                itemBuilder: (index) {
-                                  final instruction =
-                                      AppConstants.getApiTokenInstructions(
-                                          index);
-
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AspectRatio(
-                                        aspectRatio:
-                                            1.423, // Based on aspect ratio of used images
-                                        child: AppAssetImage(
-                                          assetPath: AppImages.howToGetApiToken(
-                                              index + 1),
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        instruction.title,
-                                        style: AppTextStyles.medium.copyWith(
-                                          color: AppColors.primaryText,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        instruction.body,
-                                        style: AppTextStyles.small.copyWith(
-                                          color: AppColors.descriptiveText,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      builder: (_) {
+                        return const ApiTokenInstructionsDialog();
+                      },
                     );
                   },
                 ),
               ),
               const SizedBox(height: 24),
-              AppButton(
-                text: 'Access Workspace',
-                onPressed: () {
-                  context.goNamed(AppRoutes.home.name);
+              BlocBuilder<AuthGetUserCubit, AsyncValue<User, NetworkFailure>>(
+                builder: (context, state) {
+                  return AppButton(
+                    text: 'Access Workspace',
+                    loading: state.isLoading,
+                    onPressed: context.read<AuthController>().getUserData,
+                  );
                 },
               ),
               const SizedBox(height: 8),

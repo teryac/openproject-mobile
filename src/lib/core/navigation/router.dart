@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:open_project/add_work_package/add_work_package_screen.dart';
 import 'package:open_project/auth/application/auth_controller.dart';
 import 'package:open_project/auth/data/auth_repo.dart';
+import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
 import 'package:open_project/auth/presentation/screens/auth_screen.dart';
@@ -96,10 +97,17 @@ GoRouter getAppRouter() => GoRouter(
                     authRepo: context.read<AuthRepo>(),
                   ),
                 ),
+                BlocProvider(
+                  create: (context) => AuthGetUserCubit(
+                    authRepo: context.read<AuthRepo>(),
+                  ),
+                ),
                 RepositoryProvider(
                   create: (context) => AuthController(
-                      authPageViewCubit: context.read<AuthPageViewCubit>(),
-                      authPingServerCubit: context.read<AuthPingServerCubit>()),
+                    authPageViewCubit: context.read<AuthPageViewCubit>(),
+                    authPingServerCubit: context.read<AuthPingServerCubit>(),
+                    authGetUserCubit: context.read<AuthGetUserCubit>(),
+                  ),
                 ),
               ],
               child: const AuthScreen(),

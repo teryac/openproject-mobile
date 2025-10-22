@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
 import 'package:open_project/auth/presentation/widgets/server_input_screen/connection_state_widget.dart';
+import 'package:open_project/core/navigation/router.dart';
+import 'package:open_project/core/util/dependency_injection.dart';
 
 class AuthController {
   final AuthPageViewCubit authPageViewCubit;
   final AuthPingServerCubit authPingServerCubit;
+  final AuthGetUserCubit authGetUserCubit;
   AuthController({
     required this.authPageViewCubit,
     required this.authPingServerCubit,
+    required this.authGetUserCubit,
   }) {
     // Listen to page index changes from cubit
     authPageViewCubit.stream.listen(
@@ -31,8 +37,11 @@ class AuthController {
           return;
         }
 
-        // When the state is success, wait for a period of time,
-        // then navigate to the next page using `AuthPageViewCubit`
+        // When the state is success, cache server url, then wait
+        // for a period of time, then navigate to the next page
+        // using `AuthPageViewCubit`
+
+        cacheServerUrl();
 
         const connectionAnimationDuration =
             // This is the animation duration of the widget
@@ -55,6 +64,23 @@ class AuthController {
         );
       },
     );
+
+    // Listen to `ping server` cubit states
+    authGetUserCubit.stream.listen(
+      (state) {
+        // If it's anything other than a success state, skip.
+        if (!state.isData) {
+          return;
+        }
+
+        // When the state is success, cache user data, then
+        // navigate to home screen
+
+        cacheUserData();
+
+        serviceLocator<GoRouter>().goNamed(AppRoutes.home.name);
+      },
+    );
   }
 
   // `Auth screen` page view controller
@@ -74,4 +100,20 @@ class AuthController {
 
   // `Token Input` screen text field controller
   final tokenTextController = TextEditingController();
+  void getUserData() {
+    if (tokenTextController.text.isNotEmpty) {
+      authGetUserCubit.getUserData(
+        serverUrl: 'https://${serverUrlTextController.text}',
+        apiToken: tokenTextController.text,
+      );
+    }
+  }
+
+  void cacheServerUrl() {
+    // TODO: Implement
+  }
+
+  void cacheUserData() {
+    // TODO: Implement
+  }
 }
