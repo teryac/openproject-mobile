@@ -2,10 +2,10 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:open_project/models/subjects.dart';
-import 'package:open_project/add_work_package/add_task.dart';
-import 'package:open_project/work_packages/logic/processing_tasks.dart';
+import 'package:open_project/add_work_package/old_widgets/add_task.dart';
+import 'package:open_project/logic/processing_tasks.dart';
 import 'package:open_project/home/show_projects.dart';
-import 'package:open_project/add_work_package/update_task.dart';
+import 'package:open_project/add_work_package/old_widgets/update_task.dart';
 
 // ignore: must_be_immutable
 class StateDetail extends StatefulWidget {

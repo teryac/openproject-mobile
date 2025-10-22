@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_project/auth/widgets/server_input_screen/connection_state_widget.dart';
+import 'package:open_project/auth/presentation/widgets/server_input_screen/connection_state_widget.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/widgets/app_image.dart';
 

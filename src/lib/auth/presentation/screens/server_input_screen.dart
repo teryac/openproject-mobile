@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:open_project/auth/widgets/server_input_screen/connection_state_widget.dart';
-import 'package:open_project/auth/widgets/server_input_screen/server_globe_header.dart';
+import 'package:flutter_async_value/flutter_async_value.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_project/auth/application/auth_controller.dart';
+import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
+import 'package:open_project/auth/presentation/widgets/server_input_screen/server_globe_header.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
-// import 'package:open_project/core/constants/app_assets.dart';
-// import 'package:open_project/core/widgets/app_image.dart';
-// import 'package:open_project/work_packages/logic/processing_server.dart';
 
 class ServerInputScreen extends StatefulWidget {
-  final void Function() navigateToNextPageHandler;
   const ServerInputScreen({
     super.key,
-    required this.navigateToNextPageHandler,
   });
 
   @override
@@ -21,28 +20,18 @@ class ServerInputScreen extends StatefulWidget {
 }
 
 class _ServerInputScreenState extends State<ServerInputScreen> {
-  bool hasConnectedToServer = false;
-
-  void connectToServer() {
-    setState(() {
-      hasConnectedToServer = true;
-    });
-
-    const connectionAnimationDuration = ConnectionStateWidget.animationDuration;
-    const extraDuration = Duration(milliseconds: 400);
-
-    Future.delayed(
-      connectionAnimationDuration + extraDuration,
-      widget.navigateToNextPageHandler,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ServerGlobeHeader(
-          hasConnectedToServer: hasConnectedToServer,
+        // Once the server is successfully pinged, this widget
+        // will start the connection success animation
+        BlocBuilder<AuthPingServerCubit, AsyncValue<void, NetworkFailure>>(
+          builder: (context, state) {
+            return ServerGlobeHeader(
+              hasConnectedToServer: state.isData,
+            );
+          },
         ),
         const SizedBox(height: 24),
         Padding(
@@ -90,6 +79,8 @@ class _ServerInputScreenState extends State<ServerInputScreen> {
               const SizedBox(height: 24),
               AppTextFormField(
                 hint: 'URL Link',
+                controller:
+                    context.read<AuthController>().serverUrlTextController,
                 disableLabel: true,
                 contentPadding: const EdgeInsets.only(top: 18),
                 prefixIcon: Padding(
@@ -115,9 +106,17 @@ class _ServerInputScreenState extends State<ServerInputScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              AppButton(
-                text: 'Connect to Server',
-                onPressed: connectToServer,
+              BlocBuilder<AuthPingServerCubit,
+                  AsyncValue<void, NetworkFailure>>(
+                builder: (context, state) {
+                  return AppButton(
+                    text: 'Connect to Server',
+                    loading: state.isLoading,
+                    onPressed: () {
+                      context.read<AuthController>().pingServer();
+                    },
+                  );
+                },
               ),
               const SizedBox(height: 8),
             ],

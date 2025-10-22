@@ -34,7 +34,7 @@ class _AppDropdownButtonState extends State<AppDropdownButton> {
           isMenuVisible = visible;
         });
       },
-      dropdown: true,
+      dropdownAlignment: true,
       menu: (toggleMenu) {
         return _AppDropdownMenu(
           items: widget.items,
