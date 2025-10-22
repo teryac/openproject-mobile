@@ -14,6 +14,9 @@ import 'package:open_project/bloc_tutorial/presentation/cubits/counter_cubit.dar
 import 'package:open_project/bloc_tutorial/presentation/cubits/projects_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/cubits/work_packages_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/screens/bloc_tutorial_screen.dart';
+import 'package:open_project/core/constants/app_constants.dart';
+import 'package:open_project/core/util/cache_helper.dart';
+import 'package:open_project/core/util/dependency_injection.dart';
 import 'package:open_project/home/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
@@ -43,11 +46,10 @@ GoRouter getAppRouter() => GoRouter(
       navigatorKey: _rootNavigatorKey,
       initialLocation: AppRoutes.welcome.path,
       redirect: (context, state) async {
-        /*
         // Check for authentication state
-        final prefs = await SharedPreferences.getInstance();
-        final cachedServer =
-            prefs.getString(AppConstants.sharedPreferencesServerKey);
+        final cachedServer = await serviceLocator<CacheHelper>().getData(
+          AppConstants.serverUrlCacheKey,
+        );
         final isLoggedIn = cachedServer != null && cachedServer.isNotEmpty;
 
         // List of auth-related screens
@@ -68,10 +70,6 @@ GoRouter getAppRouter() => GoRouter(
         }
 
         // Otherwise, do nothing
-        return null;
-        */
-
-        // Disabled redirection until app auth logic is solid
         return null;
       },
       routes: [
