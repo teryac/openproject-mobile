@@ -91,7 +91,7 @@ class AppButton extends StatelessWidget {
       case _ButtonStyle.normal:
         return AppColors.button;
       case _ButtonStyle.outlined:
-        return Theme.of(context).scaffoldBackgroundColor;
+        return Colors.transparent;
       case _ButtonStyle.caution:
         return AppColors.redBackground;
       case _ButtonStyle.white:

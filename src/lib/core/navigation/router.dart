@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/add_work_package/add_work_package_screen.dart';
-import 'package:open_project/auth/screens/auth_screen.dart';
+import 'package:open_project/auth/application/auth_controller.dart';
+import 'package:open_project/auth/data/auth_repo.dart';
+import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
+import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart';
+import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
+import 'package:open_project/auth/presentation/screens/auth_screen.dart';
 import 'package:open_project/bloc_tutorial/application/bloc_tutorial_controller.dart';
 import 'package:open_project/bloc_tutorial/data/bloc_tutorial_repo.dart';
 import 'package:open_project/bloc_tutorial/presentation/cubits/counter_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/cubits/projects_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/cubits/work_packages_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/screens/bloc_tutorial_screen.dart';
+import 'package:open_project/core/constants/app_constants.dart';
+import 'package:open_project/core/util/cache_helper.dart';
+import 'package:open_project/core/util/dependency_injection.dart';
 import 'package:open_project/home/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
@@ -38,11 +46,10 @@ GoRouter getAppRouter() => GoRouter(
       navigatorKey: _rootNavigatorKey,
       initialLocation: AppRoutes.welcome.path,
       redirect: (context, state) async {
-        /*
         // Check for authentication state
-        final prefs = await SharedPreferences.getInstance();
-        final cachedServer =
-            prefs.getString(AppConstants.sharedPreferencesServerKey);
+        final cachedServer = await serviceLocator<CacheHelper>().getData(
+          AppConstants.serverUrlCacheKey,
+        );
         final isLoggedIn = cachedServer != null && cachedServer.isNotEmpty;
 
         // List of auth-related screens
@@ -64,10 +71,6 @@ GoRouter getAppRouter() => GoRouter(
 
         // Otherwise, do nothing
         return null;
-        */
-
-        // Disabled redirection until app auth logic is solid
-        return null;
       },
       routes: [
         GoRoute(
@@ -78,7 +81,36 @@ GoRouter getAppRouter() => GoRouter(
         GoRoute(
           path: AppRoutes.auth.path,
           name: AppRoutes.auth.name,
-          builder: (context, state) => const AuthScreen(),
+          builder: (context, state) {
+            return MultiBlocProvider(
+              providers: [
+                RepositoryProvider(
+                  create: (_) => AuthRepo(),
+                ),
+                BlocProvider(
+                  create: (_) => AuthPageViewCubit(),
+                ),
+                BlocProvider(
+                  create: (context) => AuthPingServerCubit(
+                    authRepo: context.read<AuthRepo>(),
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => AuthGetUserCubit(
+                    authRepo: context.read<AuthRepo>(),
+                  ),
+                ),
+                RepositoryProvider(
+                  create: (context) => AuthController(
+                    authPageViewCubit: context.read<AuthPageViewCubit>(),
+                    authPingServerCubit: context.read<AuthPingServerCubit>(),
+                    authGetUserCubit: context.read<AuthGetUserCubit>(),
+                  ),
+                ),
+              ],
+              child: const AuthScreen(),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.home.path,
@@ -122,6 +154,11 @@ GoRouter getAppRouter() => GoRouter(
                     WorkPackagesCubit(repo: context.read<BlocTutorialRepo>()),
               ),
               RepositoryProvider(
+                // Immediately creates controller to listen to
+                // stream changes as soon as other dependencies
+                // are created, otherwise, the stream subscription
+                // won't get initialized (Check `BlocTutorialController`
+                // constructor body)
                 lazy: false,
                 create: (context) {
                   final projectsCubit = context.read<ProjectsCubit>();

@@ -16,14 +16,17 @@ class AppPopupMenu extends StatefulWidget {
   final Widget Function(void Function(bool) toggleMenu) child;
   final Widget Function(void Function(bool) toggleMenu) menu;
   final void Function(bool visible)? onMenuToggled;
-  // Changes popup alignment behavior
-  final bool dropdown;
+
+  /// Forces a special menu alignment with the menu expanding
+  /// from the bottom of the widget when there is space left on
+  /// the screen, and the opposite when there's no enough space
+  final bool dropdownAlignment;
   const AppPopupMenu({
     super.key,
     required this.child,
     required this.menu,
     this.onMenuToggled,
-    this.dropdown = false,
+    this.dropdownAlignment = false,
   });
 
   @override
@@ -108,7 +111,7 @@ class _AppPopupMenuState extends State<AppPopupMenu>
     final screenBottom = screenSize.height - screenPadding.bottom;
     final usableScreenHeight = screenBottom - screenTop;
 
-    final tolerance = widget.dropdown ? 0.30 : 0.15;
+    final tolerance = widget.dropdownAlignment ? 0.30 : 0.15;
 
     // Check if the widget is clipped at the top of the screen.
     final isClippedAtTop = widgetTopY <
@@ -139,7 +142,7 @@ class _AppPopupMenuState extends State<AppPopupMenu>
   ({Alignment follower, Alignment target}) _getMenuAlignment() {
     final menuDirection = _showMenuDirection();
 
-    if (widget.dropdown) {
+    if (widget.dropdownAlignment) {
       if (menuDirection == PopupMenuDirection.upwards) {
         return (
           follower: Alignment.bottomCenter,
@@ -181,7 +184,7 @@ class _AppPopupMenuState extends State<AppPopupMenu>
               return ScaleTransition(
                 scale: _animationController.scale,
                 alignment: () {
-                  if (widget.dropdown) {
+                  if (widget.dropdownAlignment) {
                     if (menuAlignment.target == Alignment.topCenter) {
                       return Alignment.bottomCenter;
                     } else {
