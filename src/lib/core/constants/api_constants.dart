@@ -14,7 +14,19 @@ class ApiConstants {
     };
   }
 
+  // Ping server
   static const root = _base;
+
+  /// Use "me" for the `id` if authorization is available in headers
+  static String userInfo(String id) {
+    return '${_base}users/$id';
+  }
+
+  // Projects list
   static const projects = '${_base}projects';
-  static const userInfo = '${_base}users';
+
+  /// Use "me" for the `id` if authorization is available in headers
+  static String userAvatar(String id) {
+    return '${_base}users/$id/avatar';
+  }
 }

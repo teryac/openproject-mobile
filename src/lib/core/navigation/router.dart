@@ -17,7 +17,11 @@ import 'package:open_project/bloc_tutorial/presentation/screens/bloc_tutorial_sc
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/util/cache_helper.dart';
 import 'package:open_project/core/util/dependency_injection.dart';
-import 'package:open_project/home/home_screen.dart';
+import 'package:open_project/home/application/home_controller.dart';
+import 'package:open_project/home/data/home_repo.dart';
+import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
+import 'package:open_project/home/presentation/cubits/projects_list_expansion_cubit.dart';
+import 'package:open_project/home/presentation/screens/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/work_packages_screen.dart';
@@ -106,6 +110,7 @@ GoRouter getAppRouter() => GoRouter(
                     authPingServerCubit: context.read<AuthPingServerCubit>(),
                     authGetUserCubit: context.read<AuthGetUserCubit>(),
                   ),
+                  dispose: (controller) => controller.dispose(),
                 ),
               ],
               child: const AuthScreen(),
@@ -115,7 +120,39 @@ GoRouter getAppRouter() => GoRouter(
         GoRoute(
           path: AppRoutes.home.path,
           name: AppRoutes.home.name,
-          builder: (context, state) => const HomeScreen(),
+          builder: (context, state) {
+            return MultiBlocProvider(
+              providers: [
+                RepositoryProvider(
+                  create: (_) => HomeRepo(),
+                ),
+                BlocProvider(
+                  create: (_) => ProjectsListExpansionCubit(),
+                ),
+                BlocProvider(
+                  create: (context) {
+                    return HomeProjectsListCubit(
+                      homeRepo: context.read<HomeRepo>(),
+                    );
+                  },
+                ),
+                BlocProvider(
+                  create: (context) {
+                    return SearchDialogProjectsCubit(
+                      homeRepo: context.read<HomeRepo>(),
+                    );
+                  },
+                ),
+                RepositoryProvider(
+                  create: (context) => HomeController(
+                    searchDialogProjectsCubit:
+                        context.read<SearchDialogProjectsCubit>(),
+                  ),
+                ),
+              ],
+              child: const HomeScreen(),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.workPackages.path,

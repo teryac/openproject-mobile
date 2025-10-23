@@ -22,12 +22,14 @@ class AsyncRetryWidget extends StatelessWidget {
           icon: const Icon(
             Icons.refresh,
             color: AppColors.primaryText,
-            size: 26,
+            size: 20,
           ),
         ),
         Text(
           message,
-          style: AppTextStyles.small.copyWith(color: AppColors.primaryText),
+          style: AppTextStyles.small.copyWith(
+            color: AppColors.primaryText,
+          ),
         ),
       ],
     );

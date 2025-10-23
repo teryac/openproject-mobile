@@ -80,7 +80,6 @@ class AuthController {
 
         cacheUserData(
           userFirstName: state.data!.firstName,
-          userAvatar: state.data!.avatar,
           userEmail: state.data!.email,
         );
 
@@ -124,15 +123,18 @@ class AuthController {
 
   void cacheUserData({
     required String userFirstName,
-    required String userAvatar,
     required String? userEmail,
   }) {
     final cacheMap = {
       AppConstants.apiTokenCacheKey: tokenTextController.text,
       AppConstants.userFirstNameCacheKey: userFirstName,
-      AppConstants.userAvatarCacheKey: userAvatar,
       AppConstants.userEmailCacheKey: userEmail,
     };
     serviceLocator<CacheHelper>().saveAll(cacheMap);
+  }
+
+  void dispose() {
+    serverUrlTextController.dispose();
+    tokenTextController.dispose();
   }
 }

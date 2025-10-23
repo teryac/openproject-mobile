@@ -18,7 +18,7 @@ import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/bottom_tab_bar.dart';
 import 'package:open_project/core/widgets/date_picker/date_picker_widget.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
-import 'package:open_project/home/widgets/members_list.dart';
+import 'package:open_project/home/presentation/widgets/members_list.dart';
 import 'package:open_project/work_packages/widgets/work_packages_popup_menu.dart';
 
 class ReadyWidgetsSheet extends StatefulWidget {

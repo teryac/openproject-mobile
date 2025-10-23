@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/core/styles/themes.dart';
 import 'package:open_project/core/util/bloc_observer.dart';
-import 'package:open_project/core/util/cache_helper.dart';
 import 'package:open_project/core/util/dependency_injection.dart';
 
 void main() {

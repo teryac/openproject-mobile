@@ -5,16 +5,21 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
-import 'package:open_project/home/widgets/members_list.dart';
+import 'package:open_project/core/util/date_format.dart';
+import 'package:open_project/home/presentation/widgets/members_list.dart';
 
 class ProjectTile extends StatelessWidget {
-  const ProjectTile(
-      {super.key,
-      required this.projectName,
-      required this.status,
-      required this.statusColor});
-
-  final String projectName, status, statusColor;
+  final String projectName;
+  final String? status;
+  final String statusColor;
+  final DateTime updatedAt;
+  const ProjectTile({
+    super.key,
+    required this.projectName,
+    required this.status,
+    required this.statusColor,
+    required this.updatedAt,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,49 +52,48 @@ class ProjectTile extends StatelessWidget {
                         style: AppTextStyles.medium
                             .copyWith(color: AppColors.primaryText),
                       ),
-                      //Container
-                      Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
+                      if (status != null)
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
                             color: HexColor(statusColor).withAlpha(38),
-                            borderRadius: BorderRadius.circular(360)),
-                        child: Text(
-                          status,
-                          // I Want a style text is Small.
-                          style: AppTextStyles.extraSmall.copyWith(
-                            color: HexColor(statusColor),
-                            fontWeight: FontWeight.w500,
+                            borderRadius: BorderRadius.circular(360),
                           ),
-                        ), /*
-                        badgeAnimation: const badges.BadgeAnimation.fade(
-                          animationDuration: Duration(seconds: 4),
-                          loopAnimation: false,
+                          child: Text(
+                            status!,
+                            style: AppTextStyles.extraSmall.copyWith(
+                              color: HexColor(statusColor),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                        badgeStyle: badges.BadgeStyle(
-                          const Color(0xFF2EAC5D).withAlpha(38),
-                          shape: badges.BadgeShape.square,
-                          badgeColor: const Color(0xFF2EAC5D).withAlpha(38),
-                          borderRadius: BorderRadius.circular(20.0),
-                          elevation: 0,
-                        ),*/
-                      ),
                     ],
                   ),
                   const SizedBox(height: 4.0),
-                  //Text.rich(),
-                  Row(
-                    children: [
-                      Text(
-                        "Overdue by : ",
-                        style: AppTextStyles.medium
-                            .copyWith(color: AppColors.descriptiveText),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: 175,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Last updated: ',
+                              style: AppTextStyles.small.copyWith(
+                                color: AppColors.descriptiveText,
+                              ),
+                            ),
+                            TextSpan(
+                              text: getFormattedDate(updatedAt).toString(),
+                              style: AppTextStyles.small.copyWith(
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        "3 Months.",
-                        style: AppTextStyles.medium
-                            .copyWith(color: AppColors.primaryText),
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 24.0),
                   Row(

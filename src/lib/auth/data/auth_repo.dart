@@ -30,6 +30,10 @@ class AuthRepo {
           ),
         );
       }
+      // Extra safety measure
+      else if (response.statusCode != 200) {
+        throw Exception();
+      }
 
       return const AsyncResult.data(data: null);
     } catch (exception) {
@@ -63,6 +67,10 @@ class AuthRepo {
             errorMessage: 'User not found',
           ),
         );
+      }
+      // Extra safety measure
+      else if (response.statusCode != 200) {
+        throw Exception();
       }
 
       return AsyncResult.data(
