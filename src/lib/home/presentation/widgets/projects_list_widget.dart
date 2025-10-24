@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_project/core/util/dependency_injection.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
@@ -60,6 +59,13 @@ class ProjectsListWidget extends StatelessWidget {
                 );
               },
               data: (context, data) {
+                final separatedProjects = context
+                    .read<HomeController>()
+                    .separatePublicFromPrivateProjects(
+                      projects: data.projects,
+                      public: public,
+                    );
+
                 return AnimatedSliverExpandable(
                   expanded: listExpansionState,
                   duration: expansionAnimationDuration,
@@ -69,9 +75,9 @@ class ProjectsListWidget extends StatelessWidget {
                     sliver: SliverMainAxisGroup(
                       slivers: [
                         SliverList.separated(
-                          itemCount: data.projects.length,
+                          itemCount: separatedProjects.length,
                           itemBuilder: (BuildContext ctx, int index) {
-                            final project = data.projects[index];
+                            final project = separatedProjects[index];
 
                             return ProjectTile(
                               projectName: project.name,

@@ -148,6 +148,7 @@ GoRouter getAppRouter() => GoRouter(
                     searchDialogProjectsCubit:
                         context.read<SearchDialogProjectsCubit>(),
                   ),
+                  dispose: (controller) => controller.dispose(),
                 ),
               ],
               child: const HomeScreen(),

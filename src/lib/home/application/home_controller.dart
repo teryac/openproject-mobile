@@ -29,21 +29,18 @@ class HomeController {
     return currentPage == (total / pageSize).ceil();
   }
 
-  ({
-    List<Project> public,
-    List<Project> private,
-  }) separatePublicFromPrivateProjects(List<Project> projects) {
-    final List<Project> public = [];
-    final List<Project> private = [];
+  List<Project> separatePublicFromPrivateProjects({
+    required List<Project> projects,
+    required bool public,
+  }) {
+    final List<Project> separatedProjects = [];
     for (final project in projects) {
-      if (project.public) {
-        public.add(project);
-      } else {
-        private.add(project);
+      if (project.public == public) {
+        separatedProjects.add(project);
       }
     }
 
-    return (public: public, private: private);
+    return separatedProjects;
   }
 
   void dispose() {
