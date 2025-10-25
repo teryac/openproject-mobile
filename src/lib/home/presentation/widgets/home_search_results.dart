@@ -140,6 +140,9 @@ class HomeSearchResults extends StatelessWidget {
                           toggleMenu(false);
                           context.pushNamed(
                             AppRoutes.workPackages.name,
+                            pathParameters: {
+                              'project_id': project.id.toString(),
+                            },
                           );
                         },
                         borderRadius: getBorderRadius(),

@@ -46,4 +46,14 @@ class ProjectsFilters {
   const ProjectsFilters.noFilters()
       : name = null,
         public = null;
+
+  @override
+  bool operator ==(covariant ProjectsFilters other) {
+    if (identical(this, other)) return true;
+
+    return other.name == name && other.public == public;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ public.hashCode;
 }

@@ -6,19 +6,19 @@ import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
-import 'package:open_project/work_packages/widgets/work_packages_popup_menu.dart';
+import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
 class WorkPackageTile extends StatelessWidget {
   final String title;
   final DateTime? endDate;
-  final String assignee;
+  final String? assignee;
   final String status;
   final String statusColor;
   const WorkPackageTile({
     super.key,
     required this.title,
     this.endDate,
-    required this.assignee,
+    this.assignee,
     required this.status,
     required this.statusColor,
   });
@@ -50,7 +50,7 @@ class WorkPackageTile extends StatelessWidget {
                 Row(
                   spacing: 12,
                   children: [
-                    Flexible(
+                    Expanded(
                       flex: 6,
                       child: Text(
                         title,
@@ -109,21 +109,23 @@ class WorkPackageTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    SvgPicture.asset(AppIcons.profile),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Task assigned to $assignee.',
-                        style: AppTextStyles.small.copyWith(
-                          color: AppColors.descriptiveText,
+                if (assignee != null) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      SvgPicture.asset(AppIcons.profile),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Task assigned to $assignee.',
+                          style: AppTextStyles.small.copyWith(
+                            color: AppColors.descriptiveText,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ]
               ],
             ),
           ),

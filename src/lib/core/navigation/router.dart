@@ -24,14 +24,17 @@ import 'package:open_project/home/presentation/cubits/projects_list_expansion_cu
 import 'package:open_project/home/presentation/screens/home_screen.dart';
 import 'package:open_project/view_work_package/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
-import 'package:open_project/work_packages/work_packages_screen.dart';
+import 'package:open_project/work_packages/application/work_packages_controller.dart';
+import 'package:open_project/work_packages/data/work_packages_repo.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/screens/work_packages_screen.dart';
 // import 'package:open_project/core/constants/app_constants.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppRoutes {
   auth(name: 'auth', path: '/auth'),
   home(name: 'home', path: '/'),
-  workPackages(name: 'workPackages', path: '/workPackges'),
+  workPackages(name: 'workPackages', path: '/workPackges/:project_id'),
   addWorkPackage(name: 'addWorkPackage', path: '/addWorkPackage'),
   viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage'),
   welcome(name: 'welcome', path: '/welcome'),
@@ -159,7 +162,39 @@ GoRouter getAppRouter() => GoRouter(
           path: AppRoutes.workPackages.path,
           name: AppRoutes.workPackages.name,
           builder: (context, state) {
-            return const WorkPackagesScreen();
+            final projectId = int.parse(state.pathParameters['project_id']!);
+
+            return MultiBlocProvider(
+              providers: [
+                RepositoryProvider(
+                  create: (_) => WorkPackagesRepo(),
+                ),
+                BlocProvider(
+                  create: (context) {
+                    return WorkPackagesListCubit(
+                      projectId: projectId,
+                      workPackagesRepo: context.read<WorkPackagesRepo>(),
+                    );
+                  },
+                ),
+                BlocProvider(
+                  create: (context) {
+                    return SearchDialogWorkPackagesCubit(
+                      workPackagesRepo: context.read<WorkPackagesRepo>(),
+                    );
+                  },
+                ),
+                RepositoryProvider(
+                  create: (context) => WorkPackagesController(
+                    projectId: projectId,
+                    searchDialogWorkPackagesCubit:
+                        context.read<SearchDialogWorkPackagesCubit>(),
+                  ),
+                  dispose: (controller) => controller.dispose(),
+                ),
+              ],
+              child: WorkPackagesScreen(projectId: projectId),
+            );
           },
         ),
         GoRoute(

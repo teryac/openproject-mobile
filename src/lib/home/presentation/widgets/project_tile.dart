@@ -9,12 +9,14 @@ import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/home/presentation/widgets/members_list.dart';
 
 class ProjectTile extends StatelessWidget {
+  final int projectId;
   final String projectName;
   final String? status;
   final String statusColor;
   final DateTime updatedAt;
   const ProjectTile({
     super.key,
+    required this.projectId,
     required this.projectName,
     required this.status,
     required this.statusColor,
@@ -31,7 +33,12 @@ class ProjectTile extends StatelessWidget {
         highlightColor: Colors.transparent,
         borderRadius: BorderRadius.circular(16.0),
         onTap: () {
-          context.pushNamed(AppRoutes.workPackages.name);
+          context.pushNamed(
+            AppRoutes.workPackages.name,
+            pathParameters: {
+              'project_id': projectId.toString(),
+            },
+          );
         },
         child: Container(
           padding: const EdgeInsets.all(16.0),

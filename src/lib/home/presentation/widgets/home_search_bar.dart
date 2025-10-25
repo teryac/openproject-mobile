@@ -47,9 +47,6 @@ class HomeSearchBar extends StatelessWidget {
               return;
             }
 
-            // Reset pagination status to get new products instead of
-            // a new page
-            searchDialogProjectsCubit.reset();
             searchDialogProjectsCubit.getProjects(
               projectsFilters: ProjectsFilters(name: query),
             );

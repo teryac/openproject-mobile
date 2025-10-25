@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_project/core/styles/colors.dart';
+import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/failure.dart';
+import 'package:open_project/core/util/pagination.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/sliver_util.dart';
@@ -66,6 +69,20 @@ class ProjectsListWidget extends StatelessWidget {
                       public: public,
                     );
 
+                if (separatedProjects.isEmpty) {
+                  return SliverPadding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        'No projects found',
+                        style: AppTextStyles.medium.copyWith(
+                          color: AppColors.descriptiveText,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
                 return AnimatedSliverExpandable(
                   expanded: listExpansionState,
                   duration: expansionAnimationDuration,
@@ -80,6 +97,7 @@ class ProjectsListWidget extends StatelessWidget {
                             final project = separatedProjects[index];
 
                             return ProjectTile(
+                              projectId: project.id,
                               projectName: project.name,
                               status: project.status,
                               // TODO: Fix - Missing status color
@@ -94,11 +112,11 @@ class ProjectsListWidget extends StatelessWidget {
                         SliverToBoxAdapter(
                           child: Builder(
                             builder: (context) {
-                              if (context.read<HomeController>().isLastPage(
-                                    total: data.total,
-                                    pageSize: data.pageSize,
-                                    currentPage: data.page,
-                                  )) {
+                              if (isLastPage(
+                                total: data.total,
+                                pageSize: data.pageSize,
+                                currentPage: data.page,
+                              )) {
                                 return const SizedBox.shrink();
                               }
 
