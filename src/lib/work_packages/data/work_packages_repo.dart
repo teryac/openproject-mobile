@@ -44,8 +44,8 @@ class WorkPackagesRepo {
       }
 
       // Successful request --> parse JSON
-
       final responseJson = jsonDecode(response.body);
+
       return AsyncResult.data(
         data: PaginatedWorkPackages.fromJson(
           responseJson,

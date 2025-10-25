@@ -5,6 +5,7 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
@@ -84,31 +85,27 @@ class WorkPackageTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    SvgPicture.asset(AppIcons.clock),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          String text = 'No deadline.';
-
-                          if (endDate != null) {
-                            // TODO: Handle other date cases
-                          }
-
-                          return Text(
-                            text,
-                            style: AppTextStyles.small.copyWith(
-                              color: AppColors.descriptiveText,
-                            ),
-                          );
-                        },
+                if (endDate != null) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      SvgPicture.asset(AppIcons.clock),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            return Text(
+                              deadlineText(endDate!),
+                              style: AppTextStyles.small.copyWith(
+                                color: AppColors.descriptiveText,
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
                 if (assignee != null) ...[
                   const SizedBox(height: 8),
                   Row(

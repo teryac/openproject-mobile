@@ -24,7 +24,11 @@ class WorkPackage {
     final links = json['_links'] as Map<String, dynamic>;
 
     // Handle nullable assignee field.
-    final assigneeJson = links['assignee'] as Map<String, dynamic>?;
+    // `href` under "assignee" can also be null, that's why
+    // the extra check is made
+    final assigneeJson = links['assignee']['href'] == null
+        ? null
+        : links['assignee'] as Map<String, dynamic>?;
 
     // Handle nullable date field.
     final dueDateString = json['dueDate'] as String?;

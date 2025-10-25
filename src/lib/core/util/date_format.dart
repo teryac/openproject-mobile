@@ -51,3 +51,44 @@ String _getDaySuffix(int day) {
       return 'th';
   }
 }
+
+String deadlineText(DateTime dueDate) {
+  final now = DateTime.now();
+  final diff = dueDate.difference(now);
+  final days = diff.inDays;
+
+  // Helper to pick between singular/plural
+  String plural(int value, String unit) =>
+      '$value $unit${value == 1 ? '' : 's'}';
+
+  if (days == 0) return 'Due today';
+  if (days == -1) return 'Due yesterday';
+  if (days == 1) return 'Due tomorrow';
+
+  if (days > 0) {
+    if (days < 7) return 'Due in ${plural(days, 'day')}';
+    if (days < 30) {
+      final weeks = (days / 7).round();
+      return 'Due in about ${plural(weeks, 'week')}';
+    }
+    if (days < 365) {
+      final months = (days / 30).round();
+      return 'Due in about ${plural(months, 'month')}';
+    }
+    final years = (days / 365).round();
+    return 'Due in about ${plural(years, 'year')}';
+  } else {
+    final overdueDays = -days;
+    if (overdueDays < 7) return 'Overdue by ${plural(overdueDays, 'day')}';
+    if (overdueDays < 30) {
+      final weeks = (overdueDays / 7).round();
+      return 'Overdue by about ${plural(weeks, 'week')}';
+    }
+    if (overdueDays < 365) {
+      final months = (overdueDays / 30).round();
+      return 'Overdue by about ${plural(months, 'month')}';
+    }
+    final years = (overdueDays / 365).round();
+    return 'Overdue by about ${plural(years, 'year')}';
+  }
+}

@@ -5,8 +5,8 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/util/pagination.dart';
-import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
+import 'package:open_project/core/widgets/load_next_page_button.dart';
 import 'package:open_project/core/widgets/sliver_util.dart';
 import 'package:open_project/home/application/home_controller.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
@@ -132,9 +132,8 @@ class ProjectsListWidget extends StatelessWidget {
 
                               return Padding(
                                 padding: const EdgeInsets.only(top: 16),
-                                child: AppTextButton(
-                                  text: 'Load more',
-                                  onPressed: () {
+                                child: LoadNextPageButton(
+                                  onTap: () {
                                     context
                                         .read<HomeProjectsListCubit>()
                                         .getProjects(
