@@ -29,6 +29,7 @@ class AppTextFormField extends StatelessWidget {
   final String? errorText;
   final bool disableLabel;
   final int? maxLines;
+  final void Function()? onTap;
 
   final _TextFieldStyle _style;
 
@@ -53,6 +54,7 @@ class AppTextFormField extends StatelessWidget {
     this.onPrefixIconPressed,
     this.disableLabel = false,
     this.maxLines = 1,
+    this.onTap,
   })  : borderRadius = null,
         _style = _TextFieldStyle.normal;
 
@@ -78,6 +80,7 @@ class AppTextFormField extends StatelessWidget {
     this.onPrefixIconPressed,
     this.disableLabel = false,
     this.maxLines = 1,
+    this.onTap,
   }) : _style = _TextFieldStyle.outlined;
 
   const AppTextFormField.filled({
@@ -102,6 +105,7 @@ class AppTextFormField extends StatelessWidget {
     this.onPrefixIconPressed,
     this.disableLabel = false,
     this.maxLines = 1,
+    this.onTap,
   }) : _style = _TextFieldStyle.filled;
 
   bool get _filled => _style == _TextFieldStyle.filled;
@@ -112,6 +116,7 @@ class AppTextFormField extends StatelessWidget {
       controller: controller,
       validator: validator,
       onChanged: onChanged,
+      onTap: onTap,
       style: _filled
           ? AppTextStyles.small.copyWith(
               color: AppColors.primaryText,

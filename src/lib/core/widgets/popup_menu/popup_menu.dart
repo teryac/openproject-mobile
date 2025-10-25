@@ -180,23 +180,25 @@ class _AppPopupMenuState extends State<AppPopupMenu>
               follower: menuAlignment.follower,
               target: menuAlignment.target,
             ),
-            portalFollower: Builder(builder: (context) {
-              return ScaleTransition(
-                scale: _animationController.scale,
-                alignment: () {
-                  if (widget.dropdownAlignment) {
-                    if (menuAlignment.target == Alignment.topCenter) {
-                      return Alignment.bottomCenter;
-                    } else {
-                      return Alignment.topCenter;
+            portalFollower: Builder(
+              builder: (context) {
+                return ScaleTransition(
+                  scale: _animationController.scale,
+                  alignment: () {
+                    if (widget.dropdownAlignment) {
+                      if (menuAlignment.target == Alignment.topCenter) {
+                        return Alignment.bottomCenter;
+                      } else {
+                        return Alignment.topCenter;
+                      }
                     }
-                  }
 
-                  return Alignment.center;
-                }(),
-                child: widget.menu(_toggleMenu),
-              );
-            }),
+                    return Alignment.center;
+                  }(),
+                  child: widget.menu(_toggleMenu),
+                );
+              },
+            ),
             child: widget.child(_toggleMenu),
           );
         },
