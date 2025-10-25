@@ -17,6 +17,10 @@ class AppPopupMenu extends StatefulWidget {
   final Widget Function(void Function(bool) toggleMenu) menu;
   final void Function(bool visible)? onMenuToggled;
 
+  /// Removes overlay from the `chld` widget so it can be clicked
+  /// without closing the menu
+  final bool disableChildOverylay;
+
   /// Forces a special menu alignment with the menu expanding
   /// from the bottom of the widget when there is space left on
   /// the screen, and the opposite when there's no enough space
@@ -26,6 +30,7 @@ class AppPopupMenu extends StatefulWidget {
     required this.child,
     required this.menu,
     this.onMenuToggled,
+    this.disableChildOverylay = false,
     this.dropdownAlignment = false,
   });
 
@@ -164,6 +169,72 @@ class _AppPopupMenuState extends State<AppPopupMenu>
 
   @override
   Widget build(BuildContext context) {
+    final portalTarget = Builder(
+      builder: (context) {
+        return PortalTarget(
+          visible: _isMenuVisible,
+          anchor: Aligned(
+            follower: menuAlignment.follower,
+            target: menuAlignment.target,
+          ),
+          portalFollower: Builder(
+            builder: (context) {
+              return ScaleTransition(
+                scale: _animationController.scale,
+                alignment: () {
+                  if (widget.dropdownAlignment) {
+                    if (menuAlignment.target == Alignment.topCenter) {
+                      return Alignment.bottomCenter;
+                    } else {
+                      return Alignment.topCenter;
+                    }
+                  }
+
+                  return Alignment.center;
+                }(),
+                child: widget.menu(_toggleMenu),
+              );
+            },
+          ),
+          child: widget.child(_toggleMenu),
+        );
+      },
+    );
+
+    if (widget.disableChildOverylay) {
+      return PortalTarget(
+        visible: _isMenuVisible,
+        anchor: Aligned(
+          follower: menuAlignment.follower,
+          target: menuAlignment.target,
+        ),
+        portalFollower: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _toggleMenu(false),
+              child: const SizedBox.expand(),
+            ),
+            ScaleTransition(
+              scale: _animationController.scale,
+              alignment: () {
+                if (widget.dropdownAlignment) {
+                  return menuAlignment.target == Alignment.topCenter
+                      ? Alignment.bottomCenter
+                      : Alignment.topCenter;
+                }
+
+                return Alignment.center;
+              }(),
+              child: widget.menu(_toggleMenu),
+            ),
+          ],
+        ),
+        child: widget.child(_toggleMenu),
+      );
+    }
+
     return PortalTarget(
       visible: _isMenuVisible,
       anchor: const Filled(),
@@ -172,37 +243,7 @@ class _AppPopupMenuState extends State<AppPopupMenu>
         onTapDown: (_) => _toggleMenu(false),
         child: const SizedBox.expand(),
       ),
-      child: Builder(
-        builder: (context) {
-          return PortalTarget(
-            visible: _isMenuVisible,
-            anchor: Aligned(
-              follower: menuAlignment.follower,
-              target: menuAlignment.target,
-            ),
-            portalFollower: Builder(
-              builder: (context) {
-                return ScaleTransition(
-                  scale: _animationController.scale,
-                  alignment: () {
-                    if (widget.dropdownAlignment) {
-                      if (menuAlignment.target == Alignment.topCenter) {
-                        return Alignment.bottomCenter;
-                      } else {
-                        return Alignment.topCenter;
-                      }
-                    }
-
-                    return Alignment.center;
-                  }(),
-                  child: widget.menu(_toggleMenu),
-                );
-              },
-            ),
-            child: widget.child(_toggleMenu),
-          );
-        },
-      ),
+      child: portalTarget,
     );
   }
 }

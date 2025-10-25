@@ -17,6 +17,7 @@ class HomeSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPopupMenu(
       dropdownAlignment: true,
+      disableChildOverylay: true,
       menu: (toggleMenu) {
         return Padding(
           padding: const EdgeInsets.only(top: 12),
