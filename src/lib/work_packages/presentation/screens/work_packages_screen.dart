@@ -9,10 +9,10 @@ import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_button.dart';
-import 'package:open_project/core/widgets/app_chip.dart';
 import 'package:open_project/core/widgets/custom_app_bar.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/widgets/work_packages_filters_widget.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_list.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_search_bar.dart';
 
@@ -22,44 +22,6 @@ class WorkPackagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return const Scaffold(
-    //   backgroundColor: Colors.amber,
-    //   body: Center(
-    //     child: Padding(
-    //       padding: EdgeInsets.symmetric(horizontal: 20),
-    //       child: SearchResultsDialog(
-    //         workPackages: [
-    //           (
-    //             name: 'Set date and location of project',
-    //             type: 'Task',
-    //             typeColor: '#2392D4',
-    //           ),
-    //           (
-    //             name: 'Send invitation to Shaaban',
-    //             type: 'Milestone',
-    //             typeColor: '#2EAC5D',
-    //           ),
-    //           (
-    //             name: 'Password not protected',
-    //             type: 'Bug',
-    //             typeColor: '#F84616',
-    //           ),
-    //           (
-    //             name: 'Release v1.1',
-    //             type: 'Milestone',
-    //             typeColor: '#2EAC5D',
-    //           ),
-    //           (
-    //             name: 'Release v1.0',
-    //             type: 'Milestone',
-    //             typeColor: '#2EAC5D',
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // );
-
     return MultiBlocListener(
       listeners: [
         BlocListener<WorkPackagesListCubit,
@@ -92,35 +54,19 @@ class WorkPackagesScreen extends StatelessWidget {
               context.pushNamed(AppRoutes.addWorkPackage.name);
             },
           ),
-          body: SingleChildScrollView(
+          body: const SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 12),
-                const Padding(
+                SizedBox(height: 12),
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: WorkPackagesSearchBar(),
                 ),
-                const SizedBox(height: 12),
-                AppChipList(
-                  chips: [
-                    AppChip(
-                      text: 'In progress',
-                      isSelected: true,
-                      onPressed: () {},
-                    ),
-                    ...List.filled(
-                      7,
-                      AppChip(
-                        text: 'New',
-                        isSelected: false,
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                const WorkPackagesList(),
-                const SizedBox(height: 24),
+                SizedBox(height: 12),
+                WorkPackagesFiltersWidget(),
+                SizedBox(height: 24),
+                WorkPackagesList(),
+                SizedBox(height: 24),
               ],
             ),
           ),

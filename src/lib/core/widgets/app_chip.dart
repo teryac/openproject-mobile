@@ -28,7 +28,7 @@ class AppChip extends StatelessWidget {
       duration: animationDuration,
       curve: animationCurve,
       tween: ColorTween(
-        begin: isSelected ? disabledChipColor : selectedChipColor,
+        begin: isSelected ? selectedChipColor : disabledChipColor,
         end: isSelected ? selectedChipColor : disabledChipColor,
       ),
       builder: (context, animatedColor, child) {
@@ -87,12 +87,11 @@ class AppChipList extends StatelessWidget {
           (index) {
             return Padding(
               padding: getScrollableRowPadding(
-                context: context,
-                index: index,
-                listLength: chips.length,
-                itemPadding: 12, 
-                marginalPadding: 28
-              ),
+                  context: context,
+                  index: index,
+                  listLength: chips.length,
+                  itemPadding: 12,
+                  marginalPadding: 28),
               child: chips[index],
             );
           },
