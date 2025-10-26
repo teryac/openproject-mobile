@@ -40,11 +40,12 @@ class _ProjectsDataCubit
 
   void getProjects({
     required ProjectsFilters projectsFilters,
+    bool resetPages = false,
   }) async {
     if (state.isLoading) return;
 
     // If different filter applied, reset model first
-    if (projectsFilters != state.data?.projectsFilters) {
+    if (resetPages || (projectsFilters != state.data?.projectsFilters)) {
       emit(PaginatedAsyncValue.initial());
     }
 

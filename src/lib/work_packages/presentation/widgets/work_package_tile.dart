@@ -91,7 +91,7 @@ class WorkPackageTile extends StatelessWidget {
                     children: [
                       SvgPicture.asset(AppIcons.clock),
                       const SizedBox(width: 8),
-                      Expanded(
+                    Expanded(
                         child: Builder(
                           builder: (context) {
                             return Text(

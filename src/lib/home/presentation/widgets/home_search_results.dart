@@ -7,6 +7,7 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
+import 'package:open_project/core/widgets/search_result_occurrence_highlighter.dart';
 import 'package:open_project/home/application/home_controller.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
@@ -158,20 +159,18 @@ class HomeSearchResults extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text.rich(
-                                      TextSpan(
-                                        children: _highlightOccurrences(
-                                          project.name,
-                                          data.projectsFilters.name,
+                                    SearchResultOccurrenceHighlighter(
+                                      source: project.name,
+                                      query: data.projectsFilters.name,
+                                      normalStyle:
                                           AppTextStyles.medium.copyWith(
-                                            color: AppColors.primaryText,
-                                            fontWeight: FontWeight.w400,
-                                          ),
+                                        color: AppColors.primaryText,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      highlightStyle:
                                           AppTextStyles.medium.copyWith(
-                                            color: AppColors.primaryText,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                        color: AppColors.primaryText,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -246,53 +245,4 @@ class _NoResultsFoundWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-/// This function is used to highlight part of the project name
-/// that matches the search query
-List<TextSpan> _highlightOccurrences(
-  String source,
-  String? query,
-  TextStyle normalStyle,
-  TextStyle highlightStyle,
-) {
-  if (query == null || query.isEmpty) {
-    return [
-      TextSpan(text: source, style: normalStyle),
-    ];
-  }
-
-  final matches = <TextSpan>[];
-  final lowerSource = source.toLowerCase();
-  final lowerQuery = query.toLowerCase();
-
-  int start = 0;
-  while (true) {
-    final index = lowerSource.indexOf(lowerQuery, start);
-    if (index < 0) {
-      // no more matches
-      matches.add(TextSpan(text: source.substring(start), style: normalStyle));
-      break;
-    }
-
-    if (index > start) {
-      matches.add(
-        TextSpan(
-          text: source.substring(start, index),
-          style: normalStyle,
-        ),
-      );
-    }
-
-    matches.add(
-      TextSpan(
-        text: source.substring(index, index + query.length),
-        style: highlightStyle,
-      ),
-    );
-
-    start = index + query.length;
-  }
-
-  return matches;
 }

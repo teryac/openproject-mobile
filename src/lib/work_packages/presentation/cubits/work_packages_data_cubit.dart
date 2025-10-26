@@ -44,11 +44,13 @@ class _WorkPackagesDataCubit
   void getWorkPackages({
     required int projectId,
     required WorkPackagesFilters workPackagesFilters,
+    bool resetPages = false,
   }) async {
     if (state.isLoading) return;
 
     // If different filter applied, reset model first
-    if (workPackagesFilters != state.data?.workPackagesFilters) {
+    if (resetPages ||
+        (workPackagesFilters != state.data?.workPackagesFilters)) {
       emit(PaginatedAsyncValue.initial());
     }
 

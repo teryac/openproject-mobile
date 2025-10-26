@@ -19,7 +19,7 @@ class WorkPackagesRepo {
       final pageText = '?offset=$page';
 
       // Assign Filters
-      final filtersText = _workPackagesJsonFilters(workPackagesFilters).isEmpty;
+      final filtersText = _workPackagesJsonFilters(workPackagesFilters);
 
       // Send request
       final response = await http.get(
@@ -124,5 +124,5 @@ String _workPackagesJsonFilters(WorkPackagesFilters filters) {
 
   final json = Uri.encodeQueryComponent(jsonEncode(apiFilters));
 
-  return json;
+  return '&filters=$json';
 }
