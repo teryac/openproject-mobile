@@ -24,6 +24,7 @@ import 'package:open_project/home/presentation/cubits/projects_list_expansion_cu
 import 'package:open_project/home/presentation/screens/home_screen.dart';
 import 'package:open_project/view_work_package/application/view_work_package_scroll_controller.dart';
 import 'package:open_project/view_work_package/presentation/cubits/view_work_package_scroll_cubit.dart';
+import 'package:open_project/view_work_package/presentation/screens/temp.dart';
 import 'package:open_project/view_work_package/presentation/screens/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
@@ -219,7 +220,8 @@ GoRouter getAppRouter() => GoRouter(
                   ),
                 ),
               ],
-              child: const ViewWorkPackageScreen(),
+              // TODO: Fix
+              child: const TempScreen(),
             );
           },
         ),
