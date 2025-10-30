@@ -129,14 +129,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
-  curved_labeled_navigation_bar:
-    dependency: "direct main"
-    description:
-      name: curved_labeled_navigation_bar
-      sha256: "936d8a34128478498e330588dbed3fdd7a6cc55ebada6e67340c080387e1a37e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.6"
   curved_navigation_bar:
     dependency: "direct main"
     description:
@@ -161,22 +153,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  dropdown_button2:
-    dependency: "direct main"
-    description:
-      name: dropdown_button2
-      sha256: b0fe8d49a030315e9eef6c7ac84ca964250155a6224d491c1365061bc974a9e1
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.9"
-  easy_date_timeline:
-    dependency: "direct main"
-    description:
-      name: easy_date_timeline
-      sha256: "0fb8fe360d78b7ccb409da9de0e8a71e8e06f0e8a60ea6c54dabf830479309b2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.9"
   expandable_page_view:
     dependency: "direct main"
     description:
@@ -341,22 +317,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  fluttericon:
-    dependency: "direct main"
-    description:
-      name: fluttericon
-      sha256: "252fa8043826e93d972a602497a260cb3d62b5aea6d045793e4381590f2c1e99"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
-  fluttertoast:
-    dependency: "direct main"
-    description:
-      name: fluttertoast
-      sha256: "144ddd74d49c865eba47abe31cbc746c7b311c82d6c32e571fd73c4264b740e2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.0.0"
   freezed_annotation:
     dependency: transitive
     description:
@@ -573,14 +533,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
-  percent_indicator:
-    dependency: "direct main"
-    description:
-      name: percent_indicator
-      sha256: "157d29133bbc6ecb11f923d36e7960a96a3f28837549a20b65e5135729f0f9fd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.5"
   petitparser:
     dependency: transitive
     description:
@@ -826,14 +778,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  universal_io:
-    dependency: transitive
-    description:
-      name: universal_io
-      sha256: "1722b2dcc462b4b2f3ee7d188dad008b6eb4c40bbd03a3de451d82c78bba9aad"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.2"
   uuid:
     dependency: transitive
     description:

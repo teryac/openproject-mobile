@@ -21,11 +21,11 @@ class DatePickerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: enabled ? 800 : 600,
+      constraints: const BoxConstraints(
+        maxWidth: 800,
       ),
       child: Row(
-        spacing: enabled ? 8 : 0,
+        spacing: 8,
         children: List.generate(
           3,
           (index) {
@@ -46,18 +46,12 @@ class DatePickerWidget extends StatelessWidget {
                   // widget right at the center between the boxes
                   ,
                 ),
-                child: enabled
-                    ? Text(
-                        'To',
-                        style: AppTextStyles.extraSmall.copyWith(
-                          color: AppColors.descriptiveText,
-                        ),
-                      )
-                    : Container(
-                        width: 28,
-                        height: 8,
-                        color: AppColors.projectBackground,
-                      ),
+                child: Text(
+                  'To',
+                  style: AppTextStyles.extraSmall.copyWith(
+                    color: AppColors.descriptiveText,
+                  ),
+                ),
               );
             }
 
@@ -89,20 +83,17 @@ class DatePickerWidget extends StatelessWidget {
                             }
                           : null,
                       child: Container(
-                        height: MediaQuery.textScalerOf(context).scale(
-                          enabled ? 132 : 104,
-                        ),
+                        height: MediaQuery.textScalerOf(context).scale(132),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          border: enabled
-                              ? Border.all(
-                                  color: AppColors.blue100,
-                                  width: 1.5,
-                                )
-                              : null,
+                          border: Border.all(
+                            color:
+                                enabled ? AppColors.blue100 : AppColors.border,
+                            width: 1.5,
+                          ),
                         ),
                         child: Center(
                           child: Builder(

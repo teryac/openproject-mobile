@@ -20,7 +20,7 @@ class MembersList extends StatelessWidget {
             Transform.translate(
               offset: Offset(
                   i * (-12) * MediaQuery.textScalerOf(context).scale(1), 0),
-              child: _MemberWidget(
+              child: MemberAvatarWidget(
                 fullName: members[i].fullName,
                 color: members[i].color,
                 extraMembersOverlayCount:
@@ -33,21 +33,39 @@ class MembersList extends StatelessWidget {
   }
 }
 
-class _MemberWidget extends StatelessWidget {
+class MemberAvatarWidget extends StatelessWidget {
   final String fullName;
   final Color color;
+  final double radius;
+  final bool _border;
+  // When not null, the profile image is blurred, and a '+x' is added
+  // on top to indicate that there are more members available -when used
+  // as a members list-, and 'x' value is `extraMembersOverlayCount` value
   final int? extraMembersOverlayCount;
 
-  const _MemberWidget({
+  const MemberAvatarWidget({
+    super.key,
     required this.fullName,
     required this.color,
+    this.radius = 22.5,
     this.extraMembersOverlayCount,
-  });
+  }) : _border = true;
+
+  const MemberAvatarWidget.noBorder({
+    super.key,
+    required this.fullName,
+    required this.color,
+    this.radius = 22.5,
+    this.extraMembersOverlayCount,
+  }) : _border = false;
 
   @override
   Widget build(BuildContext context) {
     final nameWords = fullName.split(' ');
-    final containerRadius = 45 * MediaQuery.textScalerOf(context).scale(1);
+    final containerDiameter =
+        radius * 2 * MediaQuery.textScalerOf(context).scale(1);
+    // This modifies the text size based on the diameter of the container
+    const textToDiameterModifier = 0.35;
 
     String getFirstCharacter(String? word) {
       return word?.split('').firstOrNull ?? '?';
@@ -56,19 +74,22 @@ class _MemberWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: containerRadius,
-          height: containerRadius,
+          width: containerDiameter,
+          height: containerDiameter,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: color,
-            border: Border.all(color: AppColors.projectBackground, width: 2),
+            border: _border
+                ? Border.all(color: AppColors.projectBackground, width: 2)
+                : null,
           ),
           child: Text(
             getFirstCharacter(nameWords[0]) +
                 getFirstCharacter(nameWords.length > 1 ? nameWords.last : null),
             style: AppTextStyles.medium.copyWith(
               color: AppColors.background,
+              fontSize: containerDiameter * textToDiameterModifier,
             ),
           ),
         ),
@@ -79,19 +100,21 @@ class _MemberWidget extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
               child: Container(
-                width: containerRadius,
-                height: containerRadius,
+                width: containerDiameter,
+                height: containerDiameter,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0x80505358),
-                  border:
-                      Border.all(color: AppColors.projectBackground, width: 2),
+                  border: _border
+                      ? Border.all(color: AppColors.projectBackground, width: 2)
+                      : null,
                 ),
                 child: Text(
                   '+$extraMembersOverlayCount',
                   style: AppTextStyles.medium.copyWith(
                     color: AppColors.background,
+                    fontSize: containerDiameter * textToDiameterModifier,
                   ),
                 ),
               ),

@@ -74,11 +74,7 @@ class WorkPackagesList extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     return WorkPackageTile(
-                      title: workPackages[index].subject,
-                      assignee: workPackages[index].assignee?.name,
-                      endDate: workPackages[index].dueDate,
-                      status: workPackages[index].status.name,
-                      statusColor: workPackages[index].status.colorHex,
+                      workPackage: workPackages[index],
                     );
                   },
                 ),

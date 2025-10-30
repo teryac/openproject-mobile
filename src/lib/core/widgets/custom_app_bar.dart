@@ -45,8 +45,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               borderRadius: BorderRadius.circular(360),
               onTap: trailingIconAction,
               child: Container(
-                width: 28,
-                height: 28,
+                width: 40,
+                height: 40,
                 alignment: Alignment.center,
                 child: trailingIcon,
               ),

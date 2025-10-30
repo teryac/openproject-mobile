@@ -125,6 +125,7 @@ class WorkPackagesSearchResults extends StatelessWidget {
                         splashColor: AppColors.primaryText.withAlpha(38),
                         highlightColor: Colors.transparent,
                         onTap: () {
+                          toggleMenu(false);
                           context.pushNamed(AppRoutes.viewWorkPackage.name);
                         },
                         child: Padding(

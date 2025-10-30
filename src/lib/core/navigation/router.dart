@@ -22,7 +22,9 @@ import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/cubits/projects_list_expansion_cubit.dart';
 import 'package:open_project/home/presentation/screens/home_screen.dart';
-import 'package:open_project/view_work_package/view_work_package_screen.dart';
+import 'package:open_project/view_work_package/application/view_work_package_scroll_controller.dart';
+import 'package:open_project/view_work_package/presentation/cubits/view_work_package_scroll_cubit.dart';
+import 'package:open_project/view_work_package/presentation/screens/view_work_package_screen.dart';
 import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
@@ -205,7 +207,21 @@ GoRouter getAppRouter() => GoRouter(
         GoRoute(
           path: AppRoutes.viewWorkPackage.path,
           name: AppRoutes.viewWorkPackage.name,
-          builder: (context, state) => const ViewWorkPackageScreen(),
+          builder: (context, state) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => ViewWorkPackageScrollCubit(),
+                ),
+                RepositoryProvider(
+                  create: (context) => ViewWorkPackageScrollController(
+                    scrollCubit: context.read<ViewWorkPackageScrollCubit>(),
+                  ),
+                ),
+              ],
+              child: const ViewWorkPackageScreen(),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.blocTutorial.path,

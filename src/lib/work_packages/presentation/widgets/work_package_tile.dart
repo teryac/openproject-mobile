@@ -7,22 +7,12 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
+import 'package:open_project/work_packages/models/work_package.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
 class WorkPackageTile extends StatelessWidget {
-  final String title;
-  final DateTime? endDate;
-  final String? assignee;
-  final String status;
-  final String statusColor;
-  const WorkPackageTile({
-    super.key,
-    required this.title,
-    this.endDate,
-    this.assignee,
-    required this.status,
-    required this.statusColor,
-  });
+  final WorkPackage workPackage;
+  const WorkPackageTile({super.key, required this.workPackage});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +44,7 @@ class WorkPackageTile extends StatelessWidget {
                     Expanded(
                       flex: 6,
                       child: Text(
-                        title,
+                        workPackage.subject,
                         style: AppTextStyles.medium.copyWith(
                           color: AppColors.primaryText,
                         ),
@@ -70,14 +60,15 @@ class WorkPackageTile extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: HexColor(statusColor).withAlpha(38),
+                            color: HexColor(workPackage.status.colorHex)
+                                .withAlpha(38),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            status,
+                            workPackage.status.name,
                             style: AppTextStyles.extraSmall.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: HexColor(statusColor),
+                              color: HexColor(workPackage.status.colorHex),
                             ),
                           ),
                         ),
@@ -85,17 +76,17 @@ class WorkPackageTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (endDate != null) ...[
+                if (workPackage.dueDate != null) ...[
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       SvgPicture.asset(AppIcons.clock),
                       const SizedBox(width: 8),
-                    Expanded(
+                      Expanded(
                         child: Builder(
                           builder: (context) {
                             return Text(
-                              deadlineText(endDate!),
+                              deadlineText(workPackage.dueDate!),
                               style: AppTextStyles.small.copyWith(
                                 color: AppColors.descriptiveText,
                               ),
@@ -106,7 +97,7 @@ class WorkPackageTile extends StatelessWidget {
                     ],
                   ),
                 ],
-                if (assignee != null) ...[
+                if (workPackage.assignee != null) ...[
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -114,7 +105,7 @@ class WorkPackageTile extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Task assigned to $assignee.',
+                          'Task assigned to ${workPackage.assignee}.',
                           style: AppTextStyles.small.copyWith(
                             color: AppColors.descriptiveText,
                           ),
