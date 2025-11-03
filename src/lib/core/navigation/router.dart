@@ -15,13 +15,14 @@ import 'package:open_project/bloc_tutorial/presentation/cubits/projects_cubit.da
 import 'package:open_project/bloc_tutorial/presentation/cubits/work_packages_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/screens/bloc_tutorial_screen.dart';
 import 'package:open_project/core/constants/app_constants.dart';
-import 'package:open_project/core/util/cache_helper.dart';
-import 'package:open_project/core/util/dependency_injection.dart';
+import 'package:open_project/core/cache/cache_repo.dart';
 import 'package:open_project/home/application/home_controller.dart';
 import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/cubits/projects_list_expansion_cubit.dart';
 import 'package:open_project/home/presentation/screens/home_screen.dart';
+import 'package:open_project/splash/presentation/cubit/splash_cubit.dart';
+import 'package:open_project/splash/presentation/screens/splash_screen.dart';
 import 'package:open_project/view_work_package/application/view_work_package_scroll_controller.dart';
 import 'package:open_project/view_work_package/presentation/cubits/view_work_package_scroll_cubit.dart';
 import 'package:open_project/view_work_package/presentation/screens/view_work_package_screen.dart';
@@ -30,10 +31,9 @@ import 'package:open_project/work_packages/application/work_packages_controller.
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/screens/work_packages_screen.dart';
-// import 'package:open_project/core/constants/app_constants.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppRoutes {
+  splash(name: 'splash', path: '/splash'),
   auth(name: 'auth', path: '/auth'),
   home(name: 'home', path: '/'),
   workPackages(name: 'workPackages', path: '/workPackges/:project_id'),
@@ -53,12 +53,12 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter getAppRouter() => GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
-      initialLocation: AppRoutes.welcome.path,
+      initialLocation: AppRoutes.splash.path,
       redirect: (context, state) async {
         // Check for authentication state
-        final cachedServer = await serviceLocator<CacheHelper>().getData(
-          AppConstants.serverUrlCacheKey,
-        );
+        final cachedServer = await context.read<CacheRepo>().getData(
+              AppConstants.serverUrlCacheKey,
+            );
         final isLoggedIn = cachedServer != null && cachedServer.isNotEmpty;
 
         // List of auth-related screens
@@ -82,6 +82,18 @@ GoRouter getAppRouter() => GoRouter(
         return null;
       },
       routes: [
+        GoRoute(
+          path: AppRoutes.splash.path,
+          name: AppRoutes.splash.name,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) => SplashCubit(
+                cacheHelper: context.read<CacheRepo>(),
+              ),
+              child: const SplashScreen(),
+            );
+          },
+        ),
         GoRoute(
           path: AppRoutes.welcome.path,
           name: AppRoutes.welcome.name,
@@ -111,6 +123,7 @@ GoRouter getAppRouter() => GoRouter(
                 ),
                 RepositoryProvider(
                   create: (context) => AuthController(
+                    context: context,
                     authPageViewCubit: context.read<AuthPageViewCubit>(),
                     authPingServerCubit: context.read<AuthPingServerCubit>(),
                     authGetUserCubit: context.read<AuthGetUserCubit>(),
@@ -137,6 +150,7 @@ GoRouter getAppRouter() => GoRouter(
                 BlocProvider(
                   create: (context) {
                     return HomeProjectsListCubit(
+                      context: context,
                       homeRepo: context.read<HomeRepo>(),
                     );
                   },
@@ -150,6 +164,7 @@ GoRouter getAppRouter() => GoRouter(
                 ),
                 RepositoryProvider(
                   create: (context) => HomeController(
+                    context: context,
                     searchDialogProjectsCubit:
                         context.read<SearchDialogProjectsCubit>(),
                   ),
@@ -174,6 +189,7 @@ GoRouter getAppRouter() => GoRouter(
                 BlocProvider(
                   create: (context) {
                     return WorkPackagesListCubit(
+                      context: context,
                       projectId: projectId,
                       workPackagesRepo: context.read<WorkPackagesRepo>(),
                     );
@@ -188,6 +204,7 @@ GoRouter getAppRouter() => GoRouter(
                 ),
                 RepositoryProvider(
                   create: (context) => WorkPackagesController(
+                    context: context,
                     projectId: projectId,
                     searchDialogWorkPackagesCubit:
                         context.read<SearchDialogWorkPackagesCubit>(),

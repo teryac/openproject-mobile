@@ -87,6 +87,7 @@ class WorkPackagesSearchResults extends StatelessWidget {
                   );
 
                   context.read<SearchDialogWorkPackagesCubit>().getWorkPackages(
+                        context: context,
                         projectId: projectId,
                         workPackagesFilters: WorkPackagesFilters(
                           name: searchQuery,

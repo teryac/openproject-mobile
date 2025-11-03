@@ -1,19 +1,9 @@
 class AppConstants {
-  // TODO: Remove when `SharedPreferences` is replaced
-  @Deprecated(
-      'Use `serverUrlCacheKey` instead, `SharedPreferences` will be removed in the future.')
-  static const sharedPreferencesServerKey = 'Server';
-  @Deprecated(
-      'Use `apiTokenCacheKey` instead, `SharedPreferences` will be removed in the future.')
-  static const sharedPreferencesApiKey = 'apikey';
-  @Deprecated(
-      'Use cache keys instead, `SharedPreferences` will be removed in the future.')
-  static const sharedPreferencesPasswordKey = 'password';
-
   static const serverUrlCacheKey = 'server_url';
   static const apiTokenCacheKey = 'api_token';
+  static const userIdCacheKey = 'user_id';
+  static const userNameCacheKey = 'user_name';
   static const userFirstNameCacheKey = 'user_first_name';
-  static const userAvatarCacheKey = 'user_avatar';
   static const userEmailCacheKey = 'user_email';
 
   static ({String title, String body}) getApiTokenInstructions(int index) {

@@ -1,11 +1,22 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
+import 'package:open_project/core/cache/cache_repo.dart';
+import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/models/project.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 
 class HomeController {
   final SearchDialogProjectsCubit searchDialogProjectsCubit;
-  HomeController({required this.searchDialogProjectsCubit});
+  final BuildContext context;
+  HomeController({
+    required this.searchDialogProjectsCubit,
+    required this.context,
+  });
 
   final searchTextController = TextEditingController();
   void searchProjects() {
@@ -14,14 +25,13 @@ class HomeController {
     }
 
     searchDialogProjectsCubit.getProjects(
+      context: context,
       projectsFilters: ProjectsFilters(
         name: searchTextController.text,
         public: null,
       ),
     );
   }
-
-  
 
   List<Project> separatePublicFromPrivateProjects({
     required List<Project> projects,
@@ -35,6 +45,18 @@ class HomeController {
     }
 
     return separatedProjects;
+  }
+
+  void logOut(BuildContext context) {
+    context.goNamed(AppRoutes.splash.name);
+    // Delay to avoid null pointer exceptions
+    Future.delayed(
+      const Duration(milliseconds: 300),
+      () {
+        context.read<CacheRepo>().clearAll();
+        context.read<CacheCubit>().updateCacheValues({});
+      },
+    );
   }
 
   void dispose() {

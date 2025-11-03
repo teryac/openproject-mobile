@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class CacheHelper {
-  const CacheHelper();
+class CacheRepo {
+  const CacheRepo();
 
   // Secure storage instance
   final FlutterSecureStorage _storage = const FlutterSecureStorage(
@@ -9,6 +9,13 @@ class CacheHelper {
       encryptedSharedPreferences: true,
     ),
   );
+
+  /// Save multiple key-value pairs securely
+  Future<void> saveAll(Map<String, String?> data) async {
+    for (final entry in data.entries) {
+      await _storage.write(key: entry.key, value: entry.value);
+    }
+  }
 
   /// Save a value securely
   Future<void> saveData({
@@ -18,11 +25,9 @@ class CacheHelper {
     await _storage.write(key: key, value: value);
   }
 
-  /// Save multiple key-value pairs securely
-  Future<void> saveAll(Map<String, String?> data) async {
-    for (final entry in data.entries) {
-      await _storage.write(key: entry.key, value: entry.value);
-    }
+  /// Read all stored key-value pairs
+  Future<Map<String, String>> getAll() async {
+    return await _storage.readAll();
   }
 
   /// Read a value

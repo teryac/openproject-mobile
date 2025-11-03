@@ -51,7 +51,7 @@ class AuthRepo {
   }) async {
     try {
       final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.userInfo}/me'),
+        Uri.parse('$serverUrl${ApiConstants.userInfo('me')}'),
         headers: ApiConstants.getHeaders(apiToken),
       );
 
@@ -79,6 +79,7 @@ class AuthRepo {
         ),
       );
     } catch (exception) {
+      print(exception);
       return const AsyncResult.error(
         error: NetworkFailure(
           errorMessage: 'An error occurred',

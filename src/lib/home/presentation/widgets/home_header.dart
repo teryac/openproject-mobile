@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/home/application/home_controller.dart';
+import 'package:open_project/home/presentation/widgets/members_list.dart';
+import 'package:open_project/home/presentation/widgets/server_dialog.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cacheData = context.read<CacheCubit>().state;
+    final firstName = cacheData[AppConstants.userFirstNameCacheKey] ??
+        // Name is never null, but first name can be null
+        cacheData[AppConstants.userNameCacheKey]?.split(' ').first;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -17,8 +28,10 @@ class HomeHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Hello Mohammad",
-              style: AppTextStyles.large.copyWith(color: AppColors.primaryText),
+              "Hello ${firstName ?? ''}",
+              style: AppTextStyles.large.copyWith(
+                color: AppColors.primaryText,
+              ),
             ),
             const SizedBox(
               height: 4.0,
@@ -30,37 +43,61 @@ class HomeHeader extends StatelessWidget {
             ),
           ],
         ),
-        Container(
-          padding: const EdgeInsets.only(
-              right: 8.0, left: 4.0, top: 4.0, bottom: 4.0),
-          decoration: BoxDecoration(
-              color: AppColors.searchBarBackground,
-              borderRadius: BorderRadius.circular(360.0)),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                    color: AppColors.blue100, shape: BoxShape.circle),
-                child: Center(
-                  child: Text("MH",
-                      style: AppTextStyles.small.copyWith(
-                          color: AppColors.background,
-                          fontWeight: FontWeight.bold)),
-                ),
+        Material(
+          color: AppColors.searchBarBackground,
+          borderRadius: BorderRadius.circular(360),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(360),
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: false,
+                shape: RoundedRectangleBorder(),
+                builder: (_) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: IntrinsicHeight(
+                      child: SafeArea(
+                        child: RepositoryProvider.value(
+                          value: context.read<HomeController>(),
+                          child: ServerDialog(),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.only(
+                right: 8.0,
+                left: 4.0,
+                top: 4.0,
+                bottom: 4.0,
               ),
-              const SizedBox(width: 8.0),
-              SvgPicture.asset(
-                AppIcons.arrowUp,
-                width: 16.0,
-                height: 16.0,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.iconSecondary,
-                  BlendMode.srcIn,
-                ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(360),
               ),
-            ],
+              child: Row(
+                children: [
+                  MemberAvatarWidget.noBorder(
+                    fullName: cacheData[AppConstants.userNameCacheKey],
+                    radius: 18,
+                    color: Colors.blue,
+                  ),
+                  const SizedBox(width: 8.0),
+                  SvgPicture.asset(
+                    AppIcons.arrowUp,
+                    width: 16.0,
+                    height: 16.0,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.iconSecondary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ],

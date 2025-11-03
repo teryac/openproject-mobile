@@ -21,6 +21,7 @@ class WorkPackagesList extends StatelessWidget {
       GoRouterState.of(context).pathParameters['project_id']!,
     );
     context.read<WorkPackagesListCubit>().getWorkPackages(
+          context: context,
           projectId: projectId,
           workPackagesFilters: const WorkPackagesFilters.noFilters(),
         );

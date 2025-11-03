@@ -47,6 +47,7 @@ class HomeSearchBar extends StatelessWidget {
               return;
             }
             searchDialogProjectsCubit.getProjects(
+              context: context,
               projectsFilters: ProjectsFilters(name: query),
               resetPages: true,
             );

@@ -2,6 +2,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 
@@ -34,7 +36,8 @@ class MembersList extends StatelessWidget {
 }
 
 class MemberAvatarWidget extends StatelessWidget {
-  final String fullName;
+  // TODO: Add image fallback
+  final String? fullName;
   final Color color;
   final double radius;
   final bool _border;
@@ -61,7 +64,7 @@ class MemberAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final nameWords = fullName.split(' ');
+    final nameWords = fullName?.split(' ');
     final containerDiameter =
         radius * 2 * MediaQuery.textScalerOf(context).scale(1);
     // This modifies the text size based on the diameter of the container
@@ -84,14 +87,25 @@ class MemberAvatarWidget extends StatelessWidget {
                 ? Border.all(color: AppColors.projectBackground, width: 2)
                 : null,
           ),
-          child: Text(
-            getFirstCharacter(nameWords[0]) +
-                getFirstCharacter(nameWords.length > 1 ? nameWords.last : null),
-            style: AppTextStyles.medium.copyWith(
-              color: AppColors.background,
-              fontSize: containerDiameter * textToDiameterModifier,
-            ),
-          ),
+          child: nameWords == null
+              ? SvgPicture.asset(
+                  AppIcons.profileFilled,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                )
+              : Text(
+                  getFirstCharacter(nameWords[0]) +
+                      getFirstCharacter(
+                          nameWords.length > 1 ? nameWords.last : null),
+                  style: AppTextStyles.medium.copyWith(
+                    color: AppColors.background,
+                    fontSize: containerDiameter * textToDiameterModifier,
+                  ),
+                ),
         ),
         if (extraMembersOverlayCount != null)
           ClipRRect(

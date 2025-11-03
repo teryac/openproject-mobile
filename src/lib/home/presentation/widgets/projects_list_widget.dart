@@ -55,6 +55,7 @@ class ProjectsListWidget extends StatelessWidget {
                     message: error.errorMessage,
                     onPressed: () {
                       context.read<HomeProjectsListCubit>().getProjects(
+                            context: context,
                             projectsFilters: const ProjectsFilters.noFilters(),
                           );
                     },
@@ -137,6 +138,7 @@ class ProjectsListWidget extends StatelessWidget {
                                     context
                                         .read<HomeProjectsListCubit>()
                                         .getProjects(
+                                          context: context,
                                           projectsFilters:
                                               const ProjectsFilters.noFilters(),
                                         );

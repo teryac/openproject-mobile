@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_project/core/util/cache_extension.dart';
-import 'package:open_project/core/util/cache_helper.dart';
-import 'package:open_project/core/util/dependency_injection.dart';
+import 'package:go_router/go_router.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
+import 'package:open_project/core/constants/app_constants.dart';
+import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
@@ -12,11 +14,14 @@ import 'package:open_project/work_packages/models/work_package.dart';
 /// packages screen
 class WorkPackagesListCubit extends _WorkPackagesDataCubit {
   final int projectId;
+  final BuildContext context;
   WorkPackagesListCubit({
-    required WorkPackagesRepo workPackagesRepo,
+    required this.context,
+    required super.workPackagesRepo,
     required this.projectId,
-  }) : super(workPackagesRepo: workPackagesRepo) {
+  }) {
     super.getWorkPackages(
+      context: context,
       projectId: projectId,
       workPackagesFilters: const WorkPackagesFilters.noFilters(),
     );
@@ -25,8 +30,7 @@ class WorkPackagesListCubit extends _WorkPackagesDataCubit {
 
 /// This class is used for the work packages search dialog
 class SearchDialogWorkPackagesCubit extends _WorkPackagesDataCubit {
-  SearchDialogWorkPackagesCubit({required WorkPackagesRepo workPackagesRepo})
-      : super(workPackagesRepo: workPackagesRepo);
+  SearchDialogWorkPackagesCubit({required super.workPackagesRepo});
 }
 
 /// This is a private class that is wrapped with two different classes
@@ -42,6 +46,7 @@ class _WorkPackagesDataCubit
         super(PaginatedAsyncValue.initial());
 
   void getWorkPackages({
+    required BuildContext context,
     required int projectId,
     required WorkPackagesFilters workPackagesFilters,
     bool resetPages = false,
@@ -56,11 +61,18 @@ class _WorkPackagesDataCubit
 
     emit(PaginatedAsyncValue.loading(previous: state));
 
-    final cacheHelper = serviceLocator<CacheHelper>();
+    final cacheData = context.read<CacheCubit>().state;
+
+    // This is an extra safety gaurd
+    if (cacheData[AppConstants.serverUrlCacheKey] == null) {
+      // This means that the user is not authenticated
+      context.goNamed(AppRoutes.auth.name);
+      return;
+    }
 
     final result = await _workPackagesRepo.getWorkPackages(
-      serverUrl: await cacheHelper.getServerUrl(),
-      apiToken: await cacheHelper.getApiToken(),
+      serverUrl: cacheData[AppConstants.serverUrlCacheKey]!,
+      apiToken: cacheData[AppConstants.apiTokenCacheKey],
       // If first page, `data?.page` is replaced with 0, then 1 is
       // added, making it the first page
       projectId: projectId,

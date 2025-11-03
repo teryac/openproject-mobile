@@ -54,6 +54,7 @@ class WorkPackagesSearchBar extends StatelessWidget {
             );
 
             searchDialogWorkPackagessCubit.getWorkPackages(
+              context: context,
               projectId: projectId,
               workPackagesFilters: WorkPackagesFilters(name: query),
               resetPages: true,

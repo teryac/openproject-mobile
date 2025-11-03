@@ -12,12 +12,12 @@ class AppDropdownButton extends StatefulWidget {
   final void Function(String value) onChanged;
   final String hint;
   const AppDropdownButton({
-    Key? key,
+    super.key,
     required this.items,
     this.value,
     required this.onChanged,
     required this.hint,
-  }) : super(key: key);
+  });
 
   @override
   State<AppDropdownButton> createState() => _AppDropdownButtonState();

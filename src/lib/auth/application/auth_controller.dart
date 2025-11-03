@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart';
@@ -6,14 +7,16 @@ import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dar
 import 'package:open_project/auth/presentation/widgets/server_input_screen/connection_state_widget.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
-import 'package:open_project/core/util/cache_helper.dart';
-import 'package:open_project/core/util/dependency_injection.dart';
+import 'package:open_project/core/cache/cache_repo.dart';
 
 class AuthController {
+  /// Used for fetching dependencies injected with BuildContext
+  final BuildContext context;
   final AuthPageViewCubit authPageViewCubit;
   final AuthPingServerCubit authPingServerCubit;
   final AuthGetUserCubit authGetUserCubit;
   AuthController({
+    required this.context,
     required this.authPageViewCubit,
     required this.authPingServerCubit,
     required this.authGetUserCubit,
@@ -69,21 +72,23 @@ class AuthController {
 
     // Listen to `ping server` cubit states
     authGetUserCubit.stream.listen(
-      (state) {
+      (state) async {
         // If it's anything other than a success state, skip.
         if (!state.isData) {
           return;
         }
 
         // When the state is success, cache user data, then
-        // navigate to home screen
-
-        cacheUserData(
+        // navigate to splash screen
+        await cacheUserData(
+          userId: state.data!.id,
+          userName: state.data!.name,
           userFirstName: state.data!.firstName,
           userEmail: state.data!.email,
         );
 
-        serviceLocator<GoRouter>().goNamed(AppRoutes.home.name);
+        // ignore: use_build_context_synchronously
+        context.read<GoRouter>().goNamed(AppRoutes.splash.name);
       },
     );
   }
@@ -115,22 +120,26 @@ class AuthController {
   }
 
   void cacheServerUrl() {
-    serviceLocator<CacheHelper>().saveData(
-      key: AppConstants.serverUrlCacheKey,
-      value: 'https://${serverUrlTextController.text}',
-    );
+    context.read<CacheRepo>().saveData(
+          key: AppConstants.serverUrlCacheKey,
+          value: 'https://${serverUrlTextController.text}',
+        );
   }
 
-  void cacheUserData({
-    required String userFirstName,
+  Future<void> cacheUserData({
+    required int userId,
+    required String userName,
+    required String? userFirstName,
     required String? userEmail,
-  }) {
+  }) async {
     final cacheMap = {
       AppConstants.apiTokenCacheKey: tokenTextController.text,
+      AppConstants.userIdCacheKey: userId.toString(),
+      AppConstants.userNameCacheKey: userName,
       AppConstants.userFirstNameCacheKey: userFirstName,
       AppConstants.userEmailCacheKey: userEmail,
     };
-    serviceLocator<CacheHelper>().saveAll(cacheMap);
+    await context.read<CacheRepo>().saveAll(cacheMap);
   }
 
   void dispose() {

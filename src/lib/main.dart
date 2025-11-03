@@ -2,14 +2,17 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
+import 'package:open_project/core/cache/cache_repo.dart';
+import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/themes.dart';
 import 'package:open_project/core/util/bloc_observer.dart';
-import 'package:open_project/core/util/dependency_injection.dart';
 
 void main() {
   _attachBlocObserver();
-  setupDependencyInjection();
-  runApp(DevicePreview(builder: (context) => const MyApp()));
+  // runApp(const MyApp()); // Use for release mode
+  runApp(
+      DevicePreview(builder: (context) => const MyApp())); // Use for debug mode
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +20,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: serviceLocator<GoRouter>(),
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+    return MultiBlocProvider(
+      providers: [
+        RepositoryProvider<GoRouter>(
+          create: (_) => getAppRouter(),
+        ),
+        RepositoryProvider(
+          create: (_) => CacheRepo(),
+        ),
+        BlocProvider(
+          create: (_) => CacheCubit(),
+        ),
+      ],
+      child: Builder(
+        builder: (context) {
+          return MaterialApp.router(
+            routerConfig: context.read<GoRouter>(),
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+          );
+        },
+      ),
     );
   }
 }

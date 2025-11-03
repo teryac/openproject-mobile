@@ -80,6 +80,7 @@ class HomeSearchResults extends StatelessWidget {
                   if (searchQuery.isEmpty) return;
 
                   context.read<SearchDialogProjectsCubit>().getProjects(
+                        context: context,
                         projectsFilters: ProjectsFilters(
                           name: searchQuery,
                         ),

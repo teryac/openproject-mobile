@@ -16,6 +16,7 @@ class AppIcons {
   static const logoWithName = '${_directory}logo-with-name$_fileType';
   static const clock = '${_directory}clock$_fileType';
   static const profile = '${_directory}profile$_fileType';
+  static const profileFilled = '${_directory}profile-filled$_fileType';
   static const flag = '${_directory}flag$_fileType';
   static const status = '${_directory}status$_fileType';
   static const layer = '${_directory}layer$_fileType';

@@ -41,10 +41,10 @@ class AppProgressBar extends StatelessWidget {
               inactiveTrackColor: inactiveTrackColor,
               disabledActiveTrackColor: activeTrackColor,
               disabledInactiveTrackColor: inactiveTrackColor,
-              disabledThumbColor: Colors.transparent,
               padding: const EdgeInsets.all(0),
               thumbShape: const RoundSliderThumbShape(
                 enabledThumbRadius: 6,
+                disabledThumbRadius: 0,
                 elevation: 0,
               ),
               tickMarkShape: SliderTickMarkShape.noTickMark,
