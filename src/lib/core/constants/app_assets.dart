@@ -3,6 +3,7 @@ class AppIcons {
   static const _fileType = '.svg';
 
   static const logo = '${_directory}logo$_fileType';
+  static const appNamePreview = '${_directory}app_name_preview$_fileType';
   static const task = '${_directory}task$_fileType';
   static const trash = '${_directory}trash$_fileType';
   static const edit = '${_directory}edit$_fileType';

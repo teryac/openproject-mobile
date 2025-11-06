@@ -55,6 +55,11 @@ GoRouter getAppRouter() => GoRouter(
       navigatorKey: _rootNavigatorKey,
       initialLocation: AppRoutes.splash.path,
       redirect: (context, state) async {
+        // Ignore redirection if accessing splash screen
+        if (state.uri.path == AppRoutes.splash.path) {
+          return null;
+        }
+
         // Check for authentication state
         final cachedServer = await context.read<CacheRepo>().getData(
               AppConstants.serverUrlCacheKey,
@@ -234,6 +239,7 @@ GoRouter getAppRouter() => GoRouter(
                   create: (context) => ViewWorkPackageScrollController(
                     scrollCubit: context.read<ViewWorkPackageScrollCubit>(),
                   ),
+                  dispose: (controller) => controller.dispose(),
                 ),
               ],
               child: const ViewWorkPackageScreen(),

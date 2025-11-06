@@ -5,8 +5,9 @@ part 'splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
   final CacheRepo _cacheRepo;
-  SplashCubit({required CacheRepo cacheHelper})
-      : _cacheRepo = cacheHelper,
+  SplashCubit({
+    required CacheRepo cacheHelper,
+  })  : _cacheRepo = cacheHelper,
         super(SplashInitialState()) {
     loadData();
   }
@@ -14,7 +15,7 @@ class SplashCubit extends Cubit<SplashState> {
   void loadData() async {
     // These declare a future, but don't run it
     final delayFuture = Future.delayed(
-      const Duration(milliseconds: 3000),
+      const Duration(milliseconds: 2000),
     );
     final preloadCacheFuture = _cacheRepo.getAll();
 

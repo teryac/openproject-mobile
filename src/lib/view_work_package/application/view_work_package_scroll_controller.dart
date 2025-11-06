@@ -10,11 +10,6 @@ class ViewWorkPackageScrollController {
     scrollController.addListener(_onScroll);
   }
 
-  void dispose() {
-    scrollController.removeListener(_onScroll);
-    scrollController.dispose();
-  }
-
   void _onScroll() {
     for (int i = 0; i < sectionKeys.length; i++) {
       final ctx = sectionKeys[i].currentContext;
@@ -50,5 +45,10 @@ class ViewWorkPackageScrollController {
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
+  }
+
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
   }
 }

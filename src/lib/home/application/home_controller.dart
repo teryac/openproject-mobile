@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/cache/cache_repo.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
@@ -48,15 +47,9 @@ class HomeController {
   }
 
   void logOut(BuildContext context) {
-    context.goNamed(AppRoutes.splash.name);
-    // Delay to avoid null pointer exceptions
-    Future.delayed(
-      const Duration(milliseconds: 300),
-      () {
-        context.read<CacheRepo>().clearAll();
-        context.read<CacheCubit>().updateCacheValues({});
-      },
-    );
+    context.read<CacheRepo>().clearAll().then((_) {
+      context.goNamed(AppRoutes.splash.name);
+    });
   }
 
   void dispose() {

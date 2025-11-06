@@ -79,7 +79,6 @@ class AuthRepo {
         ),
       );
     } catch (exception) {
-      print(exception);
       return const AsyncResult.error(
         error: NetworkFailure(
           errorMessage: 'An error occurred',

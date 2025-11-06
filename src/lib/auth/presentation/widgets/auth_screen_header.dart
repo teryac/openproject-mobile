@@ -57,7 +57,7 @@ class AuthScreenHeader extends StatelessWidget {
               const Spacer(),
               if (pageViewCubitState == 1)
                 GestureDetector(
-                  onTap: () => context.goNamed(AppRoutes.home.name),
+                  onTap: () => context.goNamed(AppRoutes.splash.name),
                   // Added padding to make click space larger
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
