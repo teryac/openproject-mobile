@@ -16,26 +16,28 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late final LogoAnimationHandler _animation;
+    with TickerProviderStateMixin {
+  late final LogoAnimationHandler _animationHandler;
 
   @override
   void initState() {
     super.initState();
-    _animation = LogoAnimationHandler(
+    _animationHandler = LogoAnimationHandler(
       vsync: this,
       begin: 0,
       end: 150, // target width
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _animation.forward();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        _animationHandler.forward();
+      });
     });
   }
 
   @override
   void dispose() {
-    _animation.dispose();
+    _animationHandler.dispose();
     super.dispose();
   }
 
@@ -61,29 +63,39 @@ class _SplashScreenState extends State<SplashScreen>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                AppIcons.logo,
-                width: 40,
-                height: 40,
+              // Logo slides up and fades in
+              SlideTransition(
+                position: _animationHandler.slideUpAnimation,
+                child: FadeTransition(
+                  opacity: _animationHandler.fadeInAnimation,
+                  child: SvgPicture.asset(
+                    AppIcons.logo,
+                    width: 40,
+                    height: 40,
+                  ),
+                ),
               ),
-              // AnimatedBuilder(
-              //   animation: _animation.width,
-              //   builder: (context, child) {
-              //     return SizedBox(
-              //       width: _animation.width.value,
-              //       child: child,
-              //     );
-              //   },
-              //   child: Row(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: [
-              //       const SizedBox(width: 12),
-              //       SvgPicture.asset(
-              //         AppIcons.appNamePreview,
-              //       ),
-              //     ],
-              //   ),
-              // ),
+
+              // Expanding app name (with fade-in)
+              AnimatedBuilder(
+                animation: _animationHandler.expandSidwaysAnimation,
+                builder: (context, child) {
+                  return ClipRect(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      widthFactor:
+                          _animationHandler.expandSidwaysAnimation.value,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(width: 12),
+                          SvgPicture.asset(AppIcons.appNamePreview),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
