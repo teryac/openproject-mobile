@@ -52,7 +52,7 @@ String _getDaySuffix(int day) {
   }
 }
 
-String deadlineText(DateTime dueDate) {
+({String prefix, String value}) parseDeadline(DateTime dueDate) {
   final now = DateTime.now();
   final diff = dueDate.difference(now);
   final days = diff.inDays;
@@ -61,34 +61,36 @@ String deadlineText(DateTime dueDate) {
   String plural(int value, String unit) =>
       '$value $unit${value == 1 ? '' : 's'}';
 
-  if (days == 0) return 'Due today';
-  if (days == -1) return 'Due yesterday';
-  if (days == 1) return 'Due tomorrow';
+  if (days == 0) return (prefix: 'Due', value: 'today');
+  if (days == -1) return (prefix: 'Due', value: 'yesterday');
+  if (days == 1) return (prefix: 'Due', value: 'tomorrow');
 
   if (days > 0) {
-    if (days < 7) return 'Due in ${plural(days, 'day')}';
+    if (days < 7) return (prefix: 'Due in', value: plural(days, 'day'));
     if (days < 30) {
       final weeks = (days / 7).round();
-      return 'Due in about ${plural(weeks, 'week')}';
+      return (prefix: 'Due in about', value: plural(weeks, 'week'));
     }
     if (days < 365) {
       final months = (days / 30).round();
-      return 'Due in about ${plural(months, 'month')}';
+      return (prefix: 'Due in about', value: plural(months, 'month'));
     }
     final years = (days / 365).round();
-    return 'Due in about ${plural(years, 'year')}';
+    return (prefix: 'Due in about', value: plural(years, 'year'));
   } else {
     final overdueDays = -days;
-    if (overdueDays < 7) return 'Overdue by ${plural(overdueDays, 'day')}';
+    if (overdueDays < 7) {
+      return (prefix: 'Overdue by', value: plural(overdueDays, 'day'));
+    }
     if (overdueDays < 30) {
       final weeks = (overdueDays / 7).round();
-      return 'Overdue by about ${plural(weeks, 'week')}';
+      return (prefix: 'Overdue by about', value: plural(weeks, 'week'));
     }
     if (overdueDays < 365) {
       final months = (overdueDays / 30).round();
-      return 'Overdue by about ${plural(months, 'month')}';
+      return (prefix: 'Overdue by about', value: plural(months, 'month'));
     }
     final years = (overdueDays / 365).round();
-    return 'Overdue by about ${plural(years, 'year')}';
+    return (prefix: 'Overdue by about', value: plural(years, 'year'));
   }
 }

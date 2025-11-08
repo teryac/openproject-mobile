@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/core/constants/app_assets.dart';
@@ -8,6 +11,7 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
 class WorkPackageTile extends StatelessWidget {
@@ -26,7 +30,20 @@ class WorkPackageTile extends StatelessWidget {
           highlightColor: Colors.transparent, // Removes gray overlay
           borderRadius: BorderRadius.circular(8),
           onTap: () {
-            context.pushNamed(AppRoutes.viewWorkPackage.name);
+            final encodedDataModel = jsonEncode(workPackage.toJson());
+            final encodedDependenciesModel = jsonEncode(context
+                .read<WorkPackageDependenciesDataCubit>()
+                .state
+                .data!
+                .toJson());
+
+            context.pushNamed(
+              AppRoutes.viewWorkPackage.name,
+              queryParameters: {
+                'data': encodedDataModel,
+                'dependencies': encodedDependenciesModel,
+              },
+            );
           },
           onLongPress: () => toggleMenu(true),
           child: Container(
@@ -54,23 +71,36 @@ class WorkPackageTile extends StatelessWidget {
                       flex: 4,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: HexColor(workPackage.status.colorHex)
-                                .withAlpha(38),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            workPackage.status.name,
-                            style: AppTextStyles.extraSmall.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: HexColor(workPackage.status.colorHex),
-                            ),
-                          ),
+                        child: Builder(
+                          builder: (context) {
+                            final statuses = context
+                                .read<WorkPackageDependenciesDataCubit>()
+                                .state
+                                .data!
+                                .workPackageStatuses;
+
+                            final status = statuses.firstWhere(
+                              (element) => element.id == workPackage.statusId,
+                            );
+
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: HexColor(status.colorHex).withAlpha(38),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                status.name,
+                                style: AppTextStyles.extraSmall.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: HexColor(status.colorHex),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -85,8 +115,10 @@ class WorkPackageTile extends StatelessWidget {
                       Expanded(
                         child: Builder(
                           builder: (context) {
+                            final deadlineText =
+                                parseDeadline(workPackage.dueDate!);
                             return Text(
-                              deadlineText(workPackage.dueDate!),
+                              deadlineText.prefix + deadlineText.value,
                               style: AppTextStyles.small.copyWith(
                                 color: AppColors.descriptiveText,
                               ),

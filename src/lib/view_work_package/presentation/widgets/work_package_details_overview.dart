@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/work_packages/models/work_package.dart';
+import 'package:open_project/work_packages/models/work_package_dependencies.dart';
 
 class WorkPackageDetailsOverview extends StatelessWidget {
   const WorkPackageDetailsOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final workPackage = context.read<WorkPackage>();
+    final dependencies = context.read<WorkPackageDependencies>();
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -19,14 +26,14 @@ class WorkPackageDetailsOverview extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Organize open source',
+                    workPackage.subject,
                     style: AppTextStyles.large.copyWith(
                       color: AppColors.primaryText,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Created by Yaman Kalaji',
+                    'Created by ${workPackage.author.name}',
                     style: AppTextStyles.extraSmall.copyWith(
                       color: AppColors.descriptiveText,
                     ),
@@ -39,22 +46,30 @@ class WorkPackageDetailsOverview extends StatelessWidget {
               flex: 3,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(360),
-                    color: AppColors.blue100.withAlpha(38),
-                  ),
-                  child: Text(
-                    'Task',
-                    style: AppTextStyles.small.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.blue100,
-                    ),
-                  ),
+                child: Builder(
+                  builder: (context) {
+                    final type = dependencies.workPackageTypes.firstWhere(
+                      (element) => element.id == workPackage.typeId,
+                    );
+
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(360),
+                        color: HexColor(type.colorHex).withAlpha(38),
+                      ),
+                      child: Text(
+                        type.name,
+                        style: AppTextStyles.small.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: HexColor(type.colorHex),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -62,24 +77,40 @@ class WorkPackageDetailsOverview extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          'This task involves organizing open source contributions effectively. The goal is to streamline the workflow and enhance...',
+          'Description still in development...',
           style: AppTextStyles.small.copyWith(
             color: AppColors.primaryText,
           ),
         ),
         const SizedBox(height: 20),
-        const _InfoTile(
-          name: 'Priority',
-          value: 'Medium',
-          svgAsset: AppIcons.flag,
-          colorHex: '#2392D4',
+        Builder(
+          builder: (context) {
+            final priority = dependencies.workPackagePriorities.firstWhere(
+              (element) => element.id == workPackage.priorityId,
+            );
+
+            return _InfoTile(
+              name: 'Priority',
+              value: priority.name,
+              svgAsset: AppIcons.flag,
+              colorHex: priority.colorHex,
+            );
+          },
         ),
         const SizedBox(height: 20),
-        const _InfoTile(
-          name: 'Status',
-          value: 'In progress',
-          svgAsset: AppIcons.status,
-          colorHex: '#2EAC5D',
+        Builder(
+          builder: (context) {
+            final status = dependencies.workPackageStatuses.firstWhere(
+              (element) => element.id == workPackage.statusId,
+            );
+
+            return _InfoTile(
+              name: 'Status',
+              value: status.name,
+              svgAsset: AppIcons.status,
+              colorHex: status.colorHex,
+            );
+          },
         ),
       ],
     );

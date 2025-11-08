@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:open_project/core/constants/api_constants.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
+import 'package:open_project/work_packages/models/work_package_dependencies.dart';
 
 class WorkPackagesRepo {
   Future<AsyncResult<PaginatedWorkPackages, NetworkFailure>> getWorkPackages({
@@ -52,6 +53,143 @@ class WorkPackagesRepo {
           workPackagesFilters: workPackagesFilters,
         ),
       );
+    } catch (exception) {
+      return const AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'An error occurred'),
+      );
+    }
+  }
+
+  Future<AsyncResult<List<WorkPackageType>, NetworkFailure>>
+      getWorkPackageTypes({
+    required String serverUrl,
+    required int projectId,
+  }) async {
+    try {
+      // Send request
+      final response = await http.get(
+        Uri.parse(
+            '$serverUrl${ApiConstants.workPackagesTypesInProject(projectId)}?pageSize=-1'),
+      );
+
+      // Error handling
+      if (response.statusCode == 404) {
+        return const AsyncResult.error(
+          error: NetworkFailure(errorMessage: 'Project not found'),
+        );
+      }
+
+      // Extra safety measure
+      else if (response.statusCode != 200) {
+        throw Exception();
+      }
+
+      // Successful request --> parse JSON
+      final responseJson = jsonDecode(response.body);
+
+      final List<dynamic>? elements =
+          responseJson['_embedded']?['elements'] as List<dynamic>?;
+
+      if (elements == null) {
+        return const AsyncResult.data(data: []); // no elements found
+      }
+
+      // Map each JSON object to model
+      final types = elements
+          .map((e) => WorkPackageType.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      return AsyncResult.data(data: types);
+    } catch (exception) {
+      return const AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'An error occurred'),
+      );
+    }
+  }
+
+  Future<AsyncResult<List<WorkPackageStatus>, NetworkFailure>>
+      getWorkPackageStatuses({
+    required String serverUrl,
+  }) async {
+    try {
+      // Send request
+      final response = await http.get(
+        Uri.parse('$serverUrl${ApiConstants.workPackageStatuses}?pageSize=-1'),
+      );
+
+      // Error handling
+      if (response.statusCode == 403) {
+        return const AsyncResult.error(
+          error: NetworkFailure(errorMessage: 'Forbidden'),
+        );
+      }
+
+      // Extra safety measure
+      else if (response.statusCode != 200) {
+        throw Exception();
+      }
+
+      // Successful request --> parse JSON
+      final responseJson = jsonDecode(response.body);
+
+      final List<dynamic>? elements =
+          responseJson['_embedded']?['elements'] as List<dynamic>?;
+
+      if (elements == null) {
+        return const AsyncResult.data(data: []); // no elements found
+      }
+
+      // Map each JSON object to model
+      final statuses = elements
+          .map((e) => WorkPackageStatus.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      return AsyncResult.data(data: statuses);
+    } catch (exception) {
+      return const AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'An error occurred'),
+      );
+    }
+  }
+
+  Future<AsyncResult<List<WorkPackagePriority>, NetworkFailure>>
+      getWorkPackagePriorities({
+    required String serverUrl,
+  }) async {
+    try {
+      // Send request
+      final response = await http.get(
+        Uri.parse('$serverUrl${ApiConstants.workPackagePriorities}?pageSize=-1'),
+      );
+
+      // Error handling
+      if (response.statusCode == 403) {
+        return const AsyncResult.error(
+          error: NetworkFailure(errorMessage: 'Forbidden'),
+        );
+      }
+
+      // Extra safety measure
+      else if (response.statusCode != 200) {
+        throw Exception();
+      }
+
+      // Successful request --> parse JSON
+      final responseJson = jsonDecode(response.body);
+
+      final List<dynamic>? elements =
+          responseJson['_embedded']?['elements'] as List<dynamic>?;
+
+      if (elements == null) {
+        return const AsyncResult.data(data: []); // no elements found
+      }
+
+      // Map each JSON object to model
+      final priorities = elements
+          .map((e) => WorkPackagePriority.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      return AsyncResult.data(data: priorities);
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),

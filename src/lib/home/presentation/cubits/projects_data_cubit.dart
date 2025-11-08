@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:open_project/core/cache/cache_cubit.dart';
-import 'package:open_project/core/constants/app_constants.dart';
-import 'package:open_project/core/navigation/router.dart';
+import 'package:open_project/core/util/cache_extension.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
@@ -54,18 +51,16 @@ class _ProjectsDataCubit
 
     emit(PaginatedAsyncValue.loading(previous: state));
 
-    final cacheData = context.read<CacheCubit>().state;
+    final serverUrl = context.getServerUrl();
+    final apiToken = context.getApiToken();
 
-    // This is an extra safety gaurd
-    if (cacheData[AppConstants.serverUrlCacheKey] == null) {
-      // This means that the user is not authenticated
-      context.goNamed(AppRoutes.auth.name);
+    if (serverUrl == null) {
       return;
     }
 
     final result = await _homeRepo.getProjects(
-      serverUrl: cacheData[AppConstants.serverUrlCacheKey]!,
-      apiToken: cacheData[AppConstants.apiTokenCacheKey],
+      serverUrl: serverUrl,
+      apiToken: apiToken,
       // If first page, `data?.page` is replaced with 0, then 1 is
       // added, making it the first page
       page: (state.data?.page ?? 0) + 1,

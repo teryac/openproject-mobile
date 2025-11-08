@@ -31,7 +31,7 @@ class ViewWorkPackageScreen extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: CustomAppBar(
-                  text: 'Organize open source',
+                  text: 'Work package details',
                   trailingIcon: SvgPicture.asset(
                     AppIcons.edit,
                     width: 24,

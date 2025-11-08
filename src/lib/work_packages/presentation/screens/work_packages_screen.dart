@@ -18,28 +18,29 @@ import 'package:open_project/work_packages/presentation/widgets/work_packages_se
 
 class WorkPackagesScreen extends StatelessWidget {
   final int projectId;
-  const WorkPackagesScreen({super.key, required this.projectId});
+  final String projectName;
+  const WorkPackagesScreen({
+    super.key,
+    required this.projectId,
+    required this.projectName,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<WorkPackagesListCubit,
-            PaginatedAsyncValue<PaginatedWorkPackages, NetworkFailure>>(
-          listener: (context, state) {
-            // If requesting more items failed, show an error snackbar.
-            // This isn't shown if the request failed on the first requested
-            // page, because the error state is clearly visible on the UI as
-            // a retry button (Check `widgets/projects_list_widget.dart`)
-            if (state.hasPageError) {
-              showErrorSnackBar(context, state.error!.errorMessage);
-            }
-          },
-        ),
-      ],
+    return BlocListener<WorkPackagesListCubit,
+        PaginatedAsyncValue<PaginatedWorkPackages, NetworkFailure>>(
+      listener: (context, state) {
+        // If requesting more items failed, show an error snackbar.
+        // This isn't shown if the request failed on the first requested
+        // page, because the error state is clearly visible on the UI as
+        // a retry button (Check `widgets/projects_list_widget.dart`)
+        if (state.hasPageError) {
+          showErrorSnackBar(context, state.error!.errorMessage);
+        }
+      },
       child: Portal(
         child: Scaffold(
-          appBar: const CustomAppBar(text: 'Scrum Project'),
+          appBar: CustomAppBar(text: projectName),
           floatingActionButton: AppButton(
             text: 'Add Work Package',
             prefixIcon: SvgPicture.asset(

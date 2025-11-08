@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/padding_util.dart';
+import 'package:open_project/core/widgets/shimmer.dart';
 
 class AppChip extends StatelessWidget {
   final String text;
@@ -75,26 +76,52 @@ class AppChip extends StatelessWidget {
 
 class AppChipList extends StatelessWidget {
   final List<AppChip> chips;
-  const AppChipList({super.key, required this.chips});
+
+  /// Used for showing a loading view
+  final int? _loadingShimmerCount;
+  const AppChipList({super.key, required this.chips})
+      : _loadingShimmerCount = null;
+
+  AppChipList.shimmer({super.key})
+      : _loadingShimmerCount = 10,
+        chips = [];
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: List.generate(
-          chips.length,
-          (index) {
-            return Padding(
-              padding: getScrollableRowPadding(
-                  context: context,
-                  index: index,
-                  listLength: chips.length,
-                  itemPadding: 12,
-                  marginalPadding: 28),
-              child: chips[index],
-            );
-          },
+      // Gives the row clear constraints, which places widgets correctly
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: MediaQuery.of(context).size.width,
+        ),
+        child: Row(
+          children: List.generate(
+            _loadingShimmerCount ?? chips.length,
+            (index) {
+              return Padding(
+                padding: getScrollableRowPadding(
+                    context: context,
+                    index: index,
+                    listLength: chips.length,
+                    itemPadding: 12,
+                    marginalPadding: 28),
+                child: Builder(
+                  builder: (context) {
+                    if (_loadingShimmerCount != null) {
+                      return ShimmerBox(
+                        width: 64,
+                        height: 37,
+                        borderRadius: 8,
+                      );
+                    }
+
+                    return chips[index];
+                  },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

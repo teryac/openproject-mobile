@@ -10,7 +10,7 @@ import 'package:open_project/core/util/bloc_observer.dart';
 
 void main() {
   _attachBlocObserver();
-  // runApp(const MyApp()); // Use for release mode
+  // runApp(const MyApp()); // Use for release mode-
   runApp(
       DevicePreview(builder: (context) => const MyApp())); // Use for debug mode
 }

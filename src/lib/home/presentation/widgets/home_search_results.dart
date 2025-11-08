@@ -145,6 +145,9 @@ class HomeSearchResults extends StatelessWidget {
                             pathParameters: {
                               'project_id': project.id.toString(),
                             },
+                            queryParameters: {
+                              'project_name': project.name,
+                            },
                           );
                         },
                         borderRadius: getBorderRadius(),

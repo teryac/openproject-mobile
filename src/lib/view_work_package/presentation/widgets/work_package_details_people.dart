@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_project/core/constants/api_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/home/presentation/widgets/members_list.dart';
+import 'package:open_project/work_packages/models/work_package.dart';
 
 class WorkPackageDetailsPeople extends StatelessWidget {
   const WorkPackageDetailsPeople({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final workPackage = context.read<WorkPackage>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -18,16 +23,24 @@ class WorkPackageDetailsPeople extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const _PersonInfoTile(
+        _PersonInfoTile(
           name: 'Accountable',
-          value: 'Yaman Kalaji',
-          avatarUrl: 'website.example.com/avatar1.png',
+          value: workPackage.accountable?.name,
+          avatarUrl: workPackage.accountable?.id == null
+              ? null
+              : ApiConstants.userAvatar(
+                  workPackage.accountable!.id.toString(),
+                ),
         ),
         const SizedBox(height: 20),
-        const _PersonInfoTile(
+        _PersonInfoTile(
           name: 'Assignee',
-          value: 'Shaaban Shaheen',
-          avatarUrl: 'website.example.com/avatar2.png',
+          value: workPackage.assignee?.name,
+          avatarUrl: workPackage.assignee?.id == null
+              ? null
+              : ApiConstants.userAvatar(
+                  workPackage.assignee!.id.toString(),
+                ),
         ),
       ],
     );
@@ -39,8 +52,8 @@ class _PersonInfoTile extends StatelessWidget {
   final String name;
 
   /// e.g. "Peter Peterson"
-  final String value;
-  final String avatarUrl;
+  final String? value;
+  final String? avatarUrl;
   const _PersonInfoTile({
     required this.name,
     required this.value,
@@ -60,36 +73,39 @@ class _PersonInfoTile extends StatelessWidget {
             ),
           ),
         ),
-        Flexible(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.searchBarBackground,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MemberAvatarWidget.noBorder(
-                  fullName: value,
-                  color: Colors.red, // Temp solution
-                  radius: 12,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  value,
-                  style: AppTextStyles.small.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primaryText,
+        value == null
+            ? const SizedBox.shrink()
+            : Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.searchBarBackground,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MemberAvatarWidget.noBorder(
+                        fullName: value,
+                        color: Colors.red, // Temp solution
+                        radius: 12,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        // Will never build this widget if null
+                        value!,
+                        style: AppTextStyles.small.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primaryText,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ],
     );
   }

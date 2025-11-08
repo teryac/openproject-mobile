@@ -38,6 +38,9 @@ class ProjectTile extends StatelessWidget {
             pathParameters: {
               'project_id': projectId.toString(),
             },
+            queryParameters: {
+              'project_name': projectName,
+            },
           );
         },
         child: Container(

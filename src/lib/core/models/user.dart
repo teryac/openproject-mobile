@@ -16,4 +16,12 @@ class User {
       name: json['title'] as String,
     );
   }
+
+  /// Converts the User to a JSON map compatible with the API `_links` format.
+  Map<String, dynamic> toJson() {
+    return {
+      'href': '/api/v3/users/$id',
+      'title': name,
+    };
+  }
 }

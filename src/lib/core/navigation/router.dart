@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,8 +31,12 @@ import 'package:open_project/view_work_package/presentation/screens/view_work_pa
 import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
+import 'package:open_project/work_packages/models/work_package_dependencies.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/screens/work_packages_screen.dart';
+
+import '../../work_packages/models/work_package.dart';
 
 enum AppRoutes {
   splash(name: 'splash', path: '/splash'),
@@ -185,6 +191,7 @@ GoRouter getAppRouter() => GoRouter(
           name: AppRoutes.workPackages.name,
           builder: (context, state) {
             final projectId = int.parse(state.pathParameters['project_id']!);
+            final projectName = state.uri.queryParameters['project_name']!;
 
             return MultiBlocProvider(
               providers: [
@@ -207,6 +214,15 @@ GoRouter getAppRouter() => GoRouter(
                     );
                   },
                 ),
+                BlocProvider(
+                  create: (context) {
+                    return WorkPackageDependenciesDataCubit(
+                      workPackagesRepo: context.read<WorkPackagesRepo>(),
+                      context: context,
+                      projectId: projectId,
+                    );
+                  },
+                ),
                 RepositoryProvider(
                   create: (context) => WorkPackagesController(
                     context: context,
@@ -217,19 +233,24 @@ GoRouter getAppRouter() => GoRouter(
                   dispose: (controller) => controller.dispose(),
                 ),
               ],
-              child: WorkPackagesScreen(projectId: projectId),
+              child: WorkPackagesScreen(
+                projectId: projectId,
+                projectName: projectName,
+              ),
             );
           },
-        ),
-        GoRoute(
-          path: AppRoutes.addWorkPackage.path,
-          name: AppRoutes.addWorkPackage.name,
-          builder: (context, state) => const AddWorkPackageScreen(),
         ),
         GoRoute(
           path: AppRoutes.viewWorkPackage.path,
           name: AppRoutes.viewWorkPackage.name,
           builder: (context, state) {
+            final workPackageData = WorkPackage.fromJson(
+              jsonDecode(state.uri.queryParameters['data']!),
+            );
+            final workPackageDependencies = WorkPackageDependencies.fromJson(
+              jsonDecode(state.uri.queryParameters['dependencies']!),
+            );
+
             return MultiBlocProvider(
               providers: [
                 BlocProvider(
@@ -241,10 +262,19 @@ GoRouter getAppRouter() => GoRouter(
                   ),
                   dispose: (controller) => controller.dispose(),
                 ),
+                // Work Package model & Dependencies are injected into BuildContext
+                // to access them easily in the widget tree
+                RepositoryProvider(create: (_) => workPackageData),
+                RepositoryProvider(create: (_) => workPackageDependencies),
               ],
               child: const ViewWorkPackageScreen(),
             );
           },
+        ),
+        GoRoute(
+          path: AppRoutes.addWorkPackage.path,
+          name: AppRoutes.addWorkPackage.name,
+          builder: (context, state) => const AddWorkPackageScreen(),
         ),
         GoRoute(
           path: AppRoutes.blocTutorial.path,

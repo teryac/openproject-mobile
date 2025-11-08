@@ -35,9 +35,16 @@ class ApiConstants {
     return '${_base}projects/$projectId/work_packages';
   }
 
+  /// Returns all types available in project
+  static String workPackagesTypesInProject(int projectId) {
+    return '${_base}projects/$projectId/types';
+  }
+
   /// Returns all work packages statuses to view their
   /// colors in the work packages screen, because the
   /// color is not provided within the work packages
   /// list API
-  static const statuses = '${_base}statuses';
+  static const workPackageStatuses = '${_base}statuses';
+
+  static const workPackagePriorities = '${_base}priorities';
 }
