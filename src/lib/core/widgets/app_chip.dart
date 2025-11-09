@@ -7,7 +7,10 @@ import 'package:open_project/core/widgets/shimmer.dart';
 class AppChip extends StatelessWidget {
   final String text;
   final bool isSelected;
-  final void Function() onPressed;
+
+  /// When `onPressed` is null, the chip is deactivated,
+  /// and its colors change
+  final void Function()? onPressed;
   const AppChip({
     super.key,
     required this.text,
@@ -25,12 +28,26 @@ class AppChip extends StatelessWidget {
     const animationDuration = Duration(milliseconds: 300);
     const animationCurve = Curves.fastOutSlowIn;
 
+    final backgroundColor = isSelected ? selectedChipColor : disabledChipColor;
+
+    final textColor = () {
+      if (isSelected) {
+        return selectedTextColor;
+      }
+
+      if (onPressed != null) {
+        return disabledTextColor;
+      }
+
+      return disabledTextColor.withAlpha(128);
+    }();
+
     return TweenAnimationBuilder(
       duration: animationDuration,
       curve: animationCurve,
       tween: ColorTween(
-        begin: isSelected ? selectedChipColor : disabledChipColor,
-        end: isSelected ? selectedChipColor : disabledChipColor,
+        begin: backgroundColor,
+        end: backgroundColor,
       ),
       builder: (context, animatedColor, child) {
         return Material(
@@ -38,11 +55,14 @@ class AppChip extends StatelessWidget {
           color: animatedColor,
           child: InkWell(
             borderRadius: BorderRadius.circular(8),
+            // Disable tap & splash
             onTap: onPressed,
-            splashColor: isSelected
-                ? selectedTextColor.withAlpha(50)
-                : disabledTextColor.withAlpha(50),
-            highlightColor: Colors.transparent, // removes the gray overlay
+            splashColor: onPressed != null
+                ? (isSelected
+                    ? selectedTextColor.withAlpha(50)
+                    : disabledTextColor.withAlpha(50))
+                : Colors.transparent,
+            highlightColor: Colors.transparent,
             child: IntrinsicWidth(
               child: Container(
                 padding:
@@ -55,9 +75,9 @@ class AppChip extends StatelessWidget {
                     duration: animationDuration,
                     curve: animationCurve,
                     style: AppTextStyles.extraSmall.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color:
-                            isSelected ? selectedTextColor : disabledTextColor),
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
                     child: Text(
                       text,
                       overflow: TextOverflow.ellipsis,
@@ -88,6 +108,12 @@ class AppChipList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Reorder chips: selected first, preserving their original order
+    final reordered = [
+      ...chips.where((chip) => chip.isSelected),
+      ...chips.where((chip) => !chip.isSelected),
+    ];
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       // Gives the row clear constraints, which places widgets correctly
@@ -97,13 +123,13 @@ class AppChipList extends StatelessWidget {
         ),
         child: Row(
           children: List.generate(
-            _loadingShimmerCount ?? chips.length,
+            _loadingShimmerCount ?? reordered.length,
             (index) {
               return Padding(
                 padding: getScrollableRowPadding(
                     context: context,
                     index: index,
-                    listLength: chips.length,
+                    listLength: reordered.length,
                     itemPadding: 12,
                     marginalPadding: 28),
                 child: Builder(
@@ -116,7 +142,7 @@ class AppChipList extends StatelessWidget {
                       );
                     }
 
-                    return chips[index];
+                    return reordered[index];
                   },
                 ),
               );

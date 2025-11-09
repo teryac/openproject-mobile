@@ -6,6 +6,7 @@ import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
+import 'package:open_project/work_packages/models/work_package_filters.dart';
 
 /// This class is used for the work packages list in work
 /// packages screen

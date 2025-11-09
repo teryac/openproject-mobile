@@ -32,6 +32,7 @@ import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
 import 'package:open_project/work_packages/models/work_package_dependencies.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/screens/work_packages_screen.dart';
@@ -223,12 +224,18 @@ GoRouter getAppRouter() => GoRouter(
                     );
                   },
                 ),
+                BlocProvider(
+                  create: (_) => WorkPackagesFiltersCubit(),
+                ),
                 RepositoryProvider(
                   create: (context) => WorkPackagesController(
                     context: context,
                     projectId: projectId,
+                    workPackagesListCubit: context.read<WorkPackagesListCubit>(),
                     searchDialogWorkPackagesCubit:
                         context.read<SearchDialogWorkPackagesCubit>(),
+                    workPackagesFiltersCubit:
+                        context.read<WorkPackagesFiltersCubit>(),
                   ),
                   dispose: (controller) => controller.dispose(),
                 ),

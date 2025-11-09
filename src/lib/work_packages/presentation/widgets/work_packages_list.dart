@@ -6,7 +6,7 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/pagination.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/load_next_page_button.dart';
-import 'package:open_project/work_packages/models/paginated_work_packages.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile.dart';
@@ -19,10 +19,15 @@ class WorkPackagesList extends StatelessWidget {
     final projectId = int.parse(
       GoRouterState.of(context).pathParameters['project_id']!,
     );
+
+    // It's crucial to get the same filters as the first page,
+    // otherwise, a new page will be requested
+    final previousFilters = context.read<WorkPackagesFiltersCubit>().state;
+
     context.read<WorkPackagesListCubit>().getWorkPackages(
           context: context,
           projectId: projectId,
-          workPackagesFilters: const WorkPackagesFilters.noFilters(),
+          workPackagesFilters: previousFilters,
         );
   }
 
@@ -38,7 +43,9 @@ class WorkPackagesList extends StatelessWidget {
 
         // Loading...
         if (workPackagesAsyncValue.isFirstLoading ||
-            workPackageTypesAsyncValue.isLoading) {
+            workPackageTypesAsyncValue.isLoading ||
+            workPackagesAsyncValue.isInitial ||
+            workPackageTypesAsyncValue.isInitial) {
           return ListView.separated(
             itemCount: 7,
             shrinkWrap: true,
@@ -65,7 +72,9 @@ class WorkPackagesList extends StatelessWidget {
                 final projectId = int.parse(
                   GoRouterState.of(context).pathParameters['project_id']!,
                 );
-                context.read<WorkPackageDependenciesDataCubit>().getWorkPackageDependencies(
+                context
+                    .read<WorkPackageDependenciesDataCubit>()
+                    .getWorkPackageDependencies(
                       context: context,
                       projectId: projectId,
                     );

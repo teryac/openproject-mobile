@@ -7,7 +7,7 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
-import 'package:open_project/work_packages/models/paginated_work_packages.dart';
+import 'package:open_project/work_packages/models/work_package_filters.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_search_results.dart';
 

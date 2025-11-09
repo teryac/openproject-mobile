@@ -9,7 +9,7 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/search_result_occurrence_highlighter.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
-import 'package:open_project/work_packages/models/paginated_work_packages.dart';
+import 'package:open_project/work_packages/models/work_package_filters.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 

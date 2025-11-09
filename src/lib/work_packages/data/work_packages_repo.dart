@@ -6,6 +6,7 @@ import 'package:open_project/core/constants/api_constants.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
 import 'package:open_project/work_packages/models/work_package_dependencies.dart';
+import 'package:open_project/work_packages/models/work_package_filters.dart';
 
 class WorkPackagesRepo {
   Future<AsyncResult<PaginatedWorkPackages, NetworkFailure>> getWorkPackages({
@@ -159,7 +160,8 @@ class WorkPackagesRepo {
     try {
       // Send request
       final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.workPackagePriorities}?pageSize=-1'),
+        Uri.parse(
+            '$serverUrl${ApiConstants.workPackagePriorities}?pageSize=-1'),
       );
 
       // Error handling
@@ -202,65 +204,58 @@ class WorkPackagesRepo {
 String _workPackagesJsonFilters(WorkPackagesFilters filters) {
   final List<Map<String, dynamic>> apiFilters = [];
 
-  // Filter 1: Subject
-  // {"subject":{"operator":"~","values":["Create"]}}
+  // Subject (contains)
   if (filters.name != null && filters.name!.trim().isNotEmpty) {
     apiFilters.add({
       "subject": {
-        "operator": "~", // "~" means "contains"
+        "operator": "~",
         "values": [filters.name]
       }
     });
   }
 
-  // Filter 2: Status
-  // {"status":{"operator":"=","values":[1]}}
-  if (filters.statusId != null) {
+  // Status (supports multiple IDs)
+  if (filters.statusIDs != null && filters.statusIDs!.isNotEmpty) {
     apiFilters.add({
       "status": {
-        "operator": "=", // "=" means "equals"
-        "values": [filters.statusId] // Pass as a number
+        "operator": "=",
+        "values": filters.statusIDs,
       }
     });
   }
 
-  // Filter 3: Type
-  // {"type":{"operator":"=","values":[3]}}
-  if (filters.typeId != null) {
+  // Type (supports multiple IDs)
+  if (filters.typeIDs != null && filters.typeIDs!.isNotEmpty) {
     apiFilters.add({
       "type": {
         "operator": "=",
-        "values": [filters.typeId] // Pass as a number
+        "values": filters.typeIDs,
       }
     });
   }
 
-  // Filter 4: Due Date (as "isOverdue")
-  // {"dueDate": {"operator": "<t-", "values": ["0"]}}
-  if (filters.isOverdue != null && filters.isOverdue == true) {
+  // Overdue flag
+  if (filters.isOverdue == true) {
     apiFilters.add({
       "dueDate": {
-        "operator": "<t-", // "<t-" means "days ago"
-        "values": ["0"] // "0" days ago (i.e., any date before today)
+        "operator": "<t-",
+        "values": ["0"]
       }
     });
   }
 
-  // Filter 5: Priority
-  // {"priority":{"operator":"=","values":["10"]}}
-  if (filters.priorityId != null) {
+  // Priority (supports multiple IDs, converted to string as per API example)
+  if (filters.priorityIDs != null && filters.priorityIDs!.isNotEmpty) {
     apiFilters.add({
       "priority": {
         "operator": "=",
-        // Note: The API example uses a string for priority ID.
-        "values": [filters.priorityId.toString()]
+        "values": filters.priorityIDs!.map((e) => e.toString()).toList(),
       }
     });
   }
 
   if (apiFilters.isEmpty) return '';
 
-  final json = Uri.encodeQueryComponent(jsonEncode(apiFilters));
-
-  return '&filters=$json';
+  final encoded = Uri.encodeQueryComponent(jsonEncode(apiFilters));
+  return '&filters=$encoded';
 }

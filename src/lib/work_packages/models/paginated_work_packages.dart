@@ -1,4 +1,5 @@
 import 'package:open_project/work_packages/models/work_package.dart';
+import 'package:open_project/work_packages/models/work_package_filters.dart';
 
 class PaginatedWorkPackages {
   final int total;
@@ -32,44 +33,4 @@ class PaginatedWorkPackages {
       workPackages: embedded.map((e) => WorkPackage.fromJson(e)).toList(),
     );
   }
-}
-
-class WorkPackagesFilters {
-  final String? name;
-  final bool? isOverdue;
-  final int? statusId, typeId, priorityId;
-
-  WorkPackagesFilters({
-    this.name,
-    this.isOverdue,
-    this.statusId,
-    this.typeId,
-    this.priorityId,
-  });
-
-  const WorkPackagesFilters.noFilters()
-      : name = null,
-        isOverdue = null,
-        statusId = null,
-        typeId = null,
-        priorityId = null;
-
-  @override
-  bool operator ==(covariant WorkPackagesFilters other) {
-    if (identical(this, other)) return true;
-
-    return other.name == name &&
-        other.isOverdue == isOverdue &&
-        other.statusId == statusId &&
-        other.typeId == typeId &&
-        other.priorityId == priorityId;
-  }
-
-  @override
-  int get hashCode =>
-      name.hashCode ^
-      isOverdue.hashCode ^
-      statusId.hashCode ^
-      typeId.hashCode ^
-      priorityId.hashCode;
 }

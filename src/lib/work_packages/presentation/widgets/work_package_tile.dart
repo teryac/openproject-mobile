@@ -118,7 +118,7 @@ class WorkPackageTile extends StatelessWidget {
                             final deadlineText =
                                 parseDeadline(workPackage.dueDate!);
                             return Text(
-                              deadlineText.prefix + deadlineText.value,
+                              '${deadlineText.prefix} ${deadlineText.value}',
                               style: AppTextStyles.small.copyWith(
                                 color: AppColors.descriptiveText,
                               ),
