@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:open_project/add_work_package/presentation/cubits/work_package_form_data/work_package_form_data_cubit.dart';
+import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
@@ -10,12 +14,11 @@ class WorkPackageTypePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = AppColors.blue100;
-    final List<({String name, String colorHex})> workPackagesTypes = [
-      (name: 'Task', colorHex: '#2392D4'),
-      (name: 'Milestone', colorHex: '#2EAC5D'),
-      (name: 'Phase', colorHex: '#A89F39'),
-    ];
+    final options =
+        context.read<WorkPackageFormDataCubit>().state.value.data!.options;
+    final selectedType = context.read<WorkPackagePayloadCubit>().state!.type;
+    final types = options.types;
+    types.remove(selectedType);
 
     return AppPopupMenu(
       dropdownAlignment: true,
@@ -64,11 +67,11 @@ class WorkPackageTypePicker extends StatelessWidget {
               child: IntrinsicWidth(
                 child: Column(
                   children: List.generate(
-                    workPackagesTypes.length,
+                    types.length,
                     (index) {
                       final content = Material(
                         color: HexColor(
-                          workPackagesTypes[index].colorHex,
+                          types[index].colorHex,
                         ).withAlpha(38),
                         borderRadius: BorderRadius.circular(360),
                         child: InkWell(
@@ -76,9 +79,25 @@ class WorkPackageTypePicker extends StatelessWidget {
                           highlightColor:
                               Colors.transparent, // Removes gray overlay
                           splashColor: HexColor(
-                            workPackagesTypes[index].colorHex,
+                            types[index].colorHex,
                           ).withAlpha(75),
                           onTap: () {
+                            final formCubit =
+                                context.read<WorkPackageFormDataCubit>();
+                            final payloadCubit =
+                                context.read<WorkPackagePayloadCubit>();
+
+                            payloadCubit
+                                .updatePayload(payloadCubit.state!.copyWith(
+                              type: Value.present(
+                                types[index],
+                              ),
+                            ));
+                            formCubit.getWorkPackageForm(
+                              context: context,
+                              workPackageType: types[index],
+                            );
+
                             toggleMenu(false);
                           },
                           child: Container(
@@ -91,12 +110,12 @@ class WorkPackageTypePicker extends StatelessWidget {
                               borderRadius: BorderRadius.circular(360),
                             ),
                             child: Text(
-                              workPackagesTypes[index].name,
+                              types[index].name,
                               style: AppTextStyles.small.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 11,
                                 color: HexColor(
-                                  workPackagesTypes[index].colorHex,
+                                  types[index].colorHex,
                                 ),
                               ),
                             ),
@@ -111,7 +130,7 @@ class WorkPackageTypePicker extends StatelessWidget {
                       );
 
                       // If last widget, don't put a divider at the end
-                      if (index == workPackagesTypes.length - 1) {
+                      if (index == types.length - 1) {
                         return content;
                       }
 
@@ -128,13 +147,15 @@ class WorkPackageTypePicker extends StatelessWidget {
       },
       child: (toggleMenu) {
         return Material(
-          color: color.withAlpha(38),
+          color: HexColor(selectedType.colorHex).withAlpha(38),
           borderRadius: BorderRadius.circular(360),
           child: InkWell(
             borderRadius: BorderRadius.circular(360),
             highlightColor: Colors.transparent, // Removes gray overlay
-            splashColor: color.withAlpha(75),
-            onTap: () => toggleMenu(true),
+            splashColor: HexColor(selectedType.colorHex).withAlpha(75),
+            onTap: () {
+              toggleMenu(true);
+            },
             child: Container(
               padding: const EdgeInsets.only(
                 top: 12,
@@ -148,10 +169,10 @@ class WorkPackageTypePicker extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Task',
+                    selectedType.name,
                     style: AppTextStyles.small.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: color,
+                      color: HexColor(selectedType.colorHex),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -159,8 +180,8 @@ class WorkPackageTypePicker extends StatelessWidget {
                     AppIcons.arrowDown,
                     width: 12,
                     height: 12,
-                    colorFilter: const ColorFilter.mode(
-                      color,
+                    colorFilter: ColorFilter.mode(
+                      HexColor(selectedType.colorHex),
                       BlendMode.srcIn,
                     ),
                   ),

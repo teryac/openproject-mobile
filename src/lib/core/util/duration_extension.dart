@@ -26,20 +26,42 @@ extension Iso8601Duration on Duration {
     return buffer.toString();
   }
 
-  /// Parses an ISO 8601 duration string (e.g., PT19H31M) to a Duration.
+  /// Parses an ISO 8601 duration string (e.g., P2DT17H) to a Duration.
   static Duration fromIso8601(String input) {
-    final regex = RegExp(r'^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$');
-    final match = regex.firstMatch(input);
+    final regex = RegExp(r'^P'
+        r'(?:(\d+)Y)?'
+        r'(?:(\d+)M)?'
+        r'(?:(\d+)W)?'
+        r'(?:(\d+)D)?'
+        r'(?:T'
+        r'(?:(\d+)H)?'
+        r'(?:(\d+)M)?'
+        r'(?:(\d+)S)?'
+        r')?$');
 
+    final match = regex.firstMatch(input);
     if (match == null) {
       throw FormatException('Invalid ISO 8601 duration', input);
     }
 
-    final hours = int.tryParse(match.group(1) ?? '0') ?? 0;
-    final minutes = int.tryParse(match.group(2) ?? '0') ?? 0;
-    final seconds = int.tryParse(match.group(3) ?? '0') ?? 0;
+    final years = int.tryParse(match.group(1) ?? '0') ?? 0;
+    final months = int.tryParse(match.group(2) ?? '0') ?? 0;
+    final weeks = int.tryParse(match.group(3) ?? '0') ?? 0;
+    final days = int.tryParse(match.group(4) ?? '0') ?? 0;
 
-    return Duration(hours: hours, minutes: minutes, seconds: seconds);
+    final hours = int.tryParse(match.group(5) ?? '0') ?? 0;
+    final minutes = int.tryParse(match.group(6) ?? '0') ?? 0;
+    final seconds = int.tryParse(match.group(7) ?? '0') ?? 0;
+
+    // Convert years and months into days (approximate)
+    final totalDays = days + weeks * 7 + months * 30 + years * 365;
+
+    return Duration(
+      days: totalDays,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    );
   }
 }
 

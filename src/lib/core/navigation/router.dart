@@ -3,7 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_project/add_work_package/add_work_package_screen.dart';
+import 'package:open_project/add_work_package/application/add_work_package_controller.dart';
+import 'package:open_project/add_work_package/data/add_work_package_repo.dart';
+import 'package:open_project/add_work_package/models/work_package_mode.dart';
+import 'package:open_project/add_work_package/presentation/cubits/add_work_package_data_cubit.dart';
+import 'package:open_project/add_work_package/presentation/cubits/project_users_data_cubit.dart';
+import 'package:open_project/add_work_package/presentation/cubits/work_package_form_data/work_package_form_data_cubit.dart';
+import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
+import 'package:open_project/add_work_package/presentation/screens/add_work_package_screen.dart';
+import 'package:open_project/add_work_package/presentation/cubits/week_days_data_cubit.dart';
 import 'package:open_project/auth/application/auth_controller.dart';
 import 'package:open_project/auth/data/auth_repo.dart';
 import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
@@ -44,7 +52,11 @@ enum AppRoutes {
   auth(name: 'auth', path: '/auth'),
   home(name: 'home', path: '/'),
   workPackages(name: 'workPackages', path: '/workPackges/:project_id'),
-  addWorkPackage(name: 'addWorkPackage', path: '/addWorkPackage'),
+
+  /// id is for either project id or work package id, the mode is determined
+  /// using a query parameter
+  addWorkPackage(
+      name: 'addWorkPackage', path: '/addWorkPackage/:work_package_id'),
   viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage'),
   welcome(name: 'welcome', path: '/welcome'),
   // TODO: Remove temp route once it's not needed
@@ -231,7 +243,8 @@ GoRouter getAppRouter() => GoRouter(
                   create: (context) => WorkPackagesController(
                     context: context,
                     projectId: projectId,
-                    workPackagesListCubit: context.read<WorkPackagesListCubit>(),
+                    workPackagesListCubit:
+                        context.read<WorkPackagesListCubit>(),
                     searchDialogWorkPackagesCubit:
                         context.read<SearchDialogWorkPackagesCubit>(),
                     workPackagesFiltersCubit:
@@ -281,7 +294,82 @@ GoRouter getAppRouter() => GoRouter(
         GoRoute(
           path: AppRoutes.addWorkPackage.path,
           name: AppRoutes.addWorkPackage.name,
-          builder: (context, state) => const AddWorkPackageScreen(),
+          builder: (context, state) {
+            final workPackageId = int.tryParse(
+              // the id is always passed, even when null it's
+              // passed as 'null'
+              state.pathParameters['work_package_id']!,
+            );
+
+            final editMode = bool.parse(
+              state.uri.queryParameters['edit_mode']!,
+            );
+            final projectId = int.parse(
+              state.uri.queryParameters['project_id']!,
+            );
+
+            return MultiBlocProvider(
+              providers: [
+                RepositoryProvider(
+                  create: (_) => AddWorkPackageScreenConfig(
+                    editMode: editMode,
+                    workPackageId: workPackageId,
+                    projectId: projectId,
+                  ),
+                ),
+                RepositoryProvider(
+                  create: (_) => AddWorkPackageRepo(),
+                ),
+                BlocProvider(
+                  create: (context) => WeekDaysDataCubit(
+                    addWorkPackageRepo: context.read<AddWorkPackageRepo>(),
+                    context: context,
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => WorkPackageFormDataCubit(
+                    addWorkPackageRepo: context.read<AddWorkPackageRepo>(),
+                    context: context,
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => WorkPackagePayloadCubit(),
+                ),
+                BlocProvider(
+                  create: (context) => ProjectAssigneesDataCubit(
+                    addWorkPackageRepo: context.read<AddWorkPackageRepo>(),
+                    projectId: projectId,
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => ProjectResponsiblesDataCubit(
+                    addWorkPackageRepo: context.read<AddWorkPackageRepo>(),
+                    projectId: projectId,
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => AddWorkPackageDataCubit(
+                    addWorkPackageRepo: context.read<AddWorkPackageRepo>(),
+                    context: context,
+                  ),
+                ),
+                RepositoryProvider(
+                  lazy: false,
+                  create: (context) {
+                    return AddWorkPackageController(
+                      workPackageFormDataCubit:
+                          context.read<WorkPackageFormDataCubit>(),
+                      workPackagePayloadCubit:
+                          context.read<WorkPackagePayloadCubit>(),
+                      addWorkPackageDataCubit:
+                          context.read<AddWorkPackageDataCubit>(),
+                    );
+                  },
+                ),
+              ],
+              child: const AddWorkPackageScreen(),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.blocTutorial.path,

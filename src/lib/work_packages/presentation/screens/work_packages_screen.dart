@@ -11,6 +11,7 @@ import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/custom_app_bar.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_filters_widget.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_list.dart';
@@ -51,8 +52,29 @@ class WorkPackagesScreen extends StatelessWidget {
               color: Colors.white,
             ),
             wrapContent: true,
-            onPressed: () {
-              context.pushNamed(AppRoutes.addWorkPackage.name);
+            onPressed: () async {
+              final result = await context.pushNamed<bool>(
+                AppRoutes.addWorkPackage.name,
+                pathParameters: {
+                  'work_package_id': 'null',
+                },
+                queryParameters: {
+                  'edit_mode': 'false',
+                  'project_id': projectId.toString(),
+                },
+              );
+
+              if (result != null && result && context.mounted) {
+                context.read<WorkPackagesListCubit>().getWorkPackages(
+                      context: context,
+                      projectId: projectId,
+                      workPackagesFilters:
+                          // This avoids changing the filters
+                          context.read<WorkPackagesFiltersCubit>().state,
+                      // Reset to avoid requesting next page instead of first page
+                      resetPages: true,
+                    );
+              }
             },
           ),
           body: const SingleChildScrollView(

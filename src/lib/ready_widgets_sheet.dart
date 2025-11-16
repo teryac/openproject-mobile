@@ -10,7 +10,6 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/app_chip.dart';
-import 'package:open_project/core/widgets/app_dropdown/app_dropdown_button.dart';
 import 'package:open_project/core/widgets/app_gallery_widget.dart';
 import 'package:open_project/core/widgets/app_image.dart';
 import 'package:open_project/core/widgets/app_progress_bar.dart';
@@ -35,12 +34,12 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
   String? selectedMember;
   DateTime? startDate;
   DateTime? finishDate;
-  static const List<String> members = [
-    'Yaman Kalaji',
-    'Shaaban Shaheen',
-    'Majd Haj Hmidi',
-    'Mohammad Haj Hmidi',
-  ];
+  // static const List<String> members = [
+  //   'Yaman Kalaji',
+  //   'Shaaban Shaheen',
+  //   'Majd Haj Hmidi',
+  //   'Mohammad Haj Hmidi',
+  // ];
 
   void changeProgressBarValue(double value) {
     setState(() {
@@ -212,12 +211,12 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  AppDropdownButton(
-                    items: members,
-                    value: selectedMember,
-                    hint: 'Accountable',
-                    onChanged: changeSelectedMember,
-                  ),
+                  // AppDropdownButton(
+                  //   titles: members,
+                  //   value: selectedMember,
+                  //   hint: 'Accountable',
+                  //   onChanged: changeSelectedMember,
+                  // ),
                   const SizedBox(height: 16),
                   AppTextFormField.filled(
                     hint: 'Search for Projects..',

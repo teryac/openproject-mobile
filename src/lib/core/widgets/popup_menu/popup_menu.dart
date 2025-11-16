@@ -86,6 +86,8 @@ class _AppPopupMenuState extends State<AppPopupMenu>
       Future.delayed(
         _animationController.duration,
         () {
+          if (!mounted) return;
+
           setState(() {
             _isMenuVisible = visible;
           });
@@ -291,6 +293,17 @@ class AppMenuItem extends StatelessWidget {
   })  : _first = false,
         _last = true;
 
+  const AppMenuItem.firstAndLast({
+    super.key,
+    this.icon,
+    required this.text,
+    required this.onTap,
+    this.selected = false,
+    this.style,
+    this.foregroundColor,
+  })  : _first = true,
+        _last = true;
+
   @override
   Widget build(BuildContext context) {
     const roundedRadius = Radius.circular(8);
@@ -313,22 +326,23 @@ class AppMenuItem extends StatelessWidget {
         highlightColor: Colors.transparent, // removes the gray overlay
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          width: double.infinity,
           child: Row(
             children: [
               if (icon != null) ...[
                 icon!,
                 const SizedBox(width: 12),
               ],
-              Text(
-                text,
-                style: style?.copyWith(
-                      color: foregroundColor ?? AppColors.primaryText,
-                    ) ??
-                    AppTextStyles.extraSmall.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: foregroundColor ?? AppColors.primaryText,
-                    ),
+              Flexible(
+                child: Text(
+                  text,
+                  style: style?.copyWith(
+                        color: foregroundColor ?? AppColors.primaryText,
+                      ) ??
+                      AppTextStyles.extraSmall.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: foregroundColor ?? AppColors.primaryText,
+                      ),
+                ),
               ),
             ],
           ),

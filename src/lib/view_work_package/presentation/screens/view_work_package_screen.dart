@@ -14,6 +14,7 @@ import 'package:open_project/view_work_package/presentation/widgets/work_package
 import 'package:open_project/view_work_package/presentation/widgets/work_package_details_people.dart';
 import 'package:open_project/view_work_package/presentation/widgets/work_package_details_properties.dart';
 import 'package:open_project/view_work_package/presentation/widgets/work_package_details_schedule.dart';
+import 'package:open_project/work_packages/models/work_package.dart';
 
 class ViewWorkPackageScreen extends StatelessWidget {
   const ViewWorkPackageScreen({super.key});
@@ -41,10 +42,31 @@ class ViewWorkPackageScreen extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  trailingIconAction: () {
-                    context.pushNamed(
+                  trailingIconAction: () async {
+                    final workPackage = context.read<WorkPackage>();
+
+                    final result = await context.pushNamed<bool>(
                       AppRoutes.addWorkPackage.name,
+                      pathParameters: {
+                        'work_package_id': workPackage.id.toString(),
+                      },
+                      queryParameters: {
+                        'edit_mode': 'true',
+                        'project_id': GoRouter.of(context)
+                            .state
+                            .uri
+                            .queryParameters['project_id']!,
+                      },
                     );
+
+                    // When the `AddWorkPackageScreen` successfully updates a work
+                    // package, it pops and sends a boolean with a value of `true`
+                    // to this route, this route passes that value back to the
+                    // Work Packages screen to trigger a reload in order to
+                    // update the work packages list
+                    if (result != null && result && context.mounted) {
+                      context.pop<bool>(true);
+                    }
                   },
                 ),
               ),

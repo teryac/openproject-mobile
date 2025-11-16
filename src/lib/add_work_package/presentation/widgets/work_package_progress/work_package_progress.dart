@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
+import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_progress_bar.dart';
@@ -8,6 +11,10 @@ class WorkPackageProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = context.select<WorkPackagePayloadCubit, int>(
+      (cubit) => cubit.state!.percentageDone,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -31,8 +38,18 @@ class WorkPackageProgress extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         AppProgressBar(
-          value: 0.5,
-          onChanged: (value) {},
+          value: progress / 100,
+          onChanged: (value) {
+            final payloadCubit = context.read<WorkPackagePayloadCubit>();
+
+            payloadCubit.updatePayload(
+              payloadCubit.state!.copyWith(
+                percentageDone: Value.present(
+                  (value * 100).toInt(),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

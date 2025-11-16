@@ -11,7 +11,9 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
 class WorkPackageTile extends StatelessWidget {
@@ -29,7 +31,7 @@ class WorkPackageTile extends StatelessWidget {
           splashColor: AppColors.primaryText.withAlpha(38),
           highlightColor: Colors.transparent, // Removes gray overlay
           borderRadius: BorderRadius.circular(8),
-          onTap: () {
+          onTap: () async {
             final encodedDataModel = jsonEncode(workPackage.toJson());
             final encodedDependenciesModel = jsonEncode(context
                 .read<WorkPackageDependenciesDataCubit>()
@@ -37,13 +39,31 @@ class WorkPackageTile extends StatelessWidget {
                 .data!
                 .toJson());
 
-            context.pushNamed(
+            final result = await context.pushNamed<bool>(
               AppRoutes.viewWorkPackage.name,
               queryParameters: {
                 'data': encodedDataModel,
                 'dependencies': encodedDependenciesModel,
+                'project_id':
+                    GoRouter.of(context).state.pathParameters['project_id']!,
               },
             );
+
+            if (result != null && result && context.mounted) {
+              final projectId = int.parse(
+                GoRouterState.of(context).pathParameters['project_id']!,
+              );
+
+              context.read<WorkPackagesListCubit>().getWorkPackages(
+                    context: context,
+                    projectId: projectId,
+                    workPackagesFilters:
+                        // This avoids changing the filters
+                        context.read<WorkPackagesFiltersCubit>().state,
+                    // Reset to avoid requesting next page instead of first page
+                    resetPages: true,
+                  );
+            }
           },
           onLongPress: () => toggleMenu(true),
           child: Container(

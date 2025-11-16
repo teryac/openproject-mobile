@@ -46,9 +46,10 @@ dependencies:
   flutter_portal: ^1.1.4
   smooth_page_indicator: ^1.2.1
   expandable_page_view: ^1.0.17
-  flutter_async_value: ^1.3.1
+  flutter_async_value: ^1.5.0
   flutter_secure_storage: ^9.2.4
   sliver_expandable: ^1.1.2
+  iso_duration_parser: ^1.1.1
 
 dev_dependencies:
   flutter_test:

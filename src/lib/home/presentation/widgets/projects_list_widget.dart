@@ -37,58 +37,59 @@ class ProjectsListWidget extends StatelessWidget {
           // private projects do not expand/collapse
           buildWhen: (_, __) => public,
           builder: (context, listExpansionState) {
-            return AsyncValueBuilder(
-              value: projectsState,
-              loading: (context) {
-                return SliverPadding(
-                  padding: const EdgeInsets.all(8),
-                  sliver: SliverList.separated(
-                    itemCount: 2,
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
-                    itemBuilder: (_, __) => const ProjectTileLoadingView(),
-                  ),
-                );
-              },
-              error: (context, error) {
-                return SliverToBoxAdapter(
-                  child: AsyncRetryWidget(
-                    message: error.errorMessage,
-                    onPressed: () {
-                      context.read<HomeProjectsListCubit>().getProjects(
-                            context: context,
-                            projectsFilters: const ProjectsFilters.noFilters(),
-                          );
-                    },
-                  ),
-                );
-              },
-              data: (context, data) {
-                final separatedProjects = context
-                    .read<HomeController>()
-                    .separatePublicFromPrivateProjects(
-                      projects: data.projects,
-                      public: public,
-                    );
-
-                if (separatedProjects.isEmpty) {
+            return AnimatedSliverExpandable(
+              expanded: listExpansionState,
+              duration: expansionAnimationDuration,
+              curve: expansionAnimationCurve,
+              sliver: AsyncValueBuilder(
+                value: projectsState,
+                loading: (context) {
                   return SliverPadding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    sliver: SliverToBoxAdapter(
-                      child: Text(
-                        'No projects found',
-                        style: AppTextStyles.medium.copyWith(
-                          color: AppColors.descriptiveText,
-                        ),
-                      ),
+                    padding: const EdgeInsets.all(8),
+                    sliver: SliverList.separated(
+                      itemCount: 2,
+                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      itemBuilder: (_, __) => const ProjectTileLoadingView(),
                     ),
                   );
-                }
+                },
+                error: (context, error) {
+                  return SliverToBoxAdapter(
+                    child: AsyncRetryWidget(
+                      message: error.errorMessage,
+                      onPressed: () {
+                        context.read<HomeProjectsListCubit>().getProjects(
+                              context: context,
+                              projectsFilters:
+                                  const ProjectsFilters.noFilters(),
+                            );
+                      },
+                    ),
+                  );
+                },
+                data: (context, data) {
+                  final separatedProjects = context
+                      .read<HomeController>()
+                      .separatePublicFromPrivateProjects(
+                        projects: data.projects,
+                        public: public,
+                      );
 
-                return AnimatedSliverExpandable(
-                  expanded: listExpansionState,
-                  duration: expansionAnimationDuration,
-                  curve: expansionAnimationCurve,
-                  sliver: SliverPadding(
+                  if (separatedProjects.isEmpty) {
+                    return SliverPadding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      sliver: SliverToBoxAdapter(
+                        child: Text(
+                          'No projects found',
+                          style: AppTextStyles.medium.copyWith(
+                            color: AppColors.descriptiveText,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SliverPadding(
                     padding: const EdgeInsets.all(8.0),
                     sliver: SliverMainAxisGroup(
                       slivers: [
@@ -150,9 +151,9 @@ class ProjectsListWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             );
           },
         );

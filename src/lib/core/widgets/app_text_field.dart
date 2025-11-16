@@ -9,6 +9,9 @@ enum _TextFieldStyle {
 }
 
 class AppTextFormField extends StatelessWidget {
+  /// You can update with your own state management if you
+  /// do not prefer to use the controller
+  final String? initialValue;
   final TextEditingController? controller;
   final String hint;
   final bool obscure;
@@ -34,6 +37,7 @@ class AppTextFormField extends StatelessWidget {
   final _TextFieldStyle _style;
 
   const AppTextFormField({
+    this.initialValue,
     super.key,
     this.controller,
     required this.hint,
@@ -59,6 +63,7 @@ class AppTextFormField extends StatelessWidget {
         _style = _TextFieldStyle.normal;
 
   const AppTextFormField.outlineBorder({
+    this.initialValue,
     super.key,
     this.controller,
     required this.hint,
@@ -84,6 +89,7 @@ class AppTextFormField extends StatelessWidget {
   }) : _style = _TextFieldStyle.outlined;
 
   const AppTextFormField.filled({
+    this.initialValue,
     super.key,
     this.controller,
     required this.hint,
@@ -113,6 +119,7 @@ class AppTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
       controller: controller,
       validator: validator,
       onChanged: onChanged,
@@ -151,6 +158,9 @@ class AppTextFormField extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
         errorText: errorText,
+        errorStyle: AppTextStyles.extraSmall.copyWith(
+          color: AppColors.red,
+        ),
         filled: _filled,
         fillColor: _filled ? AppColors.searchBarBackground : null,
         enabledBorder: _filled

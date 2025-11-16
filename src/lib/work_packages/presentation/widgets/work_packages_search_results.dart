@@ -10,6 +10,7 @@ import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/search_result_occurrence_highlighter.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/models/work_package_filters.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 
@@ -156,7 +157,7 @@ class WorkPackagesSearchResults extends StatelessWidget {
                   child: InkWell(
                     splashColor: AppColors.primaryText.withAlpha(38),
                     highlightColor: Colors.transparent,
-                    onTap: () {
+                    onTap: () async {
                       toggleMenu(false);
 
                       final encodedDataModel = jsonEncode(
@@ -168,13 +169,35 @@ class WorkPackagesSearchResults extends StatelessWidget {
                           .data!
                           .toJson());
 
-                      context.pushNamed(
+                      final result = await context.pushNamed<bool>(
                         AppRoutes.viewWorkPackage.name,
                         queryParameters: {
                           'data': encodedDataModel,
                           'dependencies': encodedDependenciesModel,
+                          'project_id': GoRouter.of(context)
+                              .state
+                              .pathParameters['project_id']!,
                         },
                       );
+
+                      if (result != null && result && context.mounted) {
+                        final projectId = int.parse(
+                          GoRouterState.of(context)
+                              .pathParameters['project_id']!,
+                        );
+
+                        context.read<WorkPackagesListCubit>().getWorkPackages(
+                              context: context,
+                              projectId: projectId,
+                              workPackagesFilters:
+                                  // This avoids changing the filters
+                                  context
+                                      .read<WorkPackagesFiltersCubit>()
+                                      .state,
+                              // Reset to avoid requesting next page instead of first page
+                              resetPages: true,
+                            );
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
