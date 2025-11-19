@@ -9,6 +9,7 @@ import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/search_result_occurrence_highlighter.dart';
 import 'package:open_project/home/application/home_controller.dart';
+import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 
@@ -110,8 +111,10 @@ class HomeSearchResults extends StatelessWidget {
                   },
                   itemBuilder: (context, index) {
                     final project = data.projects[index];
-                    // TODO: Change status color
-                    const statusColorHex = '#2392D4';
+                    final statusColorHex =
+                        context.read<HomeRepo>().getProjectStatusColor(
+                              data.projects[index].statusId,
+                            );
 
                     BorderRadius getBorderRadius() {
                       if (data.projects.length == 1) {

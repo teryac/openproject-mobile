@@ -6,7 +6,6 @@ import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_format.dart';
-import 'package:open_project/home/presentation/widgets/members_list.dart';
 
 class ProjectTile extends StatelessWidget {
   final int projectId;
@@ -110,19 +109,27 @@ class ProjectTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const MembersList(
-                        members: [
-                          (
-                            fullName: 'Majd Haj Hmidi',
-                            color: Colors.deepOrange
-                          ),
-                          (fullName: 'Yaman Kalaji', color: Colors.deepPurple),
-                          (fullName: 'Shaaban Shaheen', color: Colors.teal),
-                          (fullName: 'Test Name', color: Colors.black),
-                          (fullName: 'Test Name', color: Colors.red),
-                          (fullName: 'Test Name', color: Colors.blue),
-                        ],
-                      ),
+                      // Builder(
+                      //   builder: (context) {
+                      //     return const MembersList(
+                      //       members: [
+                      //         (
+                      //           fullName: 'Majd Haj Hmidi',
+                      //           color: Colors.deepOrange
+                      //         ),
+                      //         (
+                      //           fullName: 'Yaman Kalaji',
+                      //           color: Colors.deepPurple
+                      //         ),
+                      //         (fullName: 'Shaaban Shaheen', color: Colors.teal),
+                      //         (fullName: 'Test Name', color: Colors.black),
+                      //         (fullName: 'Test Name', color: Colors.red),
+                      //         (fullName: 'Test Name', color: Colors.blue),
+                      //       ],
+                      //     );
+                      //   },
+                      // ),
+                      const SizedBox.shrink(),
                       Row(
                         children: [
                           Text(

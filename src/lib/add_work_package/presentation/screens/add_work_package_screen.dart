@@ -45,11 +45,14 @@ class AddWorkPackageScreen extends StatelessWidget {
               // the latest updates, and the View Work Package screen
               // will pop itself and force the WorkPackages screen to reload
 
-              // Note, this route can be accessed in two ways:
+              // Note, this route can be accessed in three ways:
               // 1. Work Packages --> View Work Package --> Edit Work Package
               //     (Reload)               (Pop)                (Pop)
               //
               // 2. Work Packages --> Add Work Package
+              //     (Reload)              (Pop)
+
+              // 3. Work Packages --> Edit Work Package (From popup menu)
               //     (Reload)              (Pop)
               context.pop<bool>(true);
             }

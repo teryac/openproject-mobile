@@ -6,7 +6,14 @@ import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 
 class WorkPackagesPopupMenu extends StatefulWidget {
   final void Function(bool visible) toggleMenu;
-  const WorkPackagesPopupMenu({super.key, required this.toggleMenu});
+  final void Function() editWorkPackageHandler;
+  final void Function() deleteWorkPackageHandler;
+  const WorkPackagesPopupMenu({
+    super.key,
+    required this.toggleMenu,
+    required this.editWorkPackageHandler,
+    required this.deleteWorkPackageHandler,
+  });
 
   @override
   State<WorkPackagesPopupMenu> createState() => _WorkPackagesPopupMenuState();
@@ -64,28 +71,28 @@ class _WorkPackagesPopupMenuState extends State<WorkPackagesPopupMenu> {
               onTap: () {
                 if (_disableInteraction) return;
 
-                debugPrint('0');
+                widget.editWorkPackageHandler();
 
                 _disableInteraction = true;
                 widget.toggleMenu(false);
               },
             ),
-            AppMenuItem(
-              icon: SvgPicture.asset(
-                AppIcons.task,
-                // ignore: deprecated_member_use
-                color: AppColors.primaryText,
-              ),
-              text: "Mark as finished",
-              onTap: () {
-                if (_disableInteraction) return;
+            // AppMenuItem(
+            //   icon: SvgPicture.asset(
+            //     AppIcons.task,
+            //     // ignore: deprecated_member_use
+            //     color: AppColors.primaryText,
+            //   ),
+            //   text: "Mark as finished",
+            //   onTap: () {
+            //     if (_disableInteraction) return;
 
-                debugPrint('1');
+            //     debugPrint('1');
 
-                _disableInteraction = true;
-                widget.toggleMenu(false);
-              },
-            ),
+            //     _disableInteraction = true;
+            //     widget.toggleMenu(false);
+            //   },
+            // ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 12),
               child: Divider(
@@ -105,7 +112,7 @@ class _WorkPackagesPopupMenuState extends State<WorkPackagesPopupMenu> {
               onTap: () {
                 if (_disableInteraction) return;
 
-                debugPrint('2');
+                widget.deleteWorkPackageHandler();
 
                 _disableInteraction = true;
                 widget.toggleMenu(false);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/add_work_package/application/add_work_package_controller.dart';
+import 'package:open_project/add_work_package/presentation/cubits/week_days_data_cubit.dart';
 import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
 import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
@@ -41,6 +42,7 @@ class WorkPackageSchedule extends StatelessWidget {
         DatePickerWidget(
           startDate: data.startDate,
           finishDate: data.dueDate,
+          weekDays: context.read<WeekDaysDataCubit>().state.data!,
           onChanged: (startDate, finishDate) {
             final payloadCubit = context.read<WorkPackagePayloadCubit>();
             payloadCubit.updatePayload(

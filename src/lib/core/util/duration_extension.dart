@@ -9,18 +9,44 @@ extension IntDurationExtension on int {
 extension Iso8601Duration on Duration {
   /// Converts a Duration to an ISO 8601 duration string (e.g., PT19H31M).
   String toIso8601() {
-    final hours = inHours;
-    final minutes = inMinutes.remainder(60);
-    final seconds = inSeconds.remainder(60);
+    // Handle the zero-duration case, which is a standard representation.
+    if (this == Duration.zero) {
+      return 'PT0S';
+    }
 
-    final buffer = StringBuffer('PT');
-    if (hours > 0) buffer.write('${hours}H');
-    if (minutes > 0) buffer.write('${minutes}M');
-    if (seconds > 0) buffer.write('${seconds}S');
+    final buffer = StringBuffer();
+    buffer.write('P');
 
-    // If duration is zero, explicitly return PT0S
-    if (hours == 0 && minutes == 0 && seconds == 0) {
-      buffer.write('0S');
+    // Decompose the duration into its components
+    // Note: We use inDays, which is the total number of full days.
+    final days = inDays;
+
+    // We use modulo to get the remaining hours, minutes, and seconds
+    // after the full days have been accounted for.
+    final hours = inHours % 24;
+    final minutes = inMinutes % 60;
+    final seconds = inSeconds % 60;
+
+    // --- Date Part ---
+    // Add days if they exist
+    if (days > 0) {
+      buffer.write('${days}D');
+    }
+
+    // --- Time Part ---
+    // Check if any time components exist
+    if (hours > 0 || minutes > 0 || seconds > 0) {
+      buffer.write('T');
+
+      if (hours > 0) {
+        buffer.write('${hours}H');
+      }
+      if (minutes > 0) {
+        buffer.write('${minutes}M');
+      }
+      if (seconds > 0) {
+        buffer.write('${seconds}S');
+      }
     }
 
     return buffer.toString();

@@ -10,6 +10,7 @@ class AppNetworkImage extends StatefulWidget {
   final BorderRadius? borderRadius;
   final bool _shimmer;
   final Alignment alignment;
+  final Widget Function(BuildContext context)? errorBuilder;
 
   const AppNetworkImage({
     super.key,
@@ -19,6 +20,7 @@ class AppNetworkImage extends StatefulWidget {
     this.fit = BoxFit.cover,
     this.borderRadius,
     this.alignment = Alignment.center,
+    this.errorBuilder,
   }) : _shimmer = true;
 
   const AppNetworkImage.noShimmer({
@@ -29,6 +31,7 @@ class AppNetworkImage extends StatefulWidget {
     this.fit = BoxFit.cover,
     this.borderRadius,
     this.alignment = Alignment.center,
+    this.errorBuilder,
   }) : _shimmer = false;
 
   @override
@@ -58,7 +61,6 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
         ),
       ),
     );
-
     return ClipRRect(
       borderRadius: widget.borderRadius ?? BorderRadius.zero,
       child: CachedNetworkImage(
@@ -69,23 +71,29 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
         alignment: widget.alignment,
         fit: widget.fit,
         placeholder: widget._shimmer ? ((context, url) => placeholder) : null,
-        errorWidget: (context, url, error) => InkWell(
-          borderRadius: widget.borderRadius,
-          onTap: () {
-            // Force reload (rebuilding CachedNetworkImage reloads it)
-            reloadImage();
-          },
-          child: Container(
-            width: widget.width,
-            height: widget.height,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              borderRadius: widget.borderRadius,
-              color: Colors.grey.shade200,
+        errorWidget: (context, url, error) {
+          if (widget.errorBuilder != null) {
+            return widget.errorBuilder!(context);
+          }
+
+          return InkWell(
+            borderRadius: widget.borderRadius,
+            onTap: () {
+              // Force reload (rebuilding CachedNetworkImage reloads it)
+              reloadImage();
+            },
+            child: Container(
+              width: widget.width,
+              height: widget.height,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                borderRadius: widget.borderRadius,
+                color: Colors.grey.shade200,
+              ),
+              child: const Icon(Icons.refresh, color: Colors.grey),
             ),
-            child: const Icon(Icons.refresh, color: Colors.grey),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

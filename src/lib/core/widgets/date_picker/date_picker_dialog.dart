@@ -1214,28 +1214,30 @@ Future<DateRange?> showDateRangePicker({
   //   initialDateRange == null || !initialDateRange.endDate.isAfter(lastDate),
   //   "initialDateRange's endDate date must be on or before lastDate $lastDate.",
   // );
-  assert(
-    initialDateRange == null || selectableDayPredicate == null
-    // ||
-    // selectableDayPredicate(
-    //   initialDateRange.startDate,
-    //   initialDateRange.startDate,
-    //   initialDateRange.endDate,
-    // )
-    ,
-    "initialDateRange's startDate date must be selectable.",
+  // assert(
+  //   initialDateRange == null || selectableDayPredicate == null
+  //   // ||
+  //   // selectableDayPredicate(
+  //   //   initialDateRange.startDate,
+  //   //   initialDateRange.startDate,
+  //   //   initialDateRange.endDate,
+  //   // )
+  //   ,
+  //   "initialDateRange's startDate date must be selectable.",
+  // );
+  // assert(
+  //   initialDateRange == null ||
+  //       initialDateRange.endDate == null ||
+  //       selectableDayPredicate == null
+  //   // ||
+  //   // selectableDayPredicate(initialDateRange.endDate,
+  //   //     initialDateRange.startDate, initialDateRange.endDate)
+  //   ,
+  //   "initialDateRange's end date must be selectable.",
+  // );
+  currentDate = DateUtils.dateOnly(
+    currentDate ?? DateTime.now(),
   );
-  assert(
-    initialDateRange == null ||
-        initialDateRange.endDate == null ||
-        selectableDayPredicate == null
-    // ||
-    // selectableDayPredicate(initialDateRange.endDate,
-    //     initialDateRange.startDate, initialDateRange.endDate)
-    ,
-    "initialDateRange's end date must be selectable.",
-  );
-  currentDate = DateUtils.dateOnly(currentDate ?? DateTime.now());
   assert(debugCheckHasMaterialLocalizations(context));
 
   Widget dialog = DateRangePickerDialog(

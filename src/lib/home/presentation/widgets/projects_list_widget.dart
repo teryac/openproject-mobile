@@ -9,6 +9,7 @@ import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/load_next_page_button.dart';
 import 'package:open_project/core/widgets/sliver_util.dart';
 import 'package:open_project/home/application/home_controller.dart';
+import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/cubits/projects_list_expansion_cubit.dart';
@@ -102,8 +103,11 @@ class ProjectsListWidget extends StatelessWidget {
                               projectId: project.id,
                               projectName: project.name,
                               status: project.status,
-                              // TODO: Fix - Missing status color
-                              statusColor: '#F84616',
+                              statusColor: context
+                                  .read<HomeRepo>()
+                                  .getProjectStatusColor(
+                                    project.statusId,
+                                  ),
                               updatedAt: project.updatedAt,
                             );
                           },

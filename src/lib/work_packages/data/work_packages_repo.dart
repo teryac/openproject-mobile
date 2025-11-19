@@ -64,6 +64,7 @@ class WorkPackagesRepo {
   Future<AsyncResult<List<WorkPackageType>, NetworkFailure>>
       getWorkPackageTypes({
     required String serverUrl,
+    required String? apiToken,
     required int projectId,
   }) async {
     try {
@@ -71,6 +72,7 @@ class WorkPackagesRepo {
       final response = await http.get(
         Uri.parse(
             '$serverUrl${ApiConstants.workPackagesTypesInProject(projectId)}?pageSize=-1'),
+        headers: ApiConstants.getHeaders(apiToken),
       );
 
       // Error handling
@@ -116,6 +118,7 @@ class WorkPackagesRepo {
       // Send request
       final response = await http.get(
         Uri.parse('$serverUrl${ApiConstants.workPackageStatuses}?pageSize=-1'),
+        headers: ApiConstants.getHeaders(),
       );
 
       // Error handling
@@ -162,6 +165,7 @@ class WorkPackagesRepo {
       final response = await http.get(
         Uri.parse(
             '$serverUrl${ApiConstants.workPackagePriorities}?pageSize=-1'),
+        headers: ApiConstants.getHeaders(),
       );
 
       // Error handling

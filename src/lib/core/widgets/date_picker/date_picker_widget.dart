@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_project/core/models/week_day.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_range.dart';
@@ -10,11 +11,13 @@ class DatePickerWidget extends StatelessWidget {
   final DateTime? finishDate;
   final void Function(DateTime? startDate, DateTime? finishDate) onChanged;
   final bool enabled;
+  final List<WeekDay>? weekDays;
   const DatePickerWidget({
     super.key,
     required this.startDate,
     required this.finishDate,
     required this.onChanged,
+    this.weekDays,
     this.enabled = true,
   });
 
@@ -77,6 +80,7 @@ class DatePickerWidget extends StatelessWidget {
                                 context: context,
                                 startDate: startDate,
                                 finishDate: finishDate,
+                                weekDays: weekDays,
                               );
 
                               onChanged(result.startDate, result.finishDate);
@@ -171,12 +175,18 @@ Future<({DateTime? startDate, DateTime? finishDate})> _showDateRangePicker({
   required BuildContext context,
   required DateTime? startDate,
   required DateTime? finishDate,
+  required final List<WeekDay>? weekDays,
 }) async {
   final result = await custom_date_picker.showDateRangePicker(
     context: context,
     firstDate: DateTime(DateTime.now().year - 100),
     lastDate: DateTime(DateTime.now().year + 100),
     initialDateRange: DateRange(startDate: startDate, endDate: finishDate),
+    selectableDayPredicate: weekDays == null
+        ? null
+        : (day, _, __) {
+            return _isAWorkingDay(day, weekDays);
+          },
     helpText: 'Set your timeline',
   );
 
@@ -185,4 +195,29 @@ Future<({DateTime? startDate, DateTime? finishDate})> _showDateRangePicker({
   }
 
   return (startDate: result.startDate, finishDate: result.endDate);
+}
+
+/// Checks if the given date is configured as a working day.
+bool _isAWorkingDay(
+  DateTime day,
+  List<WeekDay> weekDays,
+) {
+  // 1. Get the standard Dart weekday (1=Mon, 7=Sun)
+  final int dartWeekday = day.weekday;
+
+  // Check if the configuration list is ready
+  if (weekDays.isEmpty) {
+    return true; // Default to all days selectable if config is missing
+  }
+
+  // 2. Search the configuration list for the matching day number.
+  // Since your API uses the same 1=Monday standard as Dart, we use dartWeekday directly.
+  final WeekDay? dayConfig = weekDays.cast<WeekDay?>().firstWhere(
+        (config) => config?.position == dartWeekday,
+        orElse: () => null,
+      );
+
+  // 3. Return the 'working' status.
+  // If we found a config, return its status. If not, default to selectable (true).
+  return dayConfig?.working ?? true;
 }

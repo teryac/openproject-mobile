@@ -33,6 +33,10 @@ class WorkPackagesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final projectId = int.parse(
+      GoRouterState.of(context).pathParameters['project_id']!,
+    );
+
     return Builder(
       builder: (context) {
         // Listen to all states that build the screen
@@ -111,6 +115,7 @@ class WorkPackagesList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return WorkPackageTile(
                   workPackage: workPackages[index],
+                  projectId: projectId,
                 );
               },
             ),

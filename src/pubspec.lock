@@ -194,10 +194,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_async_value
-      sha256: "315c9932059202edb700e19cb65ec6323b097754943ea8744b386d6175736085"
+      sha256: "1d0808ad63bf691eff5a0e5491f3b70c25b84d195a7cc3bb0378263e65552454"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.1"
+    version: "1.5.0"
   flutter_bloc:
     dependency: "direct main"
     description:

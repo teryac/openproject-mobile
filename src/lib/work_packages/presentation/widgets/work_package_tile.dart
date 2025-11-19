@@ -18,13 +18,45 @@ import 'package:open_project/work_packages/presentation/widgets/work_packages_po
 
 class WorkPackageTile extends StatelessWidget {
   final WorkPackage workPackage;
-  const WorkPackageTile({super.key, required this.workPackage});
+  final int projectId;
+  const WorkPackageTile({
+    super.key,
+    required this.workPackage,
+    required this.projectId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return AppPopupMenu(
       menu: (toggleMenu) {
-        return WorkPackagesPopupMenu(toggleMenu: toggleMenu);
+        return WorkPackagesPopupMenu(
+          toggleMenu: toggleMenu,
+          editWorkPackageHandler: () async {
+            final result = await context.pushNamed<bool>(
+              AppRoutes.addWorkPackage.name,
+              pathParameters: {
+                'work_package_id': workPackage.id.toString(),
+              },
+              queryParameters: {
+                'edit_mode': 'true',
+                'project_id': projectId.toString(),
+              },
+            );
+
+            if (result != null && result && context.mounted) {
+              context.read<WorkPackagesListCubit>().getWorkPackages(
+                    context: context,
+                    projectId: projectId,
+                    workPackagesFilters:
+                        // This avoids changing the filters
+                        context.read<WorkPackagesFiltersCubit>().state,
+                    // Reset to avoid requesting next page instead of first page
+                    resetPages: true,
+                  );
+            }
+          },
+          deleteWorkPackageHandler: () {},
+        );
       },
       child: (toggleMenu) {
         return InkWell(

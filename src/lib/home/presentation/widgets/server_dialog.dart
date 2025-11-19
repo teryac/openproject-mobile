@@ -5,8 +5,8 @@ import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_button.dart';
+import 'package:open_project/core/widgets/avatar_widget.dart';
 import 'package:open_project/home/application/home_controller.dart';
-import 'package:open_project/home/presentation/widgets/members_list.dart';
 
 class ServerDialog extends StatelessWidget {
   const ServerDialog({super.key});
@@ -15,6 +15,9 @@ class ServerDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final cacheData = context.read<CacheCubit>().state;
 
+    final userId = int.tryParse(
+      cacheData[AppConstants.userIdCacheKey] ?? 'null',
+    );
     final userName = cacheData[AppConstants.userNameCacheKey];
     final userEmail = cacheData[AppConstants.userEmailCacheKey];
 
@@ -36,9 +39,10 @@ class ServerDialog extends StatelessWidget {
               color: AppColors.blue100,
               shape: BoxShape.circle,
             ),
-            child: MemberAvatarWidget.noBorder(
-              fullName: userName,
-              color: Colors.blue,
+            child: AvatarWidget.noBorder(
+              userData: (userId != null && userName != null)
+                  ? (id: userId, fullName: userName)
+                  : null,
             ),
           ),
           const SizedBox(width: 8.0),

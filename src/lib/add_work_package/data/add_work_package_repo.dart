@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:http/http.dart' as http;
-import 'package:open_project/add_work_package/models/week_day.dart';
+import 'package:open_project/core/models/week_day.dart';
 import 'package:open_project/add_work_package/models/work_package_options.dart';
 import 'package:open_project/add_work_package/models/work_package_payload.dart';
 import 'package:open_project/add_work_package/models/work_package_properties.dart';
@@ -12,11 +12,12 @@ import 'package:open_project/core/util/failure.dart';
 class AddWorkPackageRepo {
   Future<AsyncResult<List<WeekDay>, NetworkFailure>> getWeekDays({
     required String serverUrl,
+    required String? apiToken,
   }) async {
     try {
       final response = await http.get(
         Uri.parse('$serverUrl${ApiConstants.listWeekDays}'),
-        headers: ApiConstants.getHeaders(),
+        headers: ApiConstants.getHeaders(apiToken),
       );
 
       // Error handling

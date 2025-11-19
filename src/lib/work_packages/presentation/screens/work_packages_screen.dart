@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
@@ -42,39 +44,52 @@ class WorkPackagesScreen extends StatelessWidget {
       child: Portal(
         child: Scaffold(
           appBar: CustomAppBar(text: projectName),
-          floatingActionButton: AppButton(
-            text: 'Add Work Package',
-            prefixIcon: SvgPicture.asset(
-              AppIcons.task,
-              width: 20,
-              height: 20,
-              // ignore: deprecated_member_use
-              color: Colors.white,
-            ),
-            wrapContent: true,
-            onPressed: () async {
-              final result = await context.pushNamed<bool>(
-                AppRoutes.addWorkPackage.name,
-                pathParameters: {
-                  'work_package_id': 'null',
-                },
-                queryParameters: {
-                  'edit_mode': 'false',
-                  'project_id': projectId.toString(),
+          floatingActionButton: Builder(
+            builder: (context) {
+              final apiToken = context
+                  .read<CacheCubit>()
+                  .state[AppConstants.apiTokenCacheKey];
+
+              // Unauthenticated users can't add work packages
+              if (apiToken == null) {
+                return SizedBox.shrink();
+              }
+
+              return AppButton(
+                text: 'Add Work Package',
+                prefixIcon: SvgPicture.asset(
+                  AppIcons.task,
+                  width: 20,
+                  height: 20,
+                  // ignore: deprecated_member_use
+                  color: Colors.white,
+                ),
+                wrapContent: true,
+                onPressed: () async {
+                  final result = await context.pushNamed<bool>(
+                    AppRoutes.addWorkPackage.name,
+                    pathParameters: {
+                      'work_package_id': 'null',
+                    },
+                    queryParameters: {
+                      'edit_mode': 'false',
+                      'project_id': projectId.toString(),
+                    },
+                  );
+
+                  if (result != null && result && context.mounted) {
+                    context.read<WorkPackagesListCubit>().getWorkPackages(
+                          context: context,
+                          projectId: projectId,
+                          workPackagesFilters:
+                              // This avoids changing the filters
+                              context.read<WorkPackagesFiltersCubit>().state,
+                          // Reset to avoid requesting next page instead of first page
+                          resetPages: true,
+                        );
+                  }
                 },
               );
-
-              if (result != null && result && context.mounted) {
-                context.read<WorkPackagesListCubit>().getWorkPackages(
-                      context: context,
-                      projectId: projectId,
-                      workPackagesFilters:
-                          // This avoids changing the filters
-                          context.read<WorkPackagesFiltersCubit>().state,
-                      // Reset to avoid requesting next page instead of first page
-                      resetPages: true,
-                    );
-              }
             },
           ),
           body: const SingleChildScrollView(

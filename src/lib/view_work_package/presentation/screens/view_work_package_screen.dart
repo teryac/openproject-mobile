@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/widgets/bottom_tab_bar.dart';
@@ -31,42 +33,55 @@ class ViewWorkPackageScreen extends StatelessWidget {
             controller: scrollController.scrollController,
             slivers: [
               SliverToBoxAdapter(
-                child: CustomAppBar(
-                  text: 'Work package details',
-                  trailingIcon: SvgPicture.asset(
-                    AppIcons.edit,
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.iconPrimary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  trailingIconAction: () async {
-                    final workPackage = context.read<WorkPackage>();
+                child: Builder(
+                  builder: (context) {
+                    final apiToken = context
+                        .read<CacheCubit>()
+                        .state[AppConstants.apiTokenCacheKey];
 
-                    final result = await context.pushNamed<bool>(
-                      AppRoutes.addWorkPackage.name,
-                      pathParameters: {
-                        'work_package_id': workPackage.id.toString(),
-                      },
-                      queryParameters: {
-                        'edit_mode': 'true',
-                        'project_id': GoRouter.of(context)
-                            .state
-                            .uri
-                            .queryParameters['project_id']!,
-                      },
+                    return CustomAppBar(
+                      text: 'Work package details',
+                      // Unauthenticated users can't edit work packages
+                      trailingIcon: apiToken == null
+                          ? null
+                          : SvgPicture.asset(
+                              AppIcons.edit,
+                              width: 24,
+                              height: 24,
+                              colorFilter: const ColorFilter.mode(
+                                AppColors.iconPrimary,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                      trailingIconAction: apiToken == null
+                          ? null
+                          : () async {
+                              final workPackage = context.read<WorkPackage>();
+
+                              final result = await context.pushNamed<bool>(
+                                AppRoutes.addWorkPackage.name,
+                                pathParameters: {
+                                  'work_package_id': workPackage.id.toString(),
+                                },
+                                queryParameters: {
+                                  'edit_mode': 'true',
+                                  'project_id': GoRouter.of(context)
+                                      .state
+                                      .uri
+                                      .queryParameters['project_id']!,
+                                },
+                              );
+
+                              // When the `AddWorkPackageScreen` successfully updates a work
+                              // package, it pops and sends a boolean with a value of `true`
+                              // to this route, this route passes that value back to the
+                              // Work Packages screen to trigger a reload in order to
+                              // update the work packages list
+                              if (result != null && result && context.mounted) {
+                                context.pop<bool>(true);
+                              }
+                            },
                     );
-
-                    // When the `AddWorkPackageScreen` successfully updates a work
-                    // package, it pops and sends a boolean with a value of `true`
-                    // to this route, this route passes that value back to the
-                    // Work Packages screen to trigger a reload in order to
-                    // update the work packages list
-                    if (result != null && result && context.mounted) {
-                      context.pop<bool>(true);
-                    }
                   },
                 ),
               ),

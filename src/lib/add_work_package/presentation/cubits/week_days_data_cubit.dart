@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/add_work_package/data/add_work_package_repo.dart';
-import 'package:open_project/add_work_package/models/week_day.dart';
+import 'package:open_project/core/models/week_day.dart';
 import 'package:open_project/core/util/cache_extension.dart';
 import 'package:open_project/core/util/failure.dart';
 
@@ -28,8 +28,11 @@ class WeekDaysDataCubit
       return;
     }
 
+    final apiToken = context.getApiToken();
+
     final result = await _addWorkPackageRepo.getWeekDays(
       serverUrl: serverUrl,
+      apiToken: apiToken,
     );
 
     if (result.isData) {

@@ -49,7 +49,6 @@ dependencies:
   flutter_async_value: ^1.5.0
   flutter_secure_storage: ^9.2.4
   sliver_expandable: ^1.1.2
-  iso_duration_parser: ^1.1.1
 
 dev_dependencies:
   flutter_test:

@@ -74,4 +74,18 @@ class HomeRepo {
       );
     }
   }
+
+  String getProjectStatusColor(String? id) {
+    final defaultColor = '#848D90';
+    final colorMap = {
+      'at_risk': '#C14200',
+      'on_track': '#008A36',
+      'off_track': '#D90022',
+      'not_started': '#245090',
+      'finished': '#9600E1',
+      'dicontinued': '#9B6A00',
+    };
+
+    return colorMap[id] ?? defaultColor;
+  }
 }

@@ -6,8 +6,8 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/widgets/avatar_widget.dart';
 import 'package:open_project/home/application/home_controller.dart';
-import 'package:open_project/home/presentation/widgets/members_list.dart';
 import 'package:open_project/home/presentation/widgets/server_dialog.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -80,10 +80,16 @@ class HomeHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  MemberAvatarWidget.noBorder(
-                    fullName: cacheData[AppConstants.userNameCacheKey],
+                  AvatarWidget.noBorder(
+                    userData: (cacheData[AppConstants.userIdCacheKey] != null &&
+                            cacheData[AppConstants.userNameCacheKey] != null)
+                        ? (
+                            id: int.parse(
+                                cacheData[AppConstants.userIdCacheKey]!),
+                            fullName: cacheData[AppConstants.userNameCacheKey]!,
+                          )
+                        : null,
                     radius: 18,
-                    color: Colors.blue,
                   ),
                   const SizedBox(width: 8.0),
                   SvgPicture.asset(

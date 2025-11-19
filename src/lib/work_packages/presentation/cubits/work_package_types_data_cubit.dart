@@ -38,12 +38,15 @@ class WorkPackageDependenciesDataCubit
       return;
     }
 
+    final apiToken = context.getApiToken();
+
     final statusesRequest = _workPackagesRepo.getWorkPackageStatuses(
       serverUrl: serverUrl,
     );
 
     final typesRequest = _workPackagesRepo.getWorkPackageTypes(
       serverUrl: serverUrl,
+      apiToken: apiToken,
       projectId: projectId,
     );
 

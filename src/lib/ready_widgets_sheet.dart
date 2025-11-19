@@ -16,9 +16,6 @@ import 'package:open_project/core/widgets/app_progress_bar.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/bottom_tab_bar.dart';
 import 'package:open_project/core/widgets/date_picker/date_picker_widget.dart';
-import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
-import 'package:open_project/home/presentation/widgets/members_list.dart';
-import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
 class ReadyWidgetsSheet extends StatefulWidget {
   const ReadyWidgetsSheet({super.key});
@@ -151,31 +148,31 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  AppPopupMenu(
-                    menu: (toggleMenu) {
-                      return WorkPackagesPopupMenu(toggleMenu: toggleMenu);
-                    },
-                    child: (toggleMenu) {
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        splashColor: AppColors.primaryText.withAlpha(50),
-                        highlightColor:
-                            Colors.transparent, // Removes gray overlay
-                        onLongPress: () => toggleMenu(true),
-                        child: Container(
-                          width: double.infinity,
-                          height: 75,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey, width: 2),
-                          ),
-                          child: const Center(
-                            child: Text("Hold to view menu"),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  // AppPopupMenu(
+                  //   menu: (toggleMenu) {
+                  //     return WorkPackagesPopupMenu(toggleMenu: toggleMenu);
+                  //   },
+                  //   child: (toggleMenu) {
+                  //     return InkWell(
+                  //       borderRadius: BorderRadius.circular(12),
+                  //       splashColor: AppColors.primaryText.withAlpha(50),
+                  //       highlightColor:
+                  //           Colors.transparent, // Removes gray overlay
+                  //       onLongPress: () => toggleMenu(true),
+                  //       child: Container(
+                  //         width: double.infinity,
+                  //         height: 75,
+                  //         decoration: BoxDecoration(
+                  //           borderRadius: BorderRadius.circular(12),
+                  //           border: Border.all(color: Colors.grey, width: 2),
+                  //         ),
+                  //         child: const Center(
+                  //           child: Text("Hold to view menu"),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                   const SizedBox(height: 24),
                   Text(
                     'Text Fields',
@@ -348,25 +345,25 @@ class _ReadyWidgetsSheetState extends State<ReadyWidgetsSheet> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Container(
-                    width: 160,
-                    height: 75,
-                    padding: const EdgeInsets.only(left: 24),
-                    decoration: BoxDecoration(
-                      color: AppColors.projectBackground,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const MembersList(
-                      members: [
-                        (fullName: 'Majd Haj Hmidi', color: Colors.deepOrange),
-                        (fullName: 'Yaman Kalaji', color: Colors.deepPurple),
-                        (fullName: 'Shaaban Shaheen', color: Colors.teal),
-                        (fullName: 'Test Name', color: Colors.black),
-                        (fullName: 'Test Name', color: Colors.red),
-                        (fullName: 'Test Name', color: Colors.blue),
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   width: 160,
+                  //   height: 75,
+                  //   padding: const EdgeInsets.only(left: 24),
+                  //   decoration: BoxDecoration(
+                  //     color: AppColors.projectBackground,
+                  //     borderRadius: BorderRadius.circular(16),
+                  //   ),
+                  //   child: const MembersList(
+                  //     members: [
+                  //       (fullName: 'Majd Haj Hmidi', color: Colors.deepOrange),
+                  //       (fullName: 'Yaman Kalaji', color: Colors.deepPurple),
+                  //       (fullName: 'Shaaban Shaheen', color: Colors.teal),
+                  //       (fullName: 'Test Name', color: Colors.black),
+                  //       (fullName: 'Test Name', color: Colors.red),
+                  //       (fullName: 'Test Name', color: Colors.blue),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: 24),
                   Stack(
                     children: [

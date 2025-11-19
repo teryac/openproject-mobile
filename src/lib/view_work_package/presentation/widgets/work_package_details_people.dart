@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_project/core/constants/api_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
-import 'package:open_project/home/presentation/widgets/members_list.dart';
+import 'package:open_project/core/widgets/avatar_widget.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 
 class WorkPackageDetailsPeople extends StatelessWidget {
@@ -26,21 +25,13 @@ class WorkPackageDetailsPeople extends StatelessWidget {
         _PersonInfoTile(
           name: 'Accountable',
           value: workPackage.accountable?.name,
-          avatarUrl: workPackage.accountable?.id == null
-              ? null
-              : ApiConstants.userAvatar(
-                  workPackage.accountable!.id.toString(),
-                ),
+          userId: workPackage.accountable?.id,
         ),
         const SizedBox(height: 20),
         _PersonInfoTile(
           name: 'Assignee',
           value: workPackage.assignee?.name,
-          avatarUrl: workPackage.assignee?.id == null
-              ? null
-              : ApiConstants.userAvatar(
-                  workPackage.assignee!.id.toString(),
-                ),
+          userId: workPackage.assignee?.id,
         ),
       ],
     );
@@ -53,11 +44,11 @@ class _PersonInfoTile extends StatelessWidget {
 
   /// e.g. "Peter Peterson"
   final String? value;
-  final String? avatarUrl;
+  final int? userId;
   const _PersonInfoTile({
     required this.name,
     required this.value,
-    required this.avatarUrl,
+    required this.userId,
   });
 
   @override
@@ -88,9 +79,10 @@ class _PersonInfoTile extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      MemberAvatarWidget.noBorder(
-                        fullName: value,
-                        color: Colors.red, // Temp solution
+                      AvatarWidget.noBorder(
+                        userData: (userId != null && value != null)
+                            ? (id: userId!, fullName: value!)
+                            : null,
                         radius: 12,
                       ),
                       const SizedBox(width: 12),
