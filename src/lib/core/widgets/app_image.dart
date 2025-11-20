@@ -10,6 +10,7 @@ class AppNetworkImage extends StatefulWidget {
   final BorderRadius? borderRadius;
   final bool _shimmer;
   final Alignment alignment;
+  final bool disableCaching;
   final Widget Function(BuildContext context)? errorBuilder;
 
   const AppNetworkImage({
@@ -21,6 +22,7 @@ class AppNetworkImage extends StatefulWidget {
     this.borderRadius,
     this.alignment = Alignment.center,
     this.errorBuilder,
+    this.disableCaching = false,
   }) : _shimmer = true;
 
   const AppNetworkImage.noShimmer({
@@ -32,6 +34,7 @@ class AppNetworkImage extends StatefulWidget {
     this.borderRadius,
     this.alignment = Alignment.center,
     this.errorBuilder,
+    this.disableCaching = false,
   }) : _shimmer = false;
 
   @override
@@ -70,6 +73,9 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
         height: widget.height,
         alignment: widget.alignment,
         fit: widget.fit,
+        cacheKey: widget.disableCaching
+            ? DateTime.now().millisecondsSinceEpoch.toString()
+            : null,
         placeholder: widget._shimmer ? ((context, url) => placeholder) : null,
         errorWidget: (context, url, error) {
           if (widget.errorBuilder != null) {

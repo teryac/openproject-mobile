@@ -55,6 +55,11 @@ class ApiConstants {
 
   static const workPackagePriorities = '${_base}priorities';
 
+  /// DELETE request
+  static String deleteWorkPackage(int workPackageId) {
+    return '${_base}work_packages/$workPackageId';
+  }
+
   // Add/Edit Work Package screen
 
   /// Lists week days, used to separate work days from others

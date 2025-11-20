@@ -40,8 +40,9 @@ import 'package:open_project/welcome/welcome_screen.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/data/work_packages_repo.dart';
 import 'package:open_project/work_packages/models/work_package_dependencies.dart';
+import 'package:open_project/work_packages/presentation/cubits/delete_work_package_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/screens/work_packages_screen.dart';
 
@@ -238,6 +239,11 @@ GoRouter getAppRouter() => GoRouter(
                 ),
                 BlocProvider(
                   create: (_) => WorkPackagesFiltersCubit(),
+                ),
+                BlocProvider(
+                  create: (context) => DeleteWorkPackageCubit(
+                    workPackagesRepo: context.read<WorkPackagesRepo>(),
+                  ),
                 ),
                 RepositoryProvider(
                   create: (context) => WorkPackagesController(

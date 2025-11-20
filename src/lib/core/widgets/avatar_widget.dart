@@ -95,6 +95,12 @@ class AvatarWidget extends StatelessWidget {
                     return AppNetworkImage(
                       imageUrl: '$serverUrl$avatarEndpoint',
                       borderRadius: BorderRadius.circular(360),
+                      /// The user avatar url doesn't change, it's always
+                      /// {baseUrl}/api/v3/users/{i}/avatar
+                      /// Caching based on URL value makes the caching
+                      /// mechanism think the image is the same as before
+                      /// even though it might have changed
+                      disableCaching: true,
                       errorBuilder: (_) => fallbackAvatar,
                     );
                   },

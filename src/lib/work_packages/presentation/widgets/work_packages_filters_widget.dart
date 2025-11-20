@@ -5,8 +5,9 @@ import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_chip.dart';
 import 'package:open_project/work_packages/models/work_package_dependencies.dart';
 import 'package:open_project/work_packages/models/work_package_filters.dart';
+import 'package:open_project/work_packages/presentation/cubits/delete_work_package_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 
 class WorkPackagesFiltersWidget extends StatelessWidget {
@@ -40,6 +41,16 @@ class WorkPackagesFiltersWidget extends StatelessWidget {
                 final workPackagesState =
                     context.watch<WorkPackagesListCubit>().state;
 
+                final deleteWorkPackagesState =
+                    context.watch<DeleteWorkPackageCubit>().state;
+
+                /// When a work package deletion is still in progress, the filters
+                /// are disabled until the deletion completes
+                final isDeleteWorkPackageLoading =
+                    deleteWorkPackagesState.values.any(
+                  (asyncValue) => asyncValue.isLoading,
+                );
+
                 final workPackagesFiltersCubit =
                     context.watch<WorkPackagesFiltersCubit>();
                 final workPackagesFilters = workPackagesFiltersCubit.state;
@@ -51,7 +62,8 @@ class WorkPackagesFiltersWidget extends StatelessWidget {
                     // and loading an additional page (`isLoadingPage`).
                     filtersCubit: workPackagesFiltersCubit,
                     filters: workPackagesFilters,
-                    disabled: workPackagesState.isLoading,
+                    disabled: workPackagesState.isLoading ||
+                        isDeleteWorkPackageLoading,
                   ),
                 );
               },

@@ -7,7 +7,7 @@ import 'package:open_project/core/util/pagination.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/load_next_page_button.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile_loading_view.dart';
@@ -111,11 +111,13 @@ class WorkPackagesList extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, __) => const SizedBox(height: 0),
               itemBuilder: (context, index) {
                 return WorkPackageTile(
                   workPackage: workPackages[index],
                   projectId: projectId,
+                  workPackagesLength: workPackages.length,
+                  workPackageIndex: index,
                 );
               },
             ),

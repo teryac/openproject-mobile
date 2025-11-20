@@ -202,6 +202,47 @@ class WorkPackagesRepo {
       );
     }
   }
+
+  /// Deletes a work package, and returns its id if it succeeds
+  Future<AsyncResult<void, NetworkFailure>> deleteWorkPackage({
+    required String serverUrl,
+    required String? apiToken,
+    required int id,
+  }) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$serverUrl${ApiConstants.deleteWorkPackage(id)}'),
+        headers: ApiConstants.getHeaders(apiToken),
+      );
+
+      // Error handling
+      final errorsMap = {
+        400: 'Invalid request',
+        403: 'Forbidden',
+        404: 'Work package not found',
+      };
+
+      if (errorsMap.containsKey(response.statusCode)) {
+        return AsyncResult.error(
+          error: NetworkFailure(
+            errorMessage: errorsMap[response.statusCode]!,
+          ),
+        );
+      }
+
+      // Extra safety measure
+      else if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception();
+      }
+
+      // Successful request
+      return AsyncResult.data(data: null);
+    } catch (exception) {
+      return const AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'An error occurred'),
+      );
+    }
+  }
 }
 
 /// Builds the list of filters for the API request based on the provided model.

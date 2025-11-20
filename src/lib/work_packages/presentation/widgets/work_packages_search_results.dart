@@ -11,7 +11,7 @@ import 'package:open_project/core/widgets/search_result_occurrence_highlighter.d
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/models/work_package_filters.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_package_types_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 
 class WorkPackagesSearchResults extends StatelessWidget {
