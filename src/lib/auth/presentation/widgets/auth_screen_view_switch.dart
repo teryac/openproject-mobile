@@ -24,7 +24,7 @@ class AuthScreenViewSwitch extends StatelessWidget {
               final widgetMinHeight = MediaQuery.sizeOf(context).height -
                   MediaQuery.paddingOf(context).top -
                   MediaQuery.paddingOf(context).bottom -
-                  100;
+                  124;
 
               return ConstrainedBox(
                 constraints: BoxConstraints(

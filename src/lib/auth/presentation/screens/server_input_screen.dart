@@ -82,7 +82,7 @@ class _ServerInputScreenState extends State<ServerInputScreen> {
                 controller:
                     context.read<AuthController>().serverUrlTextController,
                 disableLabel: true,
-                contentPadding: const EdgeInsets.only(top: 18),
+                contentPadding: const EdgeInsets.only(top: 18, bottom: 18),
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(
                     top: 8,

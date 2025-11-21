@@ -42,8 +42,8 @@ class ApiTokenInstructionsDialog extends StatelessWidget {
                     },
                     icon: SvgPicture.asset(
                       AppIcons.closeSquare,
-                      width: 24.0,
-                      height: 24.0,
+                      width: 28.0,
+                      height: 28.0,
                       colorFilter: const ColorFilter.mode(
                         AppColors.iconSecondary,
                         BlendMode.srcIn,
@@ -58,21 +58,22 @@ class ApiTokenInstructionsDialog extends StatelessWidget {
             ),
             AppGalleryWidget(
               itemCount: 3,
+              borderRadius: BorderRadius.circular(16),
               itemBuilder: (index) {
+                return AspectRatio(
+                  aspectRatio: 1.423, // Based on aspect ratio of used images
+                  child: AppAssetImage(
+                    assetPath: AppImages.howToGetApiToken(index + 1),
+                  ),
+                );
+              },
+              secondaryItemIndentation: 12,
+              secondaryItemBuilder: (index) {
                 final instruction = AppConstants.getApiTokenInstructions(index);
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AspectRatio(
-                      aspectRatio:
-                          1.423, // Based on aspect ratio of used images
-                      child: AppAssetImage(
-                        assetPath: AppImages.howToGetApiToken(index + 1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
                     Text(
                       instruction.title,
                       style: AppTextStyles.medium.copyWith(
