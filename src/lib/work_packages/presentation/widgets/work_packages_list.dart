@@ -9,7 +9,7 @@ import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
-import 'package:open_project/work_packages/presentation/widgets/work_package_tile.dart';
+import 'package:open_project/work_packages/presentation/widgets/work_package_tile/work_package_tile.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile_loading_view.dart';
 
 class WorkPackagesList extends StatelessWidget {
