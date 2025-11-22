@@ -32,6 +32,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         title: Text(
           text,
+          maxLines: 1,
+          textAlign: TextAlign.center,
           style: AppTextStyles.large.copyWith(
             color: AppColors.primaryText,
           ),
@@ -43,22 +45,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (trailingIcon != null)
             InkWell(
               borderRadius: BorderRadius.circular(360),
+              splashColor: AppColors.primaryText.withAlpha(38),
+              highlightColor: Colors.transparent,
               onTap: trailingIconAction,
-              child: Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                child: trailingIcon,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: trailingIcon,
+                ),
               ),
             ),
         ],
         leading: showBackButton
             ? InkWell(
                 borderRadius: BorderRadius.circular(360),
+                splashColor: AppColors.primaryText.withAlpha(38),
+                highlightColor: Colors.transparent,
                 onTap: leadingIconAction ?? () => context.pop(),
                 child: Container(
-                  width: 40,
-                  height: 40,
                   alignment: Alignment.center,
                   child: SvgPicture.asset(
                     AppIcons.arrowLeft,

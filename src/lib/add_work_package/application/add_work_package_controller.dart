@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:open_project/add_work_package/models/work_package_payload.dart';
 import 'package:open_project/add_work_package/models/work_package_properties.dart';
@@ -15,7 +17,8 @@ class AddWorkPackageController {
     required this.workPackagePayloadCubit,
     required this.addWorkPackageDataCubit,
   }) {
-    workPackageFormDataCubit.stream.listen((state) {
+    _workPackageFormDataCubitStreamSubscription =
+        workPackageFormDataCubit.stream.listen((state) {
       if (!state.value.isData) return;
 
       if (state is WorkPackageFormDataFetchingState) {
@@ -49,6 +52,8 @@ class AddWorkPackageController {
       );
     });
   }
+
+  StreamSubscription? _workPackageFormDataCubitStreamSubscription;
 
   final _formKey = GlobalKey<FormState>();
   GlobalKey<FormState> get formKey => _formKey;
@@ -95,5 +100,9 @@ class AddWorkPackageController {
       // Format to 2 decimal places and remove trailing zeros
       return hours.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
     }
+  }
+
+  void dispose() {
+    _workPackageFormDataCubitStreamSubscription?.cancel();
   }
 }

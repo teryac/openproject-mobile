@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/util/pagination.dart';
-import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/load_next_page_button.dart';
-import 'package:open_project/core/widgets/sliver_util.dart';
 import 'package:open_project/home/application/home_controller.dart';
 import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/cubits/projects_list_expansion_cubit.dart';
+import 'package:open_project/home/presentation/widgets/private_projects_forbidden_widget.dart';
 import 'package:open_project/home/presentation/widgets/project_tile.dart';
 import 'package:open_project/home/presentation/widgets/project_tile_loading_view.dart';
+import 'package:open_project/home/presentation/widgets/projects_list_error_widget.dart';
 import 'package:sliver_expandable/sliver_expandable.dart';
 
 class ProjectsListWidget extends StatelessWidget {
@@ -30,6 +32,16 @@ class ProjectsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cache = context.read<CacheCubit>().state;
+    final isAuthenticated = cache[AppConstants.apiTokenCacheKey] != null;
+
+    // Unauthenticated users can't access private projects
+    if (!public && !isAuthenticated) {
+      return SliverToBoxAdapter(
+        child: PrivateProjectsForbiddenWidget(),
+      );
+    }
+
     return BlocBuilder<HomeProjectsListCubit,
         PaginatedAsyncValue<PaginatedProjects, NetworkFailure>>(
       builder: (context, projectsState) {
@@ -56,9 +68,9 @@ class ProjectsListWidget extends StatelessWidget {
                 },
                 error: (context, error) {
                   return SliverToBoxAdapter(
-                    child: AsyncRetryWidget(
-                      message: error.errorMessage,
-                      onPressed: () {
+                    child: ProjectsListErrorWidget(
+                      errorMessage: error.errorMessage,
+                      retryTrigger: () {
                         context.read<HomeProjectsListCubit>().getProjects(
                               context: context,
                               projectsFilters:
@@ -82,6 +94,7 @@ class ProjectsListWidget extends StatelessWidget {
                       sliver: SliverToBoxAdapter(
                         child: Text(
                           'No projects found',
+                          textAlign: TextAlign.center,
                           style: AppTextStyles.medium.copyWith(
                             color: AppColors.descriptiveText,
                           ),
@@ -114,7 +127,7 @@ class ProjectsListWidget extends StatelessWidget {
                           separatorBuilder: (BuildContext context, int index) =>
                               const SizedBox(height: 16.0),
                         ),
-                        const SliverIndent(height: 16),
+                        // const SliverIndent(height: 16),
                         SliverToBoxAdapter(
                           child: Builder(
                             builder: (context) {
@@ -126,19 +139,10 @@ class ProjectsListWidget extends StatelessWidget {
                                 return const SizedBox.shrink();
                               }
 
-                              // If loading more items
-                              if (projectsState.isLoadingPage) {
-                                return const Padding(
-                                  padding: EdgeInsets.only(top: 16),
-                                  child: Align(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              }
-
                               return Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: LoadNextPageButton(
+                                  loading: projectsState.isLoadingPage,
                                   onTap: () {
                                     context
                                         .read<HomeProjectsListCubit>()

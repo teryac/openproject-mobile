@@ -12,6 +12,7 @@ import 'package:open_project/core/widgets/app_image.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/widgets/app_button.dart';
+import 'package:open_project/core/widgets/blurred_overlays.dart';
 
 class TokenInputScreen extends StatelessWidget {
   const TokenInputScreen({super.key});
@@ -51,7 +52,10 @@ class TokenInputScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        // This is a default 72 pixels indent
+        const SizedBox(height: 72),
+        // This is an additional option to fill the screen if screen
+        // is large enough
         const Spacer(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -83,7 +87,7 @@ class TokenInputScreen extends StatelessWidget {
                 child: AppTextButton(
                   text: 'How to get API token?',
                   onPressed: () {
-                    showDialog(
+                    showBlurredDialog(
                       context: context,
                       builder: (_) {
                         return const ApiTokenInstructionsDialog();

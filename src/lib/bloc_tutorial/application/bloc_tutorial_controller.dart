@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:open_project/bloc_tutorial/presentation/cubits/projects_cubit.dart';
 import 'package:open_project/bloc_tutorial/presentation/cubits/work_packages_cubit.dart';
 
@@ -18,7 +20,7 @@ class BlocTutorialController {
 
     // The line below means: listen to the changes
     // of the projects cubit
-    projectsCubit.stream.listen(
+    _projectsCubitStreamSubscription = projectsCubit.stream.listen(
       (event) {
         // `event` above, is the state that's emitted
         // by the projects cubit
@@ -32,5 +34,11 @@ class BlocTutorialController {
         }
       },
     );
+  }
+
+  StreamSubscription? _projectsCubitStreamSubscription;
+
+  void dispose() {
+    _projectsCubitStreamSubscription?.cancel();
   }
 }

@@ -6,7 +6,9 @@ import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_assets.dart';
+import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
@@ -36,7 +38,13 @@ class WorkPackageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cache = context.read<CacheCubit>().state;
+    final isAuthenticated = cache[AppConstants.apiTokenCacheKey] != null;
+
     return AppPopupMenu(
+      // Currently, all menu functions (Edit & Delete work packages) are exlusive to
+      // authenticated users, so it's pointless to enable the menu for others
+      enabled: isAuthenticated,
       menu: (toggleMenu) {
         return WorkPackagesPopupMenu(
           toggleMenu: toggleMenu,
@@ -124,7 +132,7 @@ class WorkPackageTile extends StatelessWidget {
                   child: InkWell(
                     splashColor: AppColors.primaryText.withAlpha(38),
                     highlightColor: Colors.transparent, // Removes gray overlay
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(16),
                     onTap: () async {
                       final encodedDataModel = jsonEncode(workPackage.toJson());
                       final encodedDependenciesModel = jsonEncode(context
@@ -180,6 +188,7 @@ class WorkPackageTile extends StatelessWidget {
                                 flex: 6,
                                 child: Text(
                                   workPackage.subject,
+                                  maxLines: 3,
                                   style: AppTextStyles.medium.copyWith(
                                     color: AppColors.primaryText,
                                   ),
@@ -216,6 +225,7 @@ class WorkPackageTile extends StatelessWidget {
                                         ),
                                         child: Text(
                                           status.name,
+                                          textAlign: TextAlign.center,
                                           style:
                                               AppTextStyles.extraSmall.copyWith(
                                             fontWeight: FontWeight.w500,

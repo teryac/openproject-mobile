@@ -22,6 +22,7 @@ class AppIcons {
   static const status = '${_directory}status$_fileType';
   static const layer = '${_directory}layer$_fileType';
   static const category = '${_directory}category$_fileType';
+  static const login = '${_directory}login$_fileType';
 }
 
 class AppImages {
@@ -38,6 +39,7 @@ class AppImages {
   static const profile = '${_directory}profile$_fileType';
   static const globe = '${_directory}globe$_fileType';
   static const overview = '${_directory}overview$_fileType';
+  static const team = '${_directory}team$_fileType';
 
   //logo-with-name.svg
   static String howToGetApiToken(int index) {

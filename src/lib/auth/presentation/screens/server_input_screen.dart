@@ -56,7 +56,10 @@ class _ServerInputScreenState extends State<ServerInputScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        // This is a default 72 pixels indent
+        const SizedBox(height: 72),
+        // This is an additional option to fill the screen if screen
+        // is large enough
         const Spacer(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

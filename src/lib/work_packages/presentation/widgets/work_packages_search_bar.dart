@@ -17,8 +17,8 @@ class WorkPackagesSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppPopupMenu(
+      toggleOnChildTap: false,
       dropdownAlignment: true,
-      disableChildOverylay: true,
       menu: (toggleMenu) {
         return Padding(
           padding: const EdgeInsets.only(top: 12),
@@ -37,6 +37,7 @@ class WorkPackagesSearchBar extends StatelessWidget {
           controller:
               context.read<WorkPackagesController>().searchTextController,
           hint: 'Search for tasks in this project..',
+          unFocusOnTapOutside: true,
           onTap: () => toggleMenu(true),
           onFieldSubmitted: (query) {
             final searchDialogWorkPackagessCubit =

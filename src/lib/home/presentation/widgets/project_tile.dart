@@ -137,10 +137,11 @@ class ProjectTile extends StatelessWidget {
                             style: AppTextStyles.small
                                 .copyWith(color: AppColors.descriptiveText),
                           ),
+                          const SizedBox(width: 4),
                           SvgPicture.asset(
                             AppIcons.arrowRight,
                             width: 14.0,
-                            height: 20,
+                            height: 14.0,
                             colorFilter: const ColorFilter.mode(
                               AppColors.iconSecondary,
                               BlendMode.srcIn,

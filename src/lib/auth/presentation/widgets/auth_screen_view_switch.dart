@@ -8,7 +8,11 @@ import 'package:open_project/auth/presentation/screens/server_input_screen.dart'
 import 'package:open_project/auth/presentation/screens/token_input_screen.dart';
 
 class AuthScreenViewSwitch extends StatelessWidget {
-  const AuthScreenViewSwitch({super.key});
+  final EdgeInsets safeArea;
+  const AuthScreenViewSwitch({
+    super.key,
+    required this.safeArea,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +26,12 @@ class AuthScreenViewSwitch extends StatelessWidget {
             2,
             (index) {
               final widgetMinHeight = MediaQuery.sizeOf(context).height -
-                  MediaQuery.paddingOf(context).top -
-                  MediaQuery.paddingOf(context).bottom -
-                  124;
+                      safeArea.top -
+                      safeArea.bottom -
+                      40 // Top screen padding (Check auth_screen.dart), the stepper
+                  // widget is not counted because it's used in a stack on top of
+                  // the current widget
+                  ;
 
               return ConstrainedBox(
                 constraints: BoxConstraints(

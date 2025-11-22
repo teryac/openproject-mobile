@@ -65,7 +65,7 @@ class _PersonInfoTile extends StatelessWidget {
           ),
         ),
         value == null
-            ? const SizedBox.shrink()
+            ? SizedBox.shrink()
             : Flexible(
                 child: Container(
                   padding: const EdgeInsets.symmetric(

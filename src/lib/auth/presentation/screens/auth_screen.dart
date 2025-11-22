@@ -19,6 +19,12 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
+    final safeArea = EdgeInsets.only(
+      top: MediaQuery.paddingOf(context).top,
+      bottom: MediaQuery.paddingOf(context).bottom,
+      right: MediaQuery.paddingOf(context).right,
+      left: MediaQuery.paddingOf(context).left,
+    );
     return MultiBlocListener(
       // Show error dialogs, snackbars, and other
       // notifications here
@@ -38,17 +44,28 @@ class _AuthScreenState extends State<AuthScreen> {
           },
         ),
       ],
-      child: const Scaffold(
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Column(
-              children: [
-                AuthScreenHeader(),
-                SizedBox(height: 20),
-                AuthScreenViewSwitch(),
-              ],
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    SizedBox(height: 40),
+                    AuthScreenViewSwitch(safeArea: safeArea),
+                  ],
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: SafeArea(
+                child: AuthScreenHeader(),
+              ),
+            ),
+          ],
         ),
       ),
     );

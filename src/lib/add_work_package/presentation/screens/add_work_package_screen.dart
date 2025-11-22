@@ -67,15 +67,6 @@ class AddWorkPackageScreen extends StatelessWidget {
                   context.watch<WorkPackageFormDataCubit>().state;
               final weekDaysState = context.watch<WeekDaysDataCubit>().state;
 
-              if (weekDaysState.isLoading ||
-                  weekDaysState.isInitial ||
-                  workPackageFormState.value.isInitial ||
-                  workPackageFormState.value.isLoading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
               if (weekDaysState.isError || workPackageFormState.value.isError) {
                 return Center(
                   child: AsyncRetryWidget(
@@ -103,6 +94,15 @@ class AddWorkPackageScreen extends StatelessWidget {
                       }
                     },
                   ),
+                );
+              }
+
+              if (weekDaysState.isLoading ||
+                  weekDaysState.isInitial ||
+                  workPackageFormState.value.isInitial ||
+                  workPackageFormState.value.isLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
                 );
               }
 

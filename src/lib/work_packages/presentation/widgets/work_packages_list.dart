@@ -1,12 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
-import 'package:open_project/core/util/pagination.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
-import 'package:open_project/core/widgets/load_next_page_button.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
+import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile.dart';
@@ -14,22 +14,6 @@ import 'package:open_project/work_packages/presentation/widgets/work_package_til
 
 class WorkPackagesList extends StatelessWidget {
   const WorkPackagesList({super.key});
-
-  void getWorkPackages(BuildContext context) {
-    final projectId = int.parse(
-      GoRouterState.of(context).pathParameters['project_id']!,
-    );
-
-    // It's crucial to get the same filters as the first page,
-    // otherwise, a new page will be requested
-    final previousFilters = context.read<WorkPackagesFiltersCubit>().state;
-
-    context.read<WorkPackagesListCubit>().getWorkPackages(
-          context: context,
-          projectId: projectId,
-          workPackagesFilters: previousFilters,
-        );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,37 +26,22 @@ class WorkPackagesList extends StatelessWidget {
         // Listen to all states that build the screen
         final workPackagesAsyncValue =
             context.watch<WorkPackagesListCubit>().state;
-        final workPackageTypesAsyncValue =
+        final workPackageDependenciesAsyncValue =
             context.watch<WorkPackageDependenciesDataCubit>().state;
-
-        // Loading...
-        if (workPackagesAsyncValue.isFirstLoading ||
-            workPackageTypesAsyncValue.isLoading ||
-            workPackagesAsyncValue.isInitial ||
-            workPackageTypesAsyncValue.isInitial) {
-          return ListView.separated(
-            itemCount: 7,
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (_, __) => const SizedBox(height: 16),
-            itemBuilder: (_, __) => const WorkPackageTileLoadingView(),
-          );
-        }
 
         // Failure...
         if (workPackagesAsyncValue.isError ||
-            workPackageTypesAsyncValue.isError) {
+            workPackageDependenciesAsyncValue.isError) {
           return AsyncRetryWidget(
             // If the first doesn't have an error, the last must do so
             message: workPackagesAsyncValue.error?.errorMessage ??
-                workPackageTypesAsyncValue.error!.errorMessage,
+                workPackageDependenciesAsyncValue.error!.errorMessage,
             onPressed: () {
               if (workPackagesAsyncValue.error != null) {
-                getWorkPackages(context);
+                context.read<WorkPackagesController>().getWorkPackages();
               }
 
-              if (workPackageTypesAsyncValue.error != null) {
+              if (workPackageDependenciesAsyncValue.error != null) {
                 final projectId = int.parse(
                   GoRouterState.of(context).pathParameters['project_id']!,
                 );
@@ -87,8 +56,22 @@ class WorkPackagesList extends StatelessWidget {
           );
         }
 
+        // Loading...
+        if (workPackagesAsyncValue.isFirstLoading ||
+            workPackageDependenciesAsyncValue.isLoading ||
+            workPackagesAsyncValue.isInitial ||
+            workPackageDependenciesAsyncValue.isInitial) {
+          return ListView.separated(
+            itemCount: 7,
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
+            itemBuilder: (_, __) => const WorkPackageTileLoadingView(),
+          );
+        }
+
         // Data...
-        final workPackagesModel = workPackagesAsyncValue.data!;
         final workPackages = workPackagesAsyncValue.data!.workPackages;
 
         // No work packages...
@@ -123,28 +106,27 @@ class WorkPackagesList extends StatelessWidget {
             ),
             Builder(
               builder: (context) {
-                if (isLastPage(
-                  total: workPackagesModel.total,
-                  pageSize: workPackagesModel.pageSize,
-                  currentPage: workPackagesModel.page,
-                )) {
+                if (!workPackagesAsyncValue.isLoadingPage) {
                   return const SizedBox.shrink();
-                }
-
-                // If loading more items
-                if (workPackagesAsyncValue.isLoadingPage) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Align(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
                 }
 
                 return Padding(
                   padding: const EdgeInsets.only(top: 16),
-                  child: LoadNextPageButton(
-                    onTap: () => getWorkPackages(context),
+                  child: ListView.separated(
+                    // In most cases, 2 loading tiles will be viewed, but if there's
+                    // only 1 more work package left in the database that is being
+                    // fetched, that can be confusing, that's why the minimum is picked
+                    itemCount: min(
+                      2,
+                      context
+                          .read<WorkPackagesController>()
+                          .getRemainingUnfetchedWorkPackages(),
+                    ),
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    physics: const NeverScrollableScrollPhysics(),
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (_, __) => const WorkPackageTileLoadingView(),
                   ),
                 );
               },

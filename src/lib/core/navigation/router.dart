@@ -18,6 +18,7 @@ import 'package:open_project/auth/presentation/cubits/auth_get_user_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart';
 import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
 import 'package:open_project/auth/presentation/screens/auth_screen.dart';
+import 'package:open_project/auth/presentation/screens/update_api_token_screen.dart';
 import 'package:open_project/bloc_tutorial/application/bloc_tutorial_controller.dart';
 import 'package:open_project/bloc_tutorial/data/bloc_tutorial_repo.dart';
 import 'package:open_project/bloc_tutorial/presentation/cubits/counter_cubit.dart';
@@ -51,6 +52,7 @@ import '../../work_packages/models/work_package.dart';
 enum AppRoutes {
   splash(name: 'splash', path: '/splash'),
   auth(name: 'auth', path: '/auth'),
+  updateApiToken(name: 'updateApiToken', path: '/updateApiToken'),
   home(name: 'home', path: '/'),
   workPackages(name: 'workPackages', path: '/workPackges/:project_id'),
 
@@ -75,8 +77,10 @@ GoRouter getAppRouter() => GoRouter(
       navigatorKey: _rootNavigatorKey,
       initialLocation: AppRoutes.splash.path,
       redirect: (context, state) async {
-        // Ignore redirection if accessing splash screen
-        if (state.uri.path == AppRoutes.splash.path) {
+        // Ignore redirection if accessing splash screen or API
+        // update screen
+        if (state.uri.path == AppRoutes.splash.path ||
+            state.uri.path == AppRoutes.updateApiToken.path) {
           return null;
         }
 
@@ -157,6 +161,32 @@ GoRouter getAppRouter() => GoRouter(
                 ),
               ],
               child: const AuthScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.updateApiToken.path,
+          name: AppRoutes.updateApiToken.name,
+          builder: (context, state) {
+            return MultiBlocProvider(
+              providers: [
+                RepositoryProvider(
+                  create: (_) => AuthRepo(),
+                ),
+                BlocProvider(
+                  create: (context) => AuthGetUserCubit(
+                    authRepo: context.read<AuthRepo>(),
+                  ),
+                ),
+                RepositoryProvider(
+                  create: (context) => AuthController(
+                    context: context,
+                    authGetUserCubit: context.read<AuthGetUserCubit>(),
+                  ),
+                  dispose: (controller) => controller.dispose(),
+                ),
+              ],
+              child: const UpdateApiTokenScreen(),
             );
           },
         ),
@@ -371,6 +401,7 @@ GoRouter getAppRouter() => GoRouter(
                           context.read<AddWorkPackageDataCubit>(),
                     );
                   },
+                  dispose: (controller) => controller.dispose(),
                 ),
               ],
               child: const AddWorkPackageScreen(),
@@ -412,6 +443,7 @@ GoRouter getAppRouter() => GoRouter(
                     workPackagesCubit: workPackagesCubit,
                   );
                 },
+                dispose: (controller) => controller.dispose(),
               ),
             ],
             child: const BlocTutorialScreen(),

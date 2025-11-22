@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,17 +14,17 @@ import 'package:open_project/core/cache/cache_repo.dart';
 class AuthController {
   /// Used for fetching dependencies injected with BuildContext
   final BuildContext context;
-  final AuthPageViewCubit authPageViewCubit;
-  final AuthPingServerCubit authPingServerCubit;
+  final AuthPageViewCubit? authPageViewCubit;
+  final AuthPingServerCubit? authPingServerCubit;
   final AuthGetUserCubit authGetUserCubit;
   AuthController({
     required this.context,
-    required this.authPageViewCubit,
-    required this.authPingServerCubit,
+    this.authPageViewCubit,
+    this.authPingServerCubit,
     required this.authGetUserCubit,
   }) {
     // Listen to page index changes from cubit
-    authPageViewCubit.stream.listen(
+    _authPageViewCubitStreamSubscription = authPageViewCubit?.stream.listen(
       (state) {
         // When switched to new page, animate pageview
         // to that page
@@ -35,7 +37,7 @@ class AuthController {
     );
 
     // Listen to `ping server` cubit states
-    authPingServerCubit.stream.listen(
+    _authPingServerCubitStreamSubscription = authPingServerCubit?.stream.listen(
       (state) {
         // If it's anything other than a success state, skip.
         if (!state.isData) {
@@ -64,14 +66,14 @@ class AuthController {
             // until the delay is finished
 
             // ignore: use_build_context_synchronously
-            authPageViewCubit.changePage(1);
+            authPageViewCubit?.changePage(1);
           },
         );
       },
     );
 
     // Listen to `ping server` cubit states
-    authGetUserCubit.stream.listen(
+    _authGetUserCubitStreamSubscription = authGetUserCubit.stream.listen(
       (state) async {
         // If it's anything other than a success state, skip.
         if (!state.isData) {
@@ -93,6 +95,10 @@ class AuthController {
     );
   }
 
+  StreamSubscription? _authPageViewCubitStreamSubscription;
+  StreamSubscription? _authPingServerCubitStreamSubscription;
+  StreamSubscription? _authGetUserCubitStreamSubscription;
+
   // `Auth screen` page view controller
   final _authScreenPageViewController = PageController();
   PageController get authScreenPageViewController =>
@@ -104,16 +110,23 @@ class AuthController {
     // 'https://' is explicitly added because it's handled
     // in the text field (Check UI)
     if (serverUrlTextController.text.isNotEmpty) {
-      authPingServerCubit.pingServer('https://${serverUrlTextController.text}');
+      authPingServerCubit
+          ?.pingServer('https://${serverUrlTextController.text}');
     }
   }
 
   // `Token Input` screen text field controller
   final tokenTextController = TextEditingController();
-  void getUserData() {
+  void getUserData() async {
     if (tokenTextController.text.isNotEmpty) {
+      final cachedServerUrl = await context
+          .read<CacheRepo>()
+          .getData(AppConstants.serverUrlCacheKey);
+
       authGetUserCubit.getUserData(
-        serverUrl: 'https://${serverUrlTextController.text}',
+        serverUrl: serverUrlTextController.text.isNotEmpty
+            ? 'https://${serverUrlTextController.text}'
+            : cachedServerUrl!,
         apiToken: tokenTextController.text,
       );
     }
@@ -143,6 +156,10 @@ class AuthController {
   }
 
   void dispose() {
+    _authPageViewCubitStreamSubscription?.cancel();
+    _authPingServerCubitStreamSubscription?.cancel();
+    _authGetUserCubitStreamSubscription?.cancel();
+
     serverUrlTextController.dispose();
     tokenTextController.dispose();
   }

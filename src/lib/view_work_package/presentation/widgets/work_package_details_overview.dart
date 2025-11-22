@@ -21,7 +21,7 @@ class WorkPackageDetailsOverview extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              flex: 7,
+              flex: 6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -43,7 +43,7 @@ class WorkPackageDetailsOverview extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Flexible(
-              flex: 3,
+              flex: 4,
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Builder(
@@ -63,6 +63,7 @@ class WorkPackageDetailsOverview extends StatelessWidget {
                       ),
                       child: Text(
                         type.name,
+                        textAlign: TextAlign.center,
                         style: AppTextStyles.small.copyWith(
                           fontWeight: FontWeight.w500,
                           color: HexColor(type.colorHex),

@@ -12,6 +12,7 @@ import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/custom_app_bar.dart';
+import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/models/paginated_work_packages.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
@@ -92,7 +93,8 @@ class WorkPackagesScreen extends StatelessWidget {
               );
             },
           ),
-          body: const SingleChildScrollView(
+          body: SingleChildScrollView(
+            controller: context.read<WorkPackagesController>().scrollController,
             child: Column(
               children: [
                 SizedBox(height: 12),

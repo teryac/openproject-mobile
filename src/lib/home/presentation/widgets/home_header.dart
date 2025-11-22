@@ -7,11 +7,13 @@ import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/avatar_widget.dart';
+import 'package:open_project/core/widgets/blurred_overlays.dart';
 import 'package:open_project/home/application/home_controller.dart';
 import 'package:open_project/home/presentation/widgets/server_dialog.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key});
+  final EdgeInsets safeArea;
+  const HomeHeader({super.key, required this.safeArea});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +26,12 @@ class HomeHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Hello ${firstName ?? ''}",
+              'Hello ${firstName ?? ''}',
               style: AppTextStyles.large.copyWith(
                 color: AppColors.primaryText,
               ),
@@ -37,7 +40,7 @@ class HomeHeader extends StatelessWidget {
               height: 4.0,
             ),
             Text(
-              "Welcome back",
+              'Join ${firstName == null ? 'the workspace' : 'back'}',
               style: AppTextStyles.small
                   .copyWith(color: AppColors.descriptiveText),
             ),
@@ -49,10 +52,8 @@ class HomeHeader extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(360),
             onTap: () {
-              showModalBottomSheet(
+              showBlurredBottomSheet(
                 context: context,
-                isScrollControlled: false,
-                shape: RoundedRectangleBorder(),
                 builder: (_) {
                   return SizedBox(
                     width: double.infinity,
@@ -60,7 +61,7 @@ class HomeHeader extends StatelessWidget {
                       child: SafeArea(
                         child: RepositoryProvider.value(
                           value: context.read<HomeController>(),
-                          child: ServerDialog(),
+                          child: ServerDialog(safeArea: safeArea),
                         ),
                       ),
                     ),

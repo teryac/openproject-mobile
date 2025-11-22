@@ -16,6 +16,8 @@ class AvatarWidget extends StatelessWidget {
   final ({int id, String fullName})? userData;
   final double radius;
   final bool _border;
+  final String? svgAssetFallback;
+  final double fallbackIconSize;
 
   /// When not null, the profile image is blurred, and a '+x' is added
   /// on top to indicate that there are more members available -when used
@@ -27,6 +29,8 @@ class AvatarWidget extends StatelessWidget {
     required this.userData,
     this.radius = 22.5,
     this.extraMembersOverlayCount,
+    this.svgAssetFallback,
+    this.fallbackIconSize = 24,
   }) : _border = true;
 
   const AvatarWidget.noBorder({
@@ -34,6 +38,8 @@ class AvatarWidget extends StatelessWidget {
     required this.userData,
     this.radius = 22.5,
     this.extraMembersOverlayCount,
+    this.svgAssetFallback,
+    this.fallbackIconSize = 24,
   }) : _border = false;
 
   @override
@@ -55,9 +61,9 @@ class AvatarWidget extends StatelessWidget {
       ),
       child: userData == null
           ? SvgPicture.asset(
-              AppIcons.profileFilled,
-              width: 24,
-              height: 24,
+              svgAssetFallback ?? AppIcons.profileFilled,
+              width: fallbackIconSize,
+              height: fallbackIconSize,
               colorFilter: ColorFilter.mode(
                 Colors.white,
                 BlendMode.srcIn,
@@ -95,6 +101,7 @@ class AvatarWidget extends StatelessWidget {
                     return AppNetworkImage(
                       imageUrl: '$serverUrl$avatarEndpoint',
                       borderRadius: BorderRadius.circular(360),
+
                       /// The user avatar url doesn't change, it's always
                       /// {baseUrl}/api/v3/users/{i}/avatar
                       /// Caching based on URL value makes the caching

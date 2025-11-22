@@ -12,6 +12,7 @@ class WorkPackageDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppTextFormField(
       hint: 'Work pacakge description',
+      unFocusOnTapOutside: true,
       maxLines: 2,
       initialValue: context.select<WorkPackagePayloadCubit, String>(
         (cubit) => cubit.state!.description.raw,

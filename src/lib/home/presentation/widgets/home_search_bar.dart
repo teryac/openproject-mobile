@@ -16,8 +16,8 @@ class HomeSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppPopupMenu(
+      toggleOnChildTap: false,
       dropdownAlignment: true,
-      disableChildOverylay: true,
       menu: (toggleMenu) {
         return Padding(
           padding: const EdgeInsets.only(top: 12),
@@ -35,15 +35,16 @@ class HomeSearchBar extends StatelessWidget {
         return AppTextFormField.filled(
           controller: context.read<HomeController>().searchTextController,
           hint: 'Search for Projects..',
+          unFocusOnTapOutside: true,
           onTap: () => toggleMenu(true),
           onFieldSubmitted: (query) {
             final searchDialogProjectsCubit =
                 context.read<SearchDialogProjectsCubit>();
-
+        
             if (query.isEmpty) {
               toggleMenu(false);
               searchDialogProjectsCubit.reset();
-
+        
               return;
             }
             searchDialogProjectsCubit.getProjects(

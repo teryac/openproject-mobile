@@ -17,21 +17,23 @@ class AppPopupMenu extends StatefulWidget {
   final Widget Function(void Function(bool) toggleMenu) menu;
   final void Function(bool visible)? onMenuToggled;
 
-  /// Removes overlay from the `chld` widget so it can be clicked
-  /// without closing the menu
-  final bool disableChildOverylay;
+  /// If true, tapping the child when the menu is open will close it.
+  /// If false, tapping the child will keep the menu open (useful for TextFields).
+  final bool toggleOnChildTap;
 
   /// Forces a special menu alignment with the menu expanding
   /// from the bottom of the widget when there is space left on
   /// the screen, and the opposite when there's no enough space
   final bool dropdownAlignment;
+  final bool enabled;
   const AppPopupMenu({
     super.key,
     required this.child,
     required this.menu,
     this.onMenuToggled,
-    this.disableChildOverylay = false,
     this.dropdownAlignment = false,
+    this.toggleOnChildTap = true,
+    this.enabled = true,
   });
 
   @override
@@ -48,6 +50,13 @@ class _AppPopupMenuState extends State<AppPopupMenu>
     target: Alignment.topRight,
   );
 
+  // This is used for TapRegion behavior, it's intended to combine the menu and
+  // the child in a group to translate "TapOutside" as "tapping outside both the
+  // menu AND the child".
+  // We use the State object itself as a unique ID for this specific menu instance
+  // to ensure multiple menus on the same screen don't interfere with each other.
+  late final Object _regionGroupId = this;
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +72,15 @@ class _AppPopupMenuState extends State<AppPopupMenu>
   }
 
   void _toggleMenu(bool visible) {
+    if (!widget.enabled) return;
+    // If the child asks to open (visible == true),
+    // but we are ALREADY open, we treat this as a request to close.
+    // Also, only close the menu when toggle mode is on, otherwise skip
+    // this case (Check toggleOnChildTap parameter documentation)
+    if (visible && _isMenuVisible && widget.toggleOnChildTap) {
+      visible = false;
+    }
+
     // Measure menu alignment based on scroll position
     setState(() {
       menuAlignment = _getMenuAlignment();
@@ -171,81 +189,42 @@ class _AppPopupMenuState extends State<AppPopupMenu>
 
   @override
   Widget build(BuildContext context) {
-    final portalTarget = Builder(
-      builder: (context) {
-        return PortalTarget(
-          visible: _isMenuVisible,
-          anchor: Aligned(
-            follower: menuAlignment.follower,
-            target: menuAlignment.target,
-          ),
-          portalFollower: Builder(
-            builder: (context) {
-              return ScaleTransition(
-                scale: _animationController.scale,
-                alignment: () {
-                  if (widget.dropdownAlignment) {
-                    if (menuAlignment.target == Alignment.topCenter) {
-                      return Alignment.bottomCenter;
-                    } else {
-                      return Alignment.topCenter;
-                    }
-                  }
-
-                  return Alignment.center;
-                }(),
-                child: widget.menu(_toggleMenu),
-              );
-            },
-          ),
-          child: widget.child(_toggleMenu),
-        );
-      },
-    );
-
-    if (widget.disableChildOverylay) {
-      return PortalTarget(
-        visible: _isMenuVisible,
-        anchor: Aligned(
-          follower: menuAlignment.follower,
-          target: menuAlignment.target,
-        ),
-        portalFollower: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => _toggleMenu(false),
-              child: const SizedBox.expand(),
-            ),
-            ScaleTransition(
-              scale: _animationController.scale,
-              alignment: () {
-                if (widget.dropdownAlignment) {
-                  return menuAlignment.target == Alignment.topCenter
-                      ? Alignment.bottomCenter
-                      : Alignment.topCenter;
-                }
-
-                return Alignment.center;
-              }(),
-              child: widget.menu(_toggleMenu),
-            ),
-          ],
-        ),
-        child: widget.child(_toggleMenu),
-      );
-    }
-
     return PortalTarget(
       visible: _isMenuVisible,
-      anchor: const Filled(),
-      portalFollower: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: (_) => _toggleMenu(false),
-        child: const SizedBox.expand(),
+      anchor: Aligned(
+        follower: menuAlignment.follower,
+        target: menuAlignment.target,
       ),
-      child: portalTarget,
+      // 1. Wrap the MENU content (in the overlay) with TapRegion
+      portalFollower: TapRegion(
+        groupId: _regionGroupId,
+        // We don't need onTapOutside here because the parent TapRegion covers it,
+        // but adding the groupId marks this area as "Safe" (don't close if clicked).
+        child: ScaleTransition(
+          scale: _animationController.scale,
+          alignment: () {
+            if (widget.dropdownAlignment) {
+              return menuAlignment.target == Alignment.topCenter
+                  ? Alignment.bottomCenter
+                  : Alignment.topCenter;
+            }
+            return Alignment.center;
+          }(),
+          child: widget.menu(_toggleMenu),
+        ),
+      ),
+      // 2. Wrap the TRIGGER button (in the main tree) with TapRegion
+      child: TapRegion(
+        groupId: _regionGroupId,
+        // This callback fires ONLY if you tap outside the button AND outside the menu.
+        // Since we do NOT consume the event, the list below will receive the scroll/tap immediately.
+        onTapOutside: (event) {
+          if (_isMenuVisible) {
+            _toggleMenu(false);
+          }
+        },
+        child: widget.child(_toggleMenu),
+      ),
     );
   }
 }

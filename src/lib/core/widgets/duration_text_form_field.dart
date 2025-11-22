@@ -12,6 +12,7 @@ class DurationTextFormField extends StatefulWidget {
     required this.durationParser,
     required this.durationFormatter,
     required this.hint,
+    this.unFocusOnTapOutside = false,
   });
 
   /// The current duration from your state management (e.g., Cubit).
@@ -30,6 +31,8 @@ class DurationTextFormField extends StatefulWidget {
 
   // Standard styling
   final String hint;
+
+  final bool unFocusOnTapOutside;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -111,6 +114,7 @@ class _DurationTextFormFieldState extends State<DurationTextFormField> {
       hint: widget.hint,
       controller: _controller,
       focusNode: _focusNode,
+      unFocusOnTapOutside: widget.unFocusOnTapOutside,
       validator: (value) {
         // This validation logic is still part of the "UI" layer
         if (value == null || value.isEmpty) {
