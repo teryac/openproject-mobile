@@ -19,12 +19,6 @@ import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart'
 import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
 import 'package:open_project/auth/presentation/screens/auth_screen.dart';
 import 'package:open_project/auth/presentation/screens/update_api_token_screen.dart';
-import 'package:open_project/bloc_tutorial/application/bloc_tutorial_controller.dart';
-import 'package:open_project/bloc_tutorial/data/bloc_tutorial_repo.dart';
-import 'package:open_project/bloc_tutorial/presentation/cubits/counter_cubit.dart';
-import 'package:open_project/bloc_tutorial/presentation/cubits/projects_cubit.dart';
-import 'package:open_project/bloc_tutorial/presentation/cubits/work_packages_cubit.dart';
-import 'package:open_project/bloc_tutorial/presentation/screens/bloc_tutorial_screen.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/cache/cache_repo.dart';
 import 'package:open_project/home/application/home_controller.dart';
@@ -61,9 +55,7 @@ enum AppRoutes {
   addWorkPackage(
       name: 'addWorkPackage', path: '/addWorkPackage/:work_package_id'),
   viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage'),
-  welcome(name: 'welcome', path: '/welcome'),
-  // TODO: Remove temp route once it's not needed
-  blocTutorial(name: 'blocTutorial', path: '/blocTutorial');
+  welcome(name: 'welcome', path: '/welcome');
 
   const AppRoutes({required this.name, required this.path});
   final String name;
@@ -407,47 +399,6 @@ GoRouter getAppRouter() => GoRouter(
               child: const AddWorkPackageScreen(),
             );
           },
-        ),
-        GoRoute(
-          path: AppRoutes.blocTutorial.path,
-          name: AppRoutes.blocTutorial.name,
-          builder: (context, state) => MultiBlocProvider(
-            providers: [
-              RepositoryProvider(
-                create: (_) => BlocTutorialRepo(),
-              ),
-              BlocProvider(
-                create: (_) => CounterCubit(),
-              ),
-              BlocProvider(
-                create: (context) =>
-                    ProjectsCubit(repo: context.read<BlocTutorialRepo>()),
-              ),
-              BlocProvider(
-                create: (context) =>
-                    WorkPackagesCubit(repo: context.read<BlocTutorialRepo>()),
-              ),
-              RepositoryProvider(
-                // Immediately creates controller to listen to
-                // stream changes as soon as other dependencies
-                // are created, otherwise, the stream subscription
-                // won't get initialized (Check `BlocTutorialController`
-                // constructor body)
-                lazy: false,
-                create: (context) {
-                  final projectsCubit = context.read<ProjectsCubit>();
-                  final workPackagesCubit = context.read<WorkPackagesCubit>();
-
-                  return BlocTutorialController(
-                    projectsCubit: projectsCubit,
-                    workPackagesCubit: workPackagesCubit,
-                  );
-                },
-                dispose: (controller) => controller.dispose(),
-              ),
-            ],
-            child: const BlocTutorialScreen(),
-          ),
         ),
       ],
     );
