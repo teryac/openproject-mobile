@@ -1,4 +1,4 @@
-package com.teryac.openproject
+package com.tryc.openproject
 
 import io.flutter.embedding.android.FlutterActivity
 
