@@ -16,11 +16,10 @@ import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
+import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 import 'package:open_project/work_packages/presentation/cubits/delete_work_package_cubit.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
-import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile/work_package_tile_animation_helper.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
 
@@ -84,12 +83,7 @@ class _WorkPackageTileState extends State<WorkPackageTile>
             );
 
             if (result != null && result && context.mounted) {
-              context.read<WorkPackagesListCubit>().getWorkPackages(
-                    context: context,
-                    projectId: widget.projectId,
-                    workPackagesFilters:
-                        // This avoids changing the filters
-                        context.read<WorkPackagesFiltersCubit>().state,
+              context.read<WorkPackagesController>().getWorkPackages(
                     // Reset to avoid requesting next page instead of first page
                     resetPages: true,
                   );
@@ -181,19 +175,9 @@ class _WorkPackageTileState extends State<WorkPackageTile>
                         );
 
                         if (result != null && result && context.mounted) {
-                          final projectId = int.parse(
-                            GoRouterState.of(context)
-                                .pathParameters['project_id']!,
-                          );
-
-                          context.read<WorkPackagesListCubit>().getWorkPackages(
-                                context: context,
-                                projectId: projectId,
-                                workPackagesFilters:
-                                    // This avoids changing the filters
-                                    context
-                                        .read<WorkPackagesFiltersCubit>()
-                                        .state,
+                          context
+                              .read<WorkPackagesController>()
+                              .getWorkPackages(
                                 // Reset to avoid requesting next page instead of first page
                                 resetPages: true,
                               );

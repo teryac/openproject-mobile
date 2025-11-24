@@ -78,7 +78,7 @@ class WorkPackagesController {
     }
   }
 
-  void getWorkPackages() {
+  void getWorkPackages({bool resetPages = false}) {
     // It's crucial to get the same filters as the first page,
     // otherwise, a new page will be requested
     final previousFilters = workPackagesFiltersCubit.state;
@@ -87,6 +87,7 @@ class WorkPackagesController {
       context: context,
       projectId: projectId,
       workPackagesFilters: previousFilters,
+      resetPages: resetPages,
     );
   }
 

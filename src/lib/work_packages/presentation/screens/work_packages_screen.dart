@@ -8,7 +8,6 @@ import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
-import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/custom_app_bar.dart';
@@ -39,7 +38,8 @@ class WorkPackagesScreen extends StatelessWidget {
         // page, because the error state is clearly visible on the UI as
         // a retry button (Check `widgets/projects_list_widget.dart`)
         if (state.hasPageError) {
-          showErrorSnackBar(context, state.error!.errorMessage);
+          // Repeat request until succeeds
+          context.read<WorkPackagesController>().getWorkPackages();
         }
       },
       child: Portal(
