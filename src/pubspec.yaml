@@ -50,6 +50,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   sliver_expandable: ^1.1.2
   async: ^2.13.0
+  flutter_cache_manager: ^3.4.1
 
 dev_dependencies:
   flutter_test:

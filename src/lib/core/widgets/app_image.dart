@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AppNetworkImage extends StatefulWidget {
@@ -11,6 +12,7 @@ class AppNetworkImage extends StatefulWidget {
   final bool _shimmer;
   final Alignment alignment;
   final bool disableCaching;
+  final bool ignoreHttpCachingRules;
   final Widget Function(BuildContext context)? errorBuilder;
 
   const AppNetworkImage({
@@ -23,6 +25,7 @@ class AppNetworkImage extends StatefulWidget {
     this.alignment = Alignment.center,
     this.errorBuilder,
     this.disableCaching = false,
+    this.ignoreHttpCachingRules = false,
   }) : _shimmer = true;
 
   const AppNetworkImage.noShimmer({
@@ -35,6 +38,7 @@ class AppNetworkImage extends StatefulWidget {
     this.alignment = Alignment.center,
     this.errorBuilder,
     this.disableCaching = false,
+    this.ignoreHttpCachingRules = false,
   }) : _shimmer = false;
 
   @override
@@ -69,6 +73,17 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
       child: CachedNetworkImage(
         key: imageKey,
         imageUrl: widget.imageUrl,
+        cacheManager: widget.ignoreHttpCachingRules
+            ? CacheManager(
+                Config(
+                  'avatarCache',
+                  stalePeriod: Duration(days: 30),
+                  maxNrOfCacheObjects: 200,
+                  repo: JsonCacheInfoRepository(databaseName: 'avatarCache'),
+                  fileService: HttpFileService(),
+                ),
+              )
+            : null,
         width: widget.width,
         height: widget.height,
         alignment: widget.alignment,
