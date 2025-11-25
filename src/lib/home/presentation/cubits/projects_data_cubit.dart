@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,17 +40,20 @@ class _ProjectsDataCubit
         // and the other for the search dialog in home screen.
         super(PaginatedAsyncValue.initial());
 
+  CancelableOperation? _currentOperation;
+
   void getProjects({
     required BuildContext context,
     required ProjectsFilters projectsFilters,
     bool resetPages = false,
   }) async {
-    if (state.isLoading) return;
-
     // If different filter applied, reset model first
     if (resetPages || (projectsFilters != state.data?.projectsFilters)) {
       emit(PaginatedAsyncValue.initial());
     }
+
+    // Cancel the previous request
+    await _currentOperation?.cancel();
 
     emit(PaginatedAsyncValue.loading(previous: state));
 
@@ -58,14 +64,21 @@ class _ProjectsDataCubit
       return;
     }
 
-    final result = await _homeRepo.getProjects(
-      serverUrl: serverUrl,
-      apiToken: apiToken,
-      // If first page, `data?.page` is replaced with 0, then 1 is
-      // added, making it the first page
-      page: (state.data?.page ?? 0) + 1,
-      projectsFilters: projectsFilters,
+    _currentOperation = CancelableOperation.fromFuture(
+      _homeRepo.getProjects(
+        serverUrl: serverUrl,
+        apiToken: apiToken,
+        // If first page, `data?.page` is replaced with 0, then 1 is
+        // added, making it the first page
+        page: (state.data?.page ?? 0) + 1,
+        projectsFilters: projectsFilters,
+      ),
     );
+
+    final AsyncResult<PaginatedProjects, NetworkFailure>? result =
+        await _currentOperation!.valueOrCancellation();
+
+    if (result == null) return;
 
     if (result.isData) {
       emit(
@@ -97,7 +110,10 @@ class _ProjectsDataCubit
     }
   }
 
-  /// This is used when the search dialog is closed
+  void cancelRunningRequest() {
+    _currentOperation?.cancel();
+  }
+
   void reset() {
     emit(PaginatedAsyncValue.initial());
   }

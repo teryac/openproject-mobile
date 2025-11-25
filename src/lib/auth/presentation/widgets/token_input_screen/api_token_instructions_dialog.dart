@@ -19,7 +19,7 @@ class ApiTokenInstructionsDialog extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

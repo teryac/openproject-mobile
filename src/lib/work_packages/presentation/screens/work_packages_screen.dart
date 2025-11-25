@@ -57,15 +57,15 @@ class WorkPackagesScreen extends StatelessWidget {
               }
 
               return AppButton(
-                text: 'Add Work Package',
+                text: 'Work package',
+                wrapContent: true,
                 prefixIcon: SvgPicture.asset(
-                  AppIcons.task,
-                  width: 20,
-                  height: 20,
+                  AppIcons.addSquare,
+                  width: 24,
+                  height: 24,
                   // ignore: deprecated_member_use
                   color: Colors.white,
                 ),
-                wrapContent: true,
                 onPressed: () async {
                   final result = await context.pushNamed<bool>(
                     AppRoutes.addWorkPackage.name,
@@ -106,7 +106,7 @@ class WorkPackagesScreen extends StatelessWidget {
                 WorkPackagesFiltersWidget(),
                 SizedBox(height: 24),
                 WorkPackagesList(),
-                SizedBox(height: 24),
+                SizedBox(height: 86),
               ],
             ),
           ),

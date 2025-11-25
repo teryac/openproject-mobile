@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,19 +46,22 @@ class _WorkPackagesDataCubit
   })  : _workPackagesRepo = workPackagesRepo,
         super(PaginatedAsyncValue.initial());
 
+  CancelableOperation? _currentOperation;
+
   void getWorkPackages({
     required BuildContext context,
     required int projectId,
     required WorkPackagesFilters workPackagesFilters,
     bool resetPages = false,
   }) async {
-    if (state.isLoading) return;
-
     // If different filter applied, reset model first
     if (resetPages ||
         (workPackagesFilters != state.data?.workPackagesFilters)) {
       emit(PaginatedAsyncValue.initial());
     }
+
+    // Cancel the previous request
+    await _currentOperation?.cancel();
 
     emit(PaginatedAsyncValue.loading(previous: state));
 
@@ -66,15 +72,22 @@ class _WorkPackagesDataCubit
       return;
     }
 
-    final result = await _workPackagesRepo.getWorkPackages(
-      serverUrl: serverUrl,
-      apiToken: apiToken,
-      // If first page, `data?.page` is replaced with 0, then 1 is
-      // added, making it the first page
-      projectId: projectId,
-      page: (state.data?.page ?? 0) + 1,
-      workPackagesFilters: workPackagesFilters,
+    _currentOperation = CancelableOperation.fromFuture(
+      _workPackagesRepo.getWorkPackages(
+        serverUrl: serverUrl,
+        apiToken: apiToken,
+        // If first page, `data?.page` is replaced with 0, then 1 is
+        // added, making it the first page
+        projectId: projectId,
+        page: (state.data?.page ?? 0) + 1,
+        workPackagesFilters: workPackagesFilters,
+      ),
     );
+
+    final AsyncResult<PaginatedWorkPackages, NetworkFailure>? result =
+        await _currentOperation!.valueOrCancellation();
+
+    if (result == null) return;
 
     if (result.isData) {
       emit(
@@ -106,7 +119,10 @@ class _WorkPackagesDataCubit
     }
   }
 
-  /// This is used when the search dialog is closed
+  void cancelRunningRequest() {
+    _currentOperation?.cancel();
+  }
+
   void reset() {
     emit(PaginatedAsyncValue.initial());
   }

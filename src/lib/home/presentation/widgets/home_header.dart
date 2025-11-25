@@ -40,7 +40,7 @@ class HomeHeader extends StatelessWidget {
               height: 4.0,
             ),
             Text(
-              'Join ${firstName == null ? 'the workspace' : 'back'}',
+              'Welcome to the team',
               style: AppTextStyles.small
                   .copyWith(color: AppColors.descriptiveText),
             ),

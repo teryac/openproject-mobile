@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:http/http.dart' as http;
@@ -15,10 +17,14 @@ class AddWorkPackageRepo {
     required String? apiToken,
   }) async {
     try {
-      final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.listWeekDays}'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .get(
+            Uri.parse('$serverUrl${ApiConstants.listWeekDays}'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 400) {
@@ -43,6 +49,14 @@ class AddWorkPackageRepo {
       return AsyncResult.data(
         data: days,
       );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -63,14 +77,18 @@ class AddWorkPackageRepo {
     bool editMode = false,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse(
-            '$serverUrl${editMode ? ApiConstants.editWorkPackageForm(id) : ApiConstants.addWorkPackageForm(id)}'),
-        headers: ApiConstants.getHeaders(apiToken, {
-          'Content-Type': 'application/json',
-        }),
-        body: body == null ? null : json.encode(body),
-      );
+      final response = await http
+          .post(
+            Uri.parse(
+                '$serverUrl${editMode ? ApiConstants.editWorkPackageForm(id) : ApiConstants.addWorkPackageForm(id)}'),
+            headers: ApiConstants.getHeaders(apiToken, {
+              'Content-Type': 'application/json',
+            }),
+            body: body == null ? null : json.encode(body),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 400) {
@@ -92,6 +110,14 @@ class AddWorkPackageRepo {
       return AsyncResult.data(
         data: (options: wpOptions, payload: wpPayload),
       );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -106,11 +132,15 @@ class AddWorkPackageRepo {
     required ProjectMemberType projectMemberType,
   }) async {
     try {
-      final response = await http.get(
-        Uri.parse(
-            '$serverUrl${projectMemberType == ProjectMemberType.assignee ? ApiConstants.getAvailableAssignees(projectId) : ApiConstants.getAvailableResponsibles(projectId)}'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+                '$serverUrl${projectMemberType == ProjectMemberType.assignee ? ApiConstants.getAvailableAssignees(projectId) : ApiConstants.getAvailableResponsibles(projectId)}'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 400) {
@@ -143,6 +173,14 @@ class AddWorkPackageRepo {
       return AsyncResult.data(
         data: users,
       );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -163,25 +201,33 @@ class AddWorkPackageRepo {
     try {
       late http.Response response;
       if (editMode) {
-        response = await http.patch(
-          Uri.parse(
-              '$serverUrl${ApiConstants.editWorkPackage(id)}?notify=false'),
-          headers: ApiConstants.getHeaders(
-            apiToken,
-            {'Content-Type': 'application/json'},
-          ),
-          body: json.encode(payload),
-        );
+        response = await http
+            .patch(
+              Uri.parse(
+                  '$serverUrl${ApiConstants.editWorkPackage(id)}?notify=false'),
+              headers: ApiConstants.getHeaders(
+                apiToken,
+                {'Content-Type': 'application/json'},
+              ),
+              body: json.encode(payload),
+            )
+            .timeout(
+              const Duration(seconds: 15),
+            );
       } else {
-        response = await http.post(
-          Uri.parse(
-              '$serverUrl${ApiConstants.addWorkPackage(id)}?notify=false'),
-          headers: ApiConstants.getHeaders(
-            apiToken,
-            {'Content-Type': 'application/json'},
-          ),
-          body: json.encode(payload),
-        );
+        response = await http
+            .post(
+              Uri.parse(
+                  '$serverUrl${ApiConstants.addWorkPackage(id)}?notify=false'),
+              headers: ApiConstants.getHeaders(
+                apiToken,
+                {'Content-Type': 'application/json'},
+              ),
+              body: json.encode(payload),
+            )
+            .timeout(
+              const Duration(seconds: 15),
+            );
       }
 
       // Error handling
@@ -202,6 +248,14 @@ class AddWorkPackageRepo {
       // Successful request
       return AsyncResult.data(
         data: null,
+      );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
       );
     } catch (exception) {
       return const AsyncResult.error(

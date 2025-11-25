@@ -15,13 +15,16 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/util/failure.dart';
+import 'package:open_project/core/widgets/blurred_overlays.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 import 'package:open_project/work_packages/presentation/cubits/delete_work_package_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
+import 'package:open_project/work_packages/presentation/widgets/delete_work_package_dialog.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile/work_package_tile_animation_helper.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_popup_menu.dart';
+import 'package:shimmer/shimmer.dart';
 
 class WorkPackageTile extends StatefulWidget {
   final WorkPackage workPackage;
@@ -90,10 +93,19 @@ class _WorkPackageTileState extends State<WorkPackageTile>
             }
           },
           deleteWorkPackageHandler: () {
-            context.read<DeleteWorkPackageCubit>().deleteWorkPackage(
-                  context: context,
-                  workPackageId: widget.workPackage.id,
+            showBlurredDialog(
+              context: context,
+              builder: (_) {
+                return DeleteWorkPackageDialog(
+                  onConfirmed: () {
+                    context.read<DeleteWorkPackageCubit>().deleteWorkPackage(
+                          context: context,
+                          workPackageId: widget.workPackage.id,
+                        );
+                  },
                 );
+              },
+            );
           },
         );
       },
@@ -131,190 +143,222 @@ class _WorkPackageTileState extends State<WorkPackageTile>
             final isBeingDeleted =
                 deletionAsyncValue != null && deletionAsyncValue.isLoading;
 
-            return SizeTransition(
-              sizeFactor: _animationHelper.sizeAnimation,
-              axisAlignment:
-                  0.0, // 0.0 shrinks to the center, -1.0 shrinks upwards
-              child: FadeTransition(
-                opacity: _animationHelper.fadeAnimation,
-                child: Padding(
-                  padding: isDeleted
-                      ? EdgeInsets.zero
-                      : EdgeInsets.only(
-                          top: widget.workPackageIndex == 0 ? 0 : 8,
-                          bottom: widget.workPackageIndex ==
-                                  widget.workPackagesLength - 1
-                              ? 0
-                              : 8,
-                        ),
-                  child: IgnorePointer(
-                    ignoring: isBeingDeleted,
-                    child: InkWell(
-                      splashColor: AppColors.primaryText.withAlpha(38),
-                      highlightColor:
-                          Colors.transparent, // Removes gray overlay
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () async {
-                        final encodedDataModel =
-                            jsonEncode(widget.workPackage.toJson());
-                        final encodedDependenciesModel = jsonEncode(context
-                            .read<WorkPackageDependenciesDataCubit>()
-                            .state
-                            .data!
-                            .toJson());
+            EdgeInsets getItemPadding() {
+              if (isDeleted) return EdgeInsets.zero;
 
-                        final result = await context.pushNamed<bool>(
-                          AppRoutes.viewWorkPackage.name,
-                          queryParameters: {
-                            'data': encodedDataModel,
-                            'dependencies': encodedDependenciesModel,
-                            'project_id': GoRouter.of(context)
-                                .state
-                                .pathParameters['project_id']!,
-                          },
-                        );
+              return EdgeInsets.only(
+                top: widget.workPackageIndex == 0 ? 0 : 8,
+                bottom: widget.workPackageIndex == widget.workPackagesLength - 1
+                    ? 0
+                    : 8,
+              );
+            }
 
-                        if (result != null && result && context.mounted) {
-                          context
-                              .read<WorkPackagesController>()
-                              .getWorkPackages(
-                                // Reset to avoid requesting next page instead of first page
-                                resetPages: true,
-                              );
-                        }
-                      },
-                      onLongPress: () => toggleMenu(true),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: isBeingDeleted
-                                ? Color(0xFFFAA087)
-                                : AppColors.border,
-                            width: 1.5,
+            return Stack(
+              children: [
+                if (isBeingDeleted)
+                  Positioned.fill(
+                    child: Padding(
+                      padding: getItemPadding(),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Shimmer.fromColors(
+                          baseColor: AppColors.red.withAlpha(0),
+                          highlightColor: AppColors.red.withAlpha(64),
+                          direction: ShimmerDirection.ltr,
+                          period: const Duration(seconds: 2),
+                          child: Container(
+                            color: Colors.white,
                           ),
-                          color: isBeingDeleted
-                              ? Color(0x80F2DBD5)
-                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  ),
+                SizeTransition(
+                  sizeFactor: _animationHelper.sizeAnimation,
+                  axisAlignment:
+                      0.0, // 0.0 shrinks to the center, -1.0 shrinks upwards
+                  child: FadeTransition(
+                    opacity: _animationHelper.fadeAnimation,
+                    child: Padding(
+                      padding: getItemPadding(),
+                      child: IgnorePointer(
+                        ignoring: isBeingDeleted,
+                        child: InkWell(
+                          splashColor: AppColors.primaryText.withAlpha(38),
+                          highlightColor:
+                              Colors.transparent, // Removes gray overlay
                           borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: ImageFiltered(
-                          enabled: isBeingDeleted,
-                          imageFilter: ImageFilter.blur(
-                            sigmaX: 6,
-                            sigmaY: 6,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                spacing: 12,
-                                children: [
-                                  Expanded(
-                                    flex: 6,
-                                    child: Text(
-                                      widget.workPackage.subject,
-                                      maxLines: 3,
-                                      style: AppTextStyles.medium.copyWith(
-                                        color: AppColors.primaryText,
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    flex: 4,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Builder(
-                                        builder: (context) {
-                                          final statuses = context
-                                              .read<
-                                                  WorkPackageDependenciesDataCubit>()
-                                              .state
-                                              .data!
-                                              .workPackageStatuses;
+                          onTap: () async {
+                            final encodedDataModel =
+                                jsonEncode(widget.workPackage.toJson());
+                            final encodedDependenciesModel = jsonEncode(context
+                                .read<WorkPackageDependenciesDataCubit>()
+                                .state
+                                .data!
+                                .toJson());
 
-                                          final status = statuses.firstWhere(
-                                            (element) =>
-                                                element.id ==
-                                                widget.workPackage.statusId,
-                                          );
+                            final result = await context.pushNamed<bool>(
+                              AppRoutes.viewWorkPackage.name,
+                              queryParameters: {
+                                'data': encodedDataModel,
+                                'dependencies': encodedDependenciesModel,
+                                'project_id': GoRouter.of(context)
+                                    .state
+                                    .pathParameters['project_id']!,
+                              },
+                            );
 
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: HexColor(status.colorHex)
-                                                  .withAlpha(38),
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                            child: Text(
-                                              status.name,
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.extraSmall
-                                                  .copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                color:
-                                                    HexColor(status.colorHex),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                            if (result != null && result && context.mounted) {
+                              context
+                                  .read<WorkPackagesController>()
+                                  .getWorkPackages(
+                                    // Reset to avoid requesting next page instead of first page
+                                    resetPages: true,
+                                  );
+                            }
+                          },
+                          onLongPress: () => toggleMenu(true),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isBeingDeleted
+                                    ? Color(0xFFFAA087)
+                                    : AppColors.border,
+                                width: 1.5,
                               ),
-                              if (widget.workPackage.dueDate != null) ...[
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(AppIcons.clock),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Builder(
-                                        builder: (context) {
-                                          final deadlineText = parseDeadline(
-                                              widget.workPackage.dueDate!);
-                                          return Text(
-                                            '${deadlineText.prefix} ${deadlineText.value}',
+                              color: isBeingDeleted
+                                  ? Color(0x80F2DBD5)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: ImageFiltered(
+                              enabled: isBeingDeleted,
+                              imageFilter: ImageFilter.blur(
+                                sigmaX: 6,
+                                sigmaY: 6,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    spacing: 12,
+                                    children: [
+                                      Expanded(
+                                        flex: 6,
+                                        child: Text(
+                                          widget.workPackage.subject,
+                                          maxLines: 3,
+                                          style: AppTextStyles.medium.copyWith(
+                                            color: AppColors.primaryText,
+                                          ),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        flex: 4,
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Builder(
+                                            builder: (context) {
+                                              final statuses = context
+                                                  .read<
+                                                      WorkPackageDependenciesDataCubit>()
+                                                  .state
+                                                  .data!
+                                                  .workPackageStatuses;
+
+                                              final status =
+                                                  statuses.firstWhere(
+                                                (element) =>
+                                                    element.id ==
+                                                    widget.workPackage.statusId,
+                                              );
+
+                                              return Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      HexColor(status.colorHex)
+                                                          .withAlpha(38),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                                child: Text(
+                                                  status.name,
+                                                  textAlign: TextAlign.center,
+                                                  style: AppTextStyles
+                                                      .extraSmall
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: HexColor(
+                                                        status.colorHex),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (widget.workPackage.dueDate != null) ...[
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(AppIcons.clock),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Builder(
+                                            builder: (context) {
+                                              final deadlineText =
+                                                  parseDeadline(widget
+                                                      .workPackage.dueDate!);
+                                              return Text(
+                                                '${deadlineText.prefix} ${deadlineText.value}',
+                                                style: AppTextStyles.small
+                                                    .copyWith(
+                                                  color:
+                                                      AppColors.descriptiveText,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                  if (widget.workPackage.assignee != null) ...[
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(AppIcons.profile),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            'Task assigned to ${widget.workPackage.assignee!.name}.',
                                             style: AppTextStyles.small.copyWith(
                                               color: AppColors.descriptiveText,
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                              if (widget.workPackage.assignee != null) ...[
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(AppIcons.profile),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        'Task assigned to ${widget.workPackage.assignee!.name}.',
-                                        style: AppTextStyles.small.copyWith(
-                                          color: AppColors.descriptiveText,
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ]
-                            ],
+                                  ]
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             );
           },
         );

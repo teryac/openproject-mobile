@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/core/util/pagination.dart' as pagination_tools;
 import 'package:open_project/work_packages/models/work_package_filters.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
@@ -36,20 +37,6 @@ class WorkPackagesController {
   StreamSubscription? _workPackagesFiltersCubitStreamSubscription;
 
   final searchTextController = TextEditingController();
-  void searchWorkPackages() {
-    if (searchTextController.text.isEmpty) {
-      return;
-    }
-
-    searchDialogWorkPackagesCubit.getWorkPackages(
-      context: context,
-      projectId: projectId,
-      workPackagesFilters: WorkPackagesFilters(
-        name: searchTextController.text,
-      ),
-    );
-  }
-
   final scrollController = ScrollController();
 
   void _onScroll() {
@@ -89,6 +76,15 @@ class WorkPackagesController {
       workPackagesFilters: previousFilters,
       resetPages: resetPages,
     );
+  }
+
+  void searchWorkPackages({required String query}) {
+    context.read<SearchDialogWorkPackagesCubit>().getWorkPackages(
+          context: context,
+          projectId: projectId,
+          workPackagesFilters: WorkPackagesFilters(name: query),
+          resetPages: true,
+        );
   }
 
   int getRemainingUnfetchedWorkPackages() {

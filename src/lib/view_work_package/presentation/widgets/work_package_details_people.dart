@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/avatar_widget.dart';
+import 'package:open_project/view_work_package/presentation/widgets/work_package_info_tile.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 
 class WorkPackageDetailsPeople extends StatelessWidget {
@@ -22,82 +23,60 @@ class WorkPackageDetailsPeople extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        _PersonInfoTile(
-          name: 'Accountable',
+        WorkPackageInfoTile(
+          hint: 'Accountable',
           value: workPackage.accountable?.name,
-          userId: workPackage.accountable?.id,
+          valueBuilder: (context, value) {
+            final userId = workPackage.accountable?.id;
+
+            return _UserInfoWidget(userId: userId, value: value);
+          },
         ),
         const SizedBox(height: 20),
-        _PersonInfoTile(
-          name: 'Assignee',
+        WorkPackageInfoTile(
+          hint: 'Assignee',
           value: workPackage.assignee?.name,
-          userId: workPackage.assignee?.id,
+          valueBuilder: (context, value) {
+            final userId = workPackage.assignee?.id;
+
+            return _UserInfoWidget(userId: userId, value: value);
+          },
         ),
       ],
     );
   }
 }
 
-class _PersonInfoTile extends StatelessWidget {
-  /// e.g. "Accountable", "Assignee", etc.
-  final String name;
-
-  /// e.g. "Peter Peterson"
-  final String? value;
+class _UserInfoWidget extends StatelessWidget {
   final int? userId;
-  const _PersonInfoTile({
-    required this.name,
-    required this.value,
+  final String value;
+  const _UserInfoWidget({
     required this.userId,
+    required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            name,
-            style: AppTextStyles.small.copyWith(
-              color: AppColors.descriptiveText,
-            ),
+        AvatarWidget.noBorder(
+          userData: (userId != null)
+              ? (
+                  id: userId!,
+                  fullName: value,
+                )
+              : null,
+          radius: 12,
+        ),
+        const SizedBox(width: 12),
+        Text(
+          value,
+          style: AppTextStyles.small.copyWith(
+            color: AppColors.primaryText,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        value == null
-            ? SizedBox.shrink()
-            : Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.searchBarBackground,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AvatarWidget.noBorder(
-                        userData: (userId != null && value != null)
-                            ? (id: userId!, fullName: value!)
-                            : null,
-                        radius: 12,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        // Will never build this widget if null
-                        value!,
-                        style: AppTextStyles.small.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryText,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
       ],
     );
   }

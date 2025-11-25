@@ -23,6 +23,7 @@ class AppIcons {
   static const layer = '${_directory}layer$_fileType';
   static const category = '${_directory}category$_fileType';
   static const login = '${_directory}login$_fileType';
+  static const addSquare = '${_directory}add-square$_fileType';
 }
 
 class AppImages {

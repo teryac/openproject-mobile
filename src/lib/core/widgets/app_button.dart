@@ -21,6 +21,7 @@ class AppButton extends StatelessWidget {
   final bool blur;
   final bool semiTransparent;
   final _ButtonStyle _style;
+  final EdgeInsets? padding;
 
   const AppButton({
     super.key,
@@ -36,6 +37,7 @@ class AppButton extends StatelessWidget {
     this.wrapContent = false,
     this.blur = false,
     this.semiTransparent = false,
+    this.padding,
   }) : _style = _ButtonStyle.normal;
 
   const AppButton.outlined({
@@ -52,6 +54,7 @@ class AppButton extends StatelessWidget {
     this.wrapContent = false,
     this.blur = false,
     this.semiTransparent = false,
+    this.padding,
   }) : _style = _ButtonStyle.outlined;
 
   const AppButton.caution({
@@ -68,6 +71,7 @@ class AppButton extends StatelessWidget {
     this.wrapContent = false,
     this.blur = false,
     this.semiTransparent = false,
+    this.padding,
   }) : _style = _ButtonStyle.caution;
 
   const AppButton.white({
@@ -84,6 +88,7 @@ class AppButton extends StatelessWidget {
     this.wrapContent = false,
     this.blur = false,
     this.semiTransparent = false,
+    this.padding,
   }) : _style = _ButtonStyle.white;
 
   Color _getBackgroundColor(BuildContext context) {
@@ -93,7 +98,7 @@ class AppButton extends StatelessWidget {
       case _ButtonStyle.outlined:
         return Colors.transparent;
       case _ButtonStyle.caution:
-        return AppColors.redBackground;
+        return AppColors.red;
       case _ButtonStyle.white:
         return AppColors.background;
     }
@@ -106,7 +111,7 @@ class AppButton extends StatelessWidget {
       case _ButtonStyle.outlined:
         return AppColors.button;
       case _ButtonStyle.caution:
-        return AppColors.red;
+        return AppColors.buttonText;
       case _ButtonStyle.white:
         return AppColors.primaryText;
     }
@@ -121,6 +126,12 @@ class AppButton extends StatelessWidget {
       default:
         return null;
     }
+  }
+
+  EdgeInsets _getPadding() {
+    if (padding != null) return padding!;
+
+    return EdgeInsets.symmetric(horizontal: small ? 12 : 16);
   }
 
   @override
@@ -146,7 +157,7 @@ class AppButton extends StatelessWidget {
             highlightColor: Colors.transparent, // removes the gray overlay
             child: Builder(builder: (context) {
               final child = Container(
-                padding: EdgeInsets.symmetric(horizontal: small ? 12 : 16),
+                padding: _getPadding(),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: _getBorder(),

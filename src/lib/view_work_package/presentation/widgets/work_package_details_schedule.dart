@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/util/duration_extension.dart';
 import 'package:open_project/core/widgets/date_picker/date_picker_widget.dart';
+import 'package:open_project/view_work_package/presentation/widgets/work_package_info_tile.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 
 class WorkPackageDetailsSchedule extends StatelessWidget {
@@ -77,34 +77,10 @@ class WorkPackageDetailsSchedule extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        Row(
-          children: [
-            SvgPicture.asset(
-              AppIcons.clock,
-              width: 16,
-              height: 16,
-              colorFilter: const ColorFilter.mode(
-                AppColors.descriptiveText,
-                BlendMode.srcIn,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Estimated time',
-              style: AppTextStyles.small.copyWith(
-                color: AppColors.descriptiveText,
-              ),
-            ),
-            const SizedBox(width: 24),
-            Text(
-              workPackage.estimatedTime == null
-                  ? ''
-                  : workPackage.estimatedTime!.toReadableString(),
-              style: AppTextStyles.medium.copyWith(
-                color: AppColors.primaryText,
-              ),
-            ),
-          ],
+        WorkPackageInfoTile(
+          hint: 'Estimated time',
+          svgIconAsset: AppIcons.clock,
+          value: workPackage.estimatedTime?.toReadableString(),
         ),
       ],
     );

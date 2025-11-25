@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
+import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/home/application/home_controller.dart';
@@ -12,6 +13,26 @@ import 'package:open_project/home/presentation/widgets/home_search_results.dart'
 
 class HomeSearchBar extends StatelessWidget {
   const HomeSearchBar({super.key});
+
+  void searchProjects({
+    required BuildContext context,
+    required String query,
+  }) {
+    final searchDialogProjectsCubit = context.read<SearchDialogProjectsCubit>();
+
+    if (query.isEmpty) {
+      searchDialogProjectsCubit.reset();
+      searchDialogProjectsCubit.cancelRunningRequest();
+
+      return;
+    }
+
+    searchDialogProjectsCubit.getProjects(
+      context: context,
+      projectsFilters: ProjectsFilters(name: query),
+      resetPages: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,25 +56,20 @@ class HomeSearchBar extends StatelessWidget {
         return AppTextFormField.filled(
           controller: context.read<HomeController>().searchTextController,
           hint: 'Search for Projects..',
+          textStyle: AppTextStyles.small.copyWith(
+            color: AppColors.primaryText,
+            fontSize: 15,
+          ),
           unFocusOnTapOutside: true,
           onTap: () => toggleMenu(true),
-          onFieldSubmitted: (query) {
-            final searchDialogProjectsCubit =
-                context.read<SearchDialogProjectsCubit>();
-        
-            if (query.isEmpty) {
-              toggleMenu(false);
-              searchDialogProjectsCubit.reset();
-        
-              return;
-            }
-            searchDialogProjectsCubit.getProjects(
-              context: context,
-              projectsFilters: ProjectsFilters(name: query),
-              resetPages: true,
-            );
-            toggleMenu(true);
-          },
+          onFieldSubmitted: (query) => searchProjects(
+            context: context,
+            query: query,
+          ),
+          onDebounceSubmitted: (query) => searchProjects(
+            context: context,
+            query: query,
+          ),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16,

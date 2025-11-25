@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
+import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_text_field.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
-import 'package:open_project/work_packages/models/work_package_filters.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_packages_search_results.dart';
 
 class WorkPackagesSearchBar extends StatelessWidget {
   const WorkPackagesSearchBar({super.key});
+
+  void searchWorkPackages({
+    required BuildContext context,
+    required String query,
+  }) {
+    if (query.isEmpty) {
+      final searchCubit = context.read<SearchDialogWorkPackagesCubit>();
+      searchCubit.reset();
+      searchCubit.cancelRunningRequest();
+
+      return;
+    }
+
+    context.read<WorkPackagesController>().searchWorkPackages(
+          query: query,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +44,9 @@ class WorkPackagesSearchBar extends StatelessWidget {
                     .horizontal - // Horizontal safe area
                 40 // Screen Horizontal Padding
             ,
-            child: WorkPackagesSearchResults(toggleMenu: toggleMenu),
+            child: WorkPackagesSearchResults(
+              toggleMenu: toggleMenu,
+            ),
           ),
         );
       },
@@ -37,31 +55,20 @@ class WorkPackagesSearchBar extends StatelessWidget {
           controller:
               context.read<WorkPackagesController>().searchTextController,
           hint: 'Search for tasks in this project..',
+          textStyle: AppTextStyles.small.copyWith(
+            color: AppColors.primaryText,
+            fontSize: 15,
+          ),
+          onFieldSubmitted: (query) => searchWorkPackages(
+            context: context,
+            query: query,
+          ),
+          onDebounceSubmitted: (query) => searchWorkPackages(
+            context: context,
+            query: query,
+          ),
           unFocusOnTapOutside: true,
           onTap: () => toggleMenu(true),
-          onFieldSubmitted: (query) {
-            final searchDialogWorkPackagessCubit =
-                context.read<SearchDialogWorkPackagesCubit>();
-
-            if (query.isEmpty) {
-              toggleMenu(false);
-              searchDialogWorkPackagessCubit.reset();
-
-              return;
-            }
-
-            final projectId = int.parse(
-              GoRouterState.of(context).pathParameters['project_id']!,
-            );
-
-            searchDialogWorkPackagessCubit.getWorkPackages(
-              context: context,
-              projectId: projectId,
-              workPackagesFilters: WorkPackagesFilters(name: query),
-              resetPages: true,
-            );
-            toggleMenu(true);
-          },
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16,

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:http/http.dart' as http;
@@ -43,10 +45,15 @@ class HomeRepo {
           : '&filters=${Uri.encodeQueryComponent(jsonEncode(filters))}';
 
       // Send request
-      final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.projects}$pageText$filtersText'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+                '$serverUrl${ApiConstants.projects}$pageText$filtersText'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 400) {
@@ -67,6 +74,14 @@ class HomeRepo {
           responseJson,
           projectsFilters: projectsFilters,
         ),
+      );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
       );
     } catch (exception) {
       return const AsyncResult.error(

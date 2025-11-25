@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../styles/colors.dart';
 import '../styles/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,7 @@ enum _TextFieldStyle {
   filled,
 }
 
-class AppTextFormField extends StatelessWidget {
+class AppTextFormField extends StatefulWidget {
   /// You can update with your own state management if you
   /// do not prefer to use the controller
   final String? initialValue;
@@ -34,7 +36,11 @@ class AppTextFormField extends StatelessWidget {
   final int? maxLines;
   final void Function()? onTap;
   final bool unFocusOnTapOutside;
-
+  final TextStyle? textStyle;
+  // Required callback for reactive search logic
+  final void Function(String value)? onDebounceSubmitted;
+  // Optional debounce duration (default to 500ms)
+  final Duration debounceDuration;
   final _TextFieldStyle _style;
 
   const AppTextFormField({
@@ -61,6 +67,9 @@ class AppTextFormField extends StatelessWidget {
     this.maxLines = 1,
     this.onTap,
     this.unFocusOnTapOutside = false,
+    this.textStyle,
+    this.onDebounceSubmitted,
+    this.debounceDuration = const Duration(milliseconds: 500),
   })  : borderRadius = null,
         _style = _TextFieldStyle.normal;
 
@@ -89,6 +98,9 @@ class AppTextFormField extends StatelessWidget {
     this.maxLines = 1,
     this.onTap,
     this.unFocusOnTapOutside = false,
+    this.textStyle,
+    this.onDebounceSubmitted,
+    this.debounceDuration = const Duration(milliseconds: 500),
   }) : _style = _TextFieldStyle.outlined;
 
   const AppTextFormField.filled({
@@ -116,56 +128,91 @@ class AppTextFormField extends StatelessWidget {
     this.maxLines = 1,
     this.onTap,
     this.unFocusOnTapOutside = false,
+    this.textStyle,
+    this.onDebounceSubmitted,
+    this.debounceDuration = const Duration(milliseconds: 500),
   }) : _style = _TextFieldStyle.filled;
 
-  bool get _filled => _style == _TextFieldStyle.filled;
+  @override
+  State<AppTextFormField> createState() => _AppTextFormFieldState();
+}
+
+class _AppTextFormFieldState extends State<AppTextFormField> {
+  bool get _filled => widget._style == _TextFieldStyle.filled;
+
+  Timer? _debounceTimer;
+
+  void _triggerDebounce(String value) {
+    // 1. Cancel the previous timer if active (user is still typing)
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+
+    // 2. Start a new timer
+    _debounceTimer = Timer(widget.debounceDuration, () {
+      // 3. This runs after the delay, triggering the onDebounceSubmitted callback
+      widget.onDebounceSubmitted?.call(value);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return TapRegion(
       onTapOutside: (event) {
-        if (!unFocusOnTapOutside) return;
+        if (!widget.unFocusOnTapOutside) return;
 
         // This will un-focus ONLY if the tap was outside this specific widget
         // AND the keyboard is currently looking at this specific widget.
-        if (focusNode?.hasFocus ?? false) {
-          focusNode?.unfocus();
+        if (widget.focusNode?.hasFocus ?? false) {
+          widget.focusNode?.unfocus();
         } else {
           // If you aren't using a custom focusNode, we use the primary focus
           FocusManager.instance.primaryFocus?.unfocus();
         }
       },
       child: TextFormField(
-        initialValue: initialValue,
-        controller: controller,
-        validator: validator,
-        onChanged: onChanged,
-        onTap: onTap,
-        style: _filled
-            ? AppTextStyles.small.copyWith(
-                color: AppColors.primaryText,
-              )
-            : AppTextStyles.medium.copyWith(
-                color: AppColors.primaryText,
-              ),
-        focusNode: focusNode,
-        obscureText: obscure,
-        maxLines: maxLines,
-        readOnly: readOnly,
-        autofocus: autofocus,
-        textInputAction: textInputAction,
-        onFieldSubmitted: onFieldSubmitted,
+        initialValue: widget.initialValue,
+        controller: widget.controller,
+        validator: widget.validator,
+        onChanged: (value) {
+          widget.onChanged?.call(value);
+
+          // Used for reactive triggers
+          if (widget.onDebounceSubmitted != null) {
+            _triggerDebounce(value);
+          }
+        },
+        onTap: widget.onTap,
+        style: widget.textStyle ??
+            (_filled
+                ? AppTextStyles.small.copyWith(
+                    color: AppColors.primaryText,
+                  )
+                : AppTextStyles.medium.copyWith(
+                    color: AppColors.primaryText,
+                  )),
+        focusNode: widget.focusNode,
+        obscureText: widget.obscure,
+        maxLines: widget.maxLines,
+        readOnly: widget.readOnly,
+        autofocus: widget.autofocus,
+        textInputAction: widget.textInputAction,
+        onFieldSubmitted: widget.onFieldSubmitted,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardType: keyboardType,
+        keyboardType: widget.keyboardType,
         cursorColor: AppColors.primaryText,
         decoration: InputDecoration(
-          contentPadding: contentPadding,
-          labelText: (_filled || disableLabel) ? null : hint,
+          contentPadding: widget.contentPadding,
+          labelText: (_filled || widget.disableLabel) ? null : widget.hint,
           labelStyle: AppTextStyles.medium.copyWith(
             color: AppColors.descriptiveText,
             fontWeight: FontWeight.w400,
           ),
-          hintText: (_filled || disableLabel) ? hint : null,
+          hintText: (_filled || widget.disableLabel) ? widget.hint : null,
           hintStyle: _filled
               ? AppTextStyles.small.copyWith(
                   color: AppColors.descriptiveText,
@@ -174,7 +221,7 @@ class AppTextFormField extends StatelessWidget {
                   color: AppColors.descriptiveText,
                   fontWeight: FontWeight.w400,
                 ),
-          errorText: errorText,
+          errorText: widget.errorText,
           errorStyle: AppTextStyles.extraSmall.copyWith(
             color: AppColors.red,
           ),
@@ -182,7 +229,8 @@ class AppTextFormField extends StatelessWidget {
           fillColor: _filled ? AppColors.searchBarBackground : null,
           enabledBorder: _filled
               ? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 360),
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius ?? 360),
                   borderSide: BorderSide.none,
                 )
               : const UnderlineInputBorder(
@@ -190,7 +238,8 @@ class AppTextFormField extends StatelessWidget {
                 ),
           focusedBorder: _filled
               ? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 360),
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius ?? 360),
                   borderSide: BorderSide.none,
                 )
               : const UnderlineInputBorder(
@@ -201,7 +250,8 @@ class AppTextFormField extends StatelessWidget {
                 ),
           errorBorder: _filled
               ? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 360),
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius ?? 360),
                   borderSide: BorderSide(
                     color: AppColors.red.withAlpha(150),
                     width: 1,
@@ -212,13 +262,14 @@ class AppTextFormField extends StatelessWidget {
                 ),
           focusedErrorBorder: _filled
               ? OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 360),
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius ?? 360),
                   borderSide: const BorderSide(color: AppColors.red, width: 2),
                 )
               : const UnderlineInputBorder(
                   borderSide: BorderSide(width: 1.5, color: AppColors.red),
                 ),
-          suffixIcon: suffixIcon == null
+          suffixIcon: widget.suffixIcon == null
               ? null
               : ConstrainedBox(
                   constraints: const BoxConstraints(
@@ -226,19 +277,19 @@ class AppTextFormField extends StatelessWidget {
                     minHeight: 0,
                   ),
                   child: GestureDetector(
-                    onTap: onSuffixIconPressed,
-                    child: suffixIcon,
+                    onTap: widget.onSuffixIconPressed,
+                    child: widget.suffixIcon,
                   ),
                 ),
           prefixIconConstraints:
               const BoxConstraints(minHeight: 0, minWidth: 0),
           suffixIconConstraints:
               const BoxConstraints(minHeight: 0, minWidth: 0),
-          prefixIcon: prefixIcon == null
+          prefixIcon: widget.prefixIcon == null
               ? null
               : GestureDetector(
-                  onTap: onPrefixIconPressed,
-                  child: prefixIcon,
+                  onTap: widget.onPrefixIconPressed,
+                  child: widget.prefixIcon,
                 ),
         ),
       ),

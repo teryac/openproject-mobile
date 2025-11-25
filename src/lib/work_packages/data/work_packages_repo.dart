@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:http/http.dart' as http;
@@ -24,11 +26,15 @@ class WorkPackagesRepo {
       final filtersText = _workPackagesJsonFilters(workPackagesFilters);
 
       // Send request
-      final response = await http.get(
-        Uri.parse(
-            '$serverUrl${ApiConstants.workPackages(projectId)}$pageText$filtersText'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+                '$serverUrl${ApiConstants.workPackages(projectId)}$pageText$filtersText'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 400) {
@@ -54,6 +60,14 @@ class WorkPackagesRepo {
           workPackagesFilters: workPackagesFilters,
         ),
       );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -69,11 +83,15 @@ class WorkPackagesRepo {
   }) async {
     try {
       // Send request
-      final response = await http.get(
-        Uri.parse(
-            '$serverUrl${ApiConstants.workPackagesTypesInProject(projectId)}?pageSize=-1'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+                '$serverUrl${ApiConstants.workPackagesTypesInProject(projectId)}?pageSize=-1'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 404) {
@@ -103,6 +121,14 @@ class WorkPackagesRepo {
           .toList();
 
       return AsyncResult.data(data: types);
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -116,10 +142,15 @@ class WorkPackagesRepo {
   }) async {
     try {
       // Send request
-      final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.workPackageStatuses}?pageSize=-1'),
-        headers: ApiConstants.getHeaders(),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+                '$serverUrl${ApiConstants.workPackageStatuses}?pageSize=-1'),
+            headers: ApiConstants.getHeaders(),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 403) {
@@ -149,6 +180,14 @@ class WorkPackagesRepo {
           .toList();
 
       return AsyncResult.data(data: statuses);
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -162,11 +201,15 @@ class WorkPackagesRepo {
   }) async {
     try {
       // Send request
-      final response = await http.get(
-        Uri.parse(
-            '$serverUrl${ApiConstants.workPackagePriorities}?pageSize=-1'),
-        headers: ApiConstants.getHeaders(),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+                '$serverUrl${ApiConstants.workPackagePriorities}?pageSize=-1'),
+            headers: ApiConstants.getHeaders(),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       if (response.statusCode == 403) {
@@ -196,6 +239,14 @@ class WorkPackagesRepo {
           .toList();
 
       return AsyncResult.data(data: priorities);
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),
@@ -210,10 +261,14 @@ class WorkPackagesRepo {
     required int id,
   }) async {
     try {
-      final response = await http.delete(
-        Uri.parse('$serverUrl${ApiConstants.deleteWorkPackage(id)}'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .delete(
+            Uri.parse('$serverUrl${ApiConstants.deleteWorkPackage(id)}'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // Error handling
       final errorsMap = {
@@ -237,6 +292,14 @@ class WorkPackagesRepo {
 
       // Successful request
       return AsyncResult.data(data: null);
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(errorMessage: 'An error occurred'),

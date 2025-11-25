@@ -43,6 +43,8 @@ class AppChip extends StatelessWidget {
     }();
 
     return TweenAnimationBuilder(
+      // Fixes tap ripple bugs when used in list
+      key: ValueKey(text),
       duration: animationDuration,
       curve: animationCurve,
       tween: ColorTween(

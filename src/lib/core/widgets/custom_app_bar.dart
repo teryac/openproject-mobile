@@ -36,6 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.large.copyWith(
             color: AppColors.primaryText,
+            fontSize: 20,
           ),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

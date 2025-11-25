@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:open_project/auth/models/user.dart';
@@ -9,10 +11,14 @@ import 'package:http/http.dart' as http;
 class AuthRepo {
   Future<AsyncResult<void, NetworkFailure>> pingServer(String serverUrl) async {
     try {
-      final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.root}'),
-        headers: ApiConstants.getHeaders(),
-      );
+      final response = await http
+          .get(
+            Uri.parse('$serverUrl${ApiConstants.root}'),
+            headers: ApiConstants.getHeaders(),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       final responseJson = jsonDecode(response.body);
       if (response.statusCode == 404 ||
@@ -36,6 +42,14 @@ class AuthRepo {
       }
 
       return const AsyncResult.data(data: null);
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
+      );
     } catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(
@@ -50,10 +64,14 @@ class AuthRepo {
     required String apiToken,
   }) async {
     try {
-      final response = await http.get(
-        Uri.parse('$serverUrl${ApiConstants.userInfo('me')}'),
-        headers: ApiConstants.getHeaders(apiToken),
-      );
+      final response = await http
+          .get(
+            Uri.parse('$serverUrl${ApiConstants.userInfo('me')}'),
+            headers: ApiConstants.getHeaders(apiToken),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
 
       // When the path parameter `id` is set to "me" instead of
       // the user id (it depends on the api token in this case
@@ -77,6 +95,14 @@ class AuthRepo {
         data: User.fromJson(
           jsonDecode(response.body),
         ),
+      );
+    } on TimeoutException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'Timed out'),
+      );
+    } on SocketException catch (_) {
+      return AsyncResult.error(
+        error: NetworkFailure(errorMessage: 'No internet connection'),
       );
     } catch (exception) {
       return const AsyncResult.error(
