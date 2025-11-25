@@ -3,10 +3,9 @@ import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_constants.dart';
-import 'package:open_project/core/styles/colors.dart';
-import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/util/pagination.dart';
+import 'package:open_project/core/widgets/empty_state_widget.dart';
 import 'package:open_project/core/widgets/load_next_page_button.dart';
 import 'package:open_project/home/application/home_controller.dart';
 import 'package:open_project/home/data/home_repo.dart';
@@ -92,13 +91,7 @@ class ProjectsListWidget extends StatelessWidget {
                     return SliverPadding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       sliver: SliverToBoxAdapter(
-                        child: Text(
-                          'No projects found',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.medium.copyWith(
-                            color: AppColors.descriptiveText,
-                          ),
-                        ),
+                        child: EmptyStateWidget(message: 'No projects found'),
                       ),
                     );
                   }

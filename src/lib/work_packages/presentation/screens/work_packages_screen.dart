@@ -30,6 +30,8 @@ class WorkPackagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeArea = MediaQuery.paddingOf(context);
+
     return BlocListener<WorkPackagesListCubit,
         PaginatedAsyncValue<PaginatedWorkPackages, NetworkFailure>>(
       listener: (context, state) {
@@ -105,7 +107,7 @@ class WorkPackagesScreen extends StatelessWidget {
                 SizedBox(height: 12),
                 WorkPackagesFiltersWidget(),
                 SizedBox(height: 24),
-                WorkPackagesList(),
+                WorkPackagesList(safeArea: safeArea),
                 SizedBox(height: 86),
               ],
             ),

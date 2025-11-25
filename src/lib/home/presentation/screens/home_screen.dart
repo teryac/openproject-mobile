@@ -7,6 +7,7 @@ import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
+import 'package:open_project/core/widgets/empty_state_widget.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/widgets/home_search_bar.dart';
@@ -75,21 +76,47 @@ class HomeScreen extends StatelessWidget {
                           // for entering an API token is shown at the private projects section,
                           // and that last widget should be shown regardless of whther the public
                           // projects loaded, are still loading, or failed to load.
-                          if (isAuthenticated && state.isError) {
-                            return SliverToBoxAdapter(
-                              child: ProjectsListErrorWidget(
-                                errorMessage: state.error!.errorMessage,
-                                retryTrigger: () {
-                                  context
-                                      .read<HomeProjectsListCubit>()
-                                      .getProjects(
-                                        context: context,
-                                        projectsFilters:
-                                            const ProjectsFilters.noFilters(),
-                                      );
-                                },
-                              ),
-                            );
+                          if (isAuthenticated) {
+                            final safeArea = MediaQuery.paddingOf(context);
+                            const approximateHeightOfScreenHeader = 300;
+                            final remainingScreenHeight =
+                                MediaQuery.sizeOf(context).height -
+                                    safeArea.top -
+                                    safeArea.bottom -
+                                    approximateHeightOfScreenHeader;
+                            if (state.data?.projects.isEmpty ?? false) {
+                              return SliverToBoxAdapter(
+                                child: SizedBox(
+                                  height: remainingScreenHeight,
+                                  child: Center(
+                                    child: EmptyStateWidget(message: 'No projects found'),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            if (state.isError) {
+                              return SliverToBoxAdapter(
+                                child: SizedBox(
+                                  height: remainingScreenHeight,
+                                  child: Center(
+                                    child: ProjectsListErrorWidget(
+                                      errorMessage: state.error!.errorMessage,
+                                      retryTrigger: () {
+                                        context
+                                            .read<HomeProjectsListCubit>()
+                                            .getProjects(
+                                              context: context,
+                                              projectsFilters:
+                                                  const ProjectsFilters
+                                                      .noFilters(),
+                                            );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           }
 
                           return SliverMainAxisGroup(

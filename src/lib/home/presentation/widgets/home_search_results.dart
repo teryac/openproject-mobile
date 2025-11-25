@@ -73,20 +73,25 @@ class HomeSearchResults extends StatelessWidget {
               );
             },
             error: (context, error) {
-              return AsyncRetryWidget(
-                message: error.errorMessage,
-                onPressed: () {
-                  final searchQuery =
-                      context.read<HomeController>().searchTextController.text;
-                  if (searchQuery.isEmpty) return;
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: AsyncRetryWidget.textOnly(
+                  message: error.errorMessage,
+                  onPressed: () {
+                    final searchQuery = context
+                        .read<HomeController>()
+                        .searchTextController
+                        .text;
+                    if (searchQuery.isEmpty) return;
 
-                  context.read<SearchDialogProjectsCubit>().getProjects(
-                        context: context,
-                        projectsFilters: ProjectsFilters(
-                          name: searchQuery,
-                        ),
-                      );
-                },
+                    context.read<SearchDialogProjectsCubit>().getProjects(
+                          context: context,
+                          projectsFilters: ProjectsFilters(
+                            name: searchQuery,
+                          ),
+                        );
+                  },
+                ),
               );
             },
             data: (context, data) {
@@ -241,10 +246,14 @@ class _NoResultsFoundWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       heightFactor: 1,
+      alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
         child: Text(
-          'No results found',
+          'No results. Try a different search',
           style: AppTextStyles.small.copyWith(
             color: AppColors.descriptiveText,
           ),

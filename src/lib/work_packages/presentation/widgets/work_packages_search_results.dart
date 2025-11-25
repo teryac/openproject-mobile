@@ -86,43 +86,48 @@ class WorkPackagesSearchResults extends StatelessWidget {
           // Failure...
           if (workPackagesAsyncValue.isError ||
               workPackageTypesAsyncValue.isError) {
-            return AsyncRetryWidget(
-              // If the first doesn't have an error, the last must do so
-              message: workPackagesAsyncValue.error?.errorMessage ??
-                  workPackageTypesAsyncValue.error!.errorMessage,
-              onPressed: () {
-                if (workPackageTypesAsyncValue.error != null) {
-                  final searchQuery = context
-                      .read<WorkPackagesController>()
-                      .searchTextController
-                      .text;
-                  if (searchQuery.isEmpty) return;
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: AsyncRetryWidget.textOnly(
+                // If the first doesn't have an error, the last must do so
+                message: workPackagesAsyncValue.error?.errorMessage ??
+                    workPackageTypesAsyncValue.error!.errorMessage,
+                onPressed: () {
+                  if (workPackageTypesAsyncValue.error != null) {
+                    final searchQuery = context
+                        .read<WorkPackagesController>()
+                        .searchTextController
+                        .text;
+                    if (searchQuery.isEmpty) return;
 
-                  final projectId = int.parse(
-                    GoRouterState.of(context).pathParameters['project_id']!,
-                  );
+                    final projectId = int.parse(
+                      GoRouterState.of(context).pathParameters['project_id']!,
+                    );
 
-                  context.read<SearchDialogWorkPackagesCubit>().getWorkPackages(
-                        context: context,
-                        projectId: projectId,
-                        workPackagesFilters: WorkPackagesFilters(
-                          name: searchQuery,
-                        ),
-                      );
-                }
+                    context
+                        .read<SearchDialogWorkPackagesCubit>()
+                        .getWorkPackages(
+                          context: context,
+                          projectId: projectId,
+                          workPackagesFilters: WorkPackagesFilters(
+                            name: searchQuery,
+                          ),
+                        );
+                  }
 
-                if (workPackageTypesAsyncValue.error != null) {
-                  final projectId = int.parse(
-                    GoRouterState.of(context).pathParameters['project_id']!,
-                  );
-                  context
-                      .read<WorkPackageDependenciesDataCubit>()
-                      .getWorkPackageDependencies(
-                        context: context,
-                        projectId: projectId,
-                      );
-                }
-              },
+                  if (workPackageTypesAsyncValue.error != null) {
+                    final projectId = int.parse(
+                      GoRouterState.of(context).pathParameters['project_id']!,
+                    );
+                    context
+                        .read<WorkPackageDependenciesDataCubit>()
+                        .getWorkPackageDependencies(
+                          context: context,
+                          projectId: projectId,
+                        );
+                  }
+                },
+              ),
             );
           }
 
@@ -283,10 +288,14 @@ class _NoResultsFoundWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       heightFactor: 1,
+      alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
         child: Text(
-          'No results found',
+          'No results. Try a different search',
           style: AppTextStyles.small.copyWith(
             color: AppColors.descriptiveText,
           ),

@@ -3,17 +3,18 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_project/core/styles/colors.dart';
-import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
+import 'package:open_project/core/widgets/empty_state_widget.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
+import 'package:open_project/work_packages/presentation/cubits/delete_work_package_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_dependencies_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_packages_data_cubit.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile/work_package_tile.dart';
 import 'package:open_project/work_packages/presentation/widgets/work_package_tile_loading_view.dart';
 
 class WorkPackagesList extends StatelessWidget {
-  const WorkPackagesList({super.key});
+  final EdgeInsets safeArea;
+  const WorkPackagesList({super.key, required this.safeArea});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,8 @@ class WorkPackagesList extends StatelessWidget {
             context.watch<WorkPackagesListCubit>().state;
         final workPackageDependenciesAsyncValue =
             context.watch<WorkPackageDependenciesDataCubit>().state;
+        final deletedWorkPackages =
+            context.watch<DeleteWorkPackageCubit>().state;
 
         // Failure...
         if (workPackagesAsyncValue.isError ||
@@ -75,16 +78,17 @@ class WorkPackagesList extends StatelessWidget {
         final workPackages = workPackagesAsyncValue.data!.workPackages;
 
         // No work packages...
-        if (workPackages.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              'No work packages found',
-              style: AppTextStyles.medium.copyWith(
-                color: AppColors.descriptiveText,
-              ),
-            ),
-          );
+        int totalDeletedWorkPackages = 0;
+        deletedWorkPackages.forEach((workPackageId, asyncState) {
+          // If state is `isData`, then the work package has been successfully
+          // deleted
+          if (asyncState.isData) {
+            ++totalDeletedWorkPackages;
+          }
+        });
+        if (workPackages.isEmpty ||
+            (totalDeletedWorkPackages == workPackages.length)) {
+          return EmptyStateWidget(message: 'No work packages found');
         }
 
         return Column(

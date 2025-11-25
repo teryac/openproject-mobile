@@ -41,6 +41,10 @@ class AppImages {
   static const globe = '${_directory}globe$_fileType';
   static const overview = '${_directory}overview$_fileType';
   static const team = '${_directory}team$_fileType';
+  static const emptyStateIllustration =
+      '${_directory}empty_state_illustration$_fileType';
+  static const errorStateIllustration =
+      '${_directory}error_state_illustration$_fileType';
 
   //logo-with-name.svg
   static String howToGetApiToken(int index) {
