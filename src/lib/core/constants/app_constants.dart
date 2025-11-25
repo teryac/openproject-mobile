@@ -6,6 +6,14 @@ class AppConstants {
   static const userFirstNameCacheKey = 'user_first_name';
   static const userEmailCacheKey = 'user_email';
 
+  /// This is used for caching if members avatars are not valid
+  /// to avoid loading them everytime, once it's checked that
+  /// they are not valid, the user id is stored in memory, this
+  /// data is lost when the app is closed
+  static String memberAvatarDoesntExistCacheKey(int userId) {
+    return 'user_avatar_invalid_$userId';
+  }
+
   static ({String title, String body}) getApiTokenInstructions(int index) {
     switch (index) {
       case 0:

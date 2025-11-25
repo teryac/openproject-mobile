@@ -34,7 +34,7 @@ class ApiConstants {
 
   /// Use "me" for the `id` if authorization is available in headers
   static String userAvatar(String userId) {
-    return '${_base}users/$userId/avatar.png';
+    return '${_base}users/$userId/avatar';
   }
 
   // Work Packages screen

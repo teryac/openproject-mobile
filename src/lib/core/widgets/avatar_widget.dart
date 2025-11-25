@@ -49,6 +49,12 @@ class AvatarWidget extends StatelessWidget {
     // This modifies the text size based on the diameter of the container
     const textToDiameterModifier = 0.35;
 
+    final invalidAvatar = userData == null
+        ? true
+        : (context.read<CacheCubit>().state[
+                AppConstants.memberAvatarDoesntExistCacheKey(userData!.id)] !=
+            null);
+
     final color = userData != null
         ? _getColorForString('${userData!.id}${userData!.fullName}')
         : AppColors.blue100;
@@ -88,7 +94,7 @@ class AvatarWidget extends StatelessWidget {
                 ? Border.all(color: AppColors.projectBackground, width: 2)
                 : null,
           ),
-          child: userData?.id == null
+          child: (userData?.id == null || invalidAvatar)
               ? fallbackAvatar
               : Builder(
                   builder: (context) {
@@ -108,7 +114,18 @@ class AvatarWidget extends StatelessWidget {
                       /// mechanism think the image is the same as before
                       /// even though it might have changed
                       disableCaching: true,
-                      errorBuilder: (_) => fallbackAvatar,
+                      errorBuilder: (_) {
+                        if (userData == null) return fallbackAvatar;
+
+                        final cacheCubit = context.read<CacheCubit>();
+                        cacheCubit.addCacheValue(
+                          AppConstants.memberAvatarDoesntExistCacheKey(
+                              userData!.id),
+                          'true',
+                        );
+
+                        return fallbackAvatar;
+                      },
                     );
                   },
                 ),
