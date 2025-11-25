@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_project/core/styles/colors.dart';
 
 void showErrorSnackBar(
   BuildContext context,
@@ -13,16 +14,20 @@ void showErrorSnackBar(
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: theme.colorScheme.error,
+      backgroundColor: AppColors.red,
+      duration: duration,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(16),
+      ),
       content: Row(
         spacing: 12,
         children: [
-          Icon(Icons.error_outline, color: theme.colorScheme.onError),
+          Icon(Icons.error_outline, color: AppColors.buttonText),
           Expanded(
             child: Text(
               message,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onError,
+                color: AppColors.buttonText,
               ),
             ),
           ),
