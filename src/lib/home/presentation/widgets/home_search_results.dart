@@ -201,26 +201,35 @@ class HomeSearchResults extends StatelessWidget {
                                 flex: 3,
                                 child: project.status == null
                                     ? const SizedBox.shrink()
-                                    : Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8.0),
-                                          decoration: BoxDecoration(
-                                            color: HexColor(statusColorHex)
-                                                .withAlpha(15),
-                                            borderRadius:
-                                                BorderRadius.circular(360),
-                                          ),
-                                          child: Text(
-                                            // Widget won't be shown if `status` is null
-                                            project.status!,
-                                            style: AppTextStyles.extraSmall
-                                                .copyWith(
-                                              color: HexColor(statusColorHex),
-                                              fontWeight: FontWeight.w500,
+                                    : Builder(
+                                        builder: (context) {
+                                          final statusColor =
+                                              HexColor(statusColorHex)
+                                                  .getReadableColor();
+
+                                          return Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    statusColor.withAlpha(15),
+                                                borderRadius:
+                                                    BorderRadius.circular(360),
+                                              ),
+                                              child: Text(
+                                                // Widget won't be shown if `status` is null
+                                                project.status!,
+                                                style: AppTextStyles.extraSmall
+                                                    .copyWith(
+                                                  color: statusColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        },
                                       ),
                               ),
                             ],

@@ -242,24 +242,23 @@ class WorkPackagesSearchResults extends StatelessWidget {
                                         workPackages[index].typeId,
                                   );
 
+                                  final typeColor = HexColor(type.colorHex)
+                                      .getReadableColor();
+
                                   return Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8,
                                       vertical: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: HexColor(
-                                        type.colorHex,
-                                      ).withAlpha(38),
+                                      color: typeColor.withAlpha(38),
                                       borderRadius: BorderRadius.circular(360),
                                     ),
                                     child: Text(
                                       type.name,
                                       style: AppTextStyles.extraSmall.copyWith(
                                         fontWeight: FontWeight.w500,
-                                        color: HexColor(
-                                          type.colorHex,
-                                        ),
+                                        color: typeColor,
                                       ),
                                     ),
                                   );

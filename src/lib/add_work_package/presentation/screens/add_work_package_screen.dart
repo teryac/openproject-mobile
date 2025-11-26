@@ -68,31 +68,34 @@ class AddWorkPackageScreen extends StatelessWidget {
               final weekDaysState = context.watch<WeekDaysDataCubit>().state;
 
               if (weekDaysState.isError || workPackageFormState.value.isError) {
-                return Center(
-                  child: AsyncRetryWidget(
-                    // If the first one is null, the second isn't
-                    message: weekDaysState.error?.errorMessage ??
-                        workPackageFormState.value.error!.errorMessage,
-                    onPressed: () {
-                      if (weekDaysState.error != null) {
-                        context.read<WeekDaysDataCubit>().getWeekDays(context);
-                      }
-
-                      if (workPackageFormState.value.error != null) {
-                        context
-                            .read<WorkPackageFormDataCubit>()
-                            .getWorkPackageForm(
-                              context: context,
-                              // This ensures that if the request fails while trying to
-                              // update the options from the API (rather than requesting
-                              // data for the first time), in that case the data isn't lost
-                              workPackageType: context
-                                  .read<WorkPackagePayloadCubit>()
-                                  .state
-                                  ?.type,
-                            );
-                      }
-                    },
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Center(
+                    child: AsyncRetryWidget(
+                      // If the first one is null, the second isn't
+                      message: weekDaysState.error?.errorMessage ??
+                          workPackageFormState.value.error!.errorMessage,
+                      onPressed: () {
+                        if (weekDaysState.error != null) {
+                          context.read<WeekDaysDataCubit>().getWeekDays(context);
+                        }
+                  
+                        if (workPackageFormState.value.error != null) {
+                          context
+                              .read<WorkPackageFormDataCubit>()
+                              .getWorkPackageForm(
+                                context: context,
+                                // This ensures that if the request fails while trying to
+                                // update the options from the API (rather than requesting
+                                // data for the first time), in that case the data isn't lost
+                                workPackageType: context
+                                    .read<WorkPackagePayloadCubit>()
+                                    .state
+                                    ?.type,
+                              );
+                        }
+                      },
+                    ),
                   ),
                 );
               }

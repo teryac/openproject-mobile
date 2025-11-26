@@ -275,6 +275,10 @@ class _WorkPackageTileState extends State<WorkPackageTile>
                                                     widget.workPackage.statusId,
                                               );
 
+                                              final statusColor =
+                                                  HexColor(status.colorHex)
+                                                      .getReadableColor();
+
                                               return Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -283,8 +287,7 @@ class _WorkPackageTileState extends State<WorkPackageTile>
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color:
-                                                      HexColor(status.colorHex)
-                                                          .withAlpha(38),
+                                                      statusColor.withAlpha(38),
                                                   borderRadius:
                                                       BorderRadius.circular(4),
                                                 ),
@@ -295,8 +298,7 @@ class _WorkPackageTileState extends State<WorkPackageTile>
                                                       .extraSmall
                                                       .copyWith(
                                                     fontWeight: FontWeight.w500,
-                                                    color: HexColor(
-                                                        status.colorHex),
+                                                    color: statusColor,
                                                   ),
                                                 ),
                                               );

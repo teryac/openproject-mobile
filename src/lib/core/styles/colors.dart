@@ -43,3 +43,33 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
+
+extension ColorTools on Color {
+  /// Gets the lightness component (L) of the color as a double (0.0 to 1.0).
+  double get colorLightness {
+    return HSLColor.fromColor(this).lightness;
+  }
+
+  /// Changes the lightness component of the color to the specified value.
+  /// The new lightness value must be between 0.0 and 1.0.
+  Color changeColorLightness(double newLightness) {
+    if (newLightness < 0.0 || newLightness > 1.0) {
+      throw ArgumentError('New lightness must be between 0.0 and 1.0');
+    }
+
+    HSLColor hslColor = HSLColor.fromColor(this);
+
+    // Create a new HSL color with the updated lightness.
+    HSLColor newHslColor = hslColor.withLightness(newLightness);
+
+    // Convert back to a standard RGB Color.
+    return newHslColor.toColor();
+  }
+
+  /// Changes colors lightness to make them more readable
+  Color getReadableColor() {
+    if (colorLightness <= 0.7) return this;
+
+    return changeColorLightness(0.7);
+  }
+}

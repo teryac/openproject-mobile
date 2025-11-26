@@ -62,19 +62,25 @@ class ProjectTile extends StatelessWidget {
                             .copyWith(color: AppColors.primaryText),
                       ),
                       if (status != null)
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: HexColor(statusColor).withAlpha(38),
-                            borderRadius: BorderRadius.circular(360),
-                          ),
-                          child: Text(
-                            status!,
-                            style: AppTextStyles.extraSmall.copyWith(
-                              color: HexColor(statusColor),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final readableStatusColor =
+                                HexColor(statusColor).getReadableColor();
+                            return Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: readableStatusColor.withAlpha(38),
+                                borderRadius: BorderRadius.circular(360),
+                              ),
+                              child: Text(
+                                status!,
+                                style: AppTextStyles.extraSmall.copyWith(
+                                  color: readableStatusColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                     ],
                   ),

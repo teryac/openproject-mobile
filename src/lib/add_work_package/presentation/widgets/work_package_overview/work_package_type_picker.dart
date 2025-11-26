@@ -69,18 +69,16 @@ class WorkPackageTypePicker extends StatelessWidget {
                   children: List.generate(
                     types.length,
                     (index) {
+                      final typeColor = HexColor(types[index].colorHex)
+                          .getReadableColor();
                       final content = Material(
-                        color: HexColor(
-                          types[index].colorHex,
-                        ).withAlpha(38),
+                        color: typeColor.withAlpha(38),
                         borderRadius: BorderRadius.circular(360),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(360),
                           highlightColor:
                               Colors.transparent, // Removes gray overlay
-                          splashColor: HexColor(
-                            types[index].colorHex,
-                          ).withAlpha(75),
+                          splashColor: typeColor.withAlpha(75),
                           onTap: () {
                             final formCubit =
                                 context.read<WorkPackageFormDataCubit>();
@@ -114,9 +112,7 @@ class WorkPackageTypePicker extends StatelessWidget {
                               style: AppTextStyles.small.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 11,
-                                color: HexColor(
-                                  types[index].colorHex,
-                                ),
+                                color: typeColor,
                               ),
                             ),
                           ),
@@ -146,13 +142,15 @@ class WorkPackageTypePicker extends StatelessWidget {
         );
       },
       child: (toggleMenu) {
+        final typeColor =
+            HexColor(selectedType.colorHex).getReadableColor();
         return Material(
-          color: HexColor(selectedType.colorHex).withAlpha(38),
+          color: typeColor.withAlpha(38),
           borderRadius: BorderRadius.circular(360),
           child: InkWell(
             borderRadius: BorderRadius.circular(360),
             highlightColor: Colors.transparent, // Removes gray overlay
-            splashColor: HexColor(selectedType.colorHex).withAlpha(75),
+            splashColor: typeColor.withAlpha(75),
             onTap: () {
               toggleMenu(true);
             },
@@ -172,7 +170,7 @@ class WorkPackageTypePicker extends StatelessWidget {
                     selectedType.name,
                     style: AppTextStyles.small.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: HexColor(selectedType.colorHex),
+                      color: typeColor,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -181,7 +179,7 @@ class WorkPackageTypePicker extends StatelessWidget {
                     width: 12,
                     height: 12,
                     colorFilter: ColorFilter.mode(
-                      HexColor(selectedType.colorHex),
+                      typeColor,
                       BlendMode.srcIn,
                     ),
                   ),

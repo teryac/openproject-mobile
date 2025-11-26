@@ -60,7 +60,7 @@ class _WorkPackageStatusItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = HexColor(status.colorHex);
+    final color = HexColor(status.colorHex).getReadableColor();
 
     return InkWell(
       onTap: () {
