@@ -8,6 +8,7 @@ import 'package:open_project/auth/presentation/widgets/auth_screen_header.dart';
 import 'package:open_project/auth/presentation/widgets/auth_screen_view_switch.dart';
 import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
+import 'package:open_project/core/util/focus.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -45,27 +46,32 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ],
       child: Scaffold(
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    SizedBox(height: 40),
-                    AuthScreenViewSwitch(safeArea: safeArea),
-                  ],
+        body: GestureDetector(
+          onTap: unFocusTextField,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 40),
+                      AuthScreenViewSwitch(safeArea: safeArea),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              left: 0,
-              child: SafeArea(
-                child: AuthScreenHeader(),
+              Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                child: SafeArea(
+                  child: AuthScreenHeader(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

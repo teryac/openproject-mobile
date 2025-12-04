@@ -9,6 +9,7 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/navigation/router.dart';
 import 'package:open_project/core/util/failure.dart';
+import 'package:open_project/core/util/focus.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/custom_app_bar.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
@@ -95,21 +96,25 @@ class WorkPackagesScreen extends StatelessWidget {
               );
             },
           ),
-          body: SingleChildScrollView(
-            controller: context.read<WorkPackagesController>().scrollController,
-            child: Column(
-              children: [
-                SizedBox(height: 12),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: WorkPackagesSearchBar(),
-                ),
-                SizedBox(height: 12),
-                WorkPackagesFiltersWidget(),
-                SizedBox(height: 24),
-                WorkPackagesList(safeArea: safeArea),
-                SizedBox(height: 86),
-              ],
+          body: GestureDetector(
+            onTap: unFocusTextField,
+            child: SingleChildScrollView(
+              controller: context.read<WorkPackagesController>().scrollController,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: Column(
+                children: [
+                  SizedBox(height: 12),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: WorkPackagesSearchBar(),
+                  ),
+                  SizedBox(height: 12),
+                  WorkPackagesFiltersWidget(),
+                  SizedBox(height: 24),
+                  WorkPackagesList(safeArea: safeArea),
+                  SizedBox(height: 86),
+                ],
+              ),
             ),
           ),
         ),

@@ -32,44 +32,110 @@ class _HomeImageCarouselState extends State<AppGalleryWidget> {
   PageController? secondaryPageController;
   late PeriodicTimer timer;
 
-  void _syncPageViews() {
-    if (secondaryPageController == null) return;
+  // A guard flag to prevent infinite loops
+  bool _isSyncing = false;
 
-    final double? currentPage = pageController.page;
-
-    if (currentPage != null && pageController.hasClients) {
-      final double secondaryOffset =
-          currentPage * secondaryPageController!.position.viewportDimension;
-      secondaryPageController!.jumpTo(secondaryOffset);
+// Syncs Primary -> Secondary
+  void _syncSecondary() {
+    // If we are already syncing or controllers aren't ready, stop.
+    if (_isSyncing || secondaryPageController == null) return;
+    if (!pageController.hasClients || !secondaryPageController!.hasClients) {
+      return;
     }
+
+    // Lock sync
+    setState(() {
+      _isSyncing = true;
+    });
+
+    // Calculate the matching position based on the "Page" index
+    final double currentPage = pageController.page ?? 0;
+    final double secondaryOffset =
+        currentPage * secondaryPageController!.position.viewportDimension;
+
+    secondaryPageController!.jumpTo(secondaryOffset);
+
+    // Unlock sync
+    setState(() {
+      _isSyncing = false;
+    });
+  }
+
+  // Syncs Secondary -> Primary
+  void _syncPrimary() {
+    if (_isSyncing || secondaryPageController == null) return;
+    if (!pageController.hasClients || !secondaryPageController!.hasClients) {
+      return;
+    }
+
+    setState(() {
+      _isSyncing = true;
+    });
+
+    final double currentPage = secondaryPageController!.page ?? 0;
+    final double primaryOffset =
+        currentPage * pageController.position.viewportDimension;
+
+    pageController.jumpTo(primaryOffset);
+
+    setState(() {
+      _isSyncing = false;
+    });
   }
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.secondaryItemBuilder != null) {
       secondaryPageController = PageController();
-      pageController.addListener(_syncPageViews);
+
+      // Attach listeners to both controllers
+      pageController.addListener(_syncSecondary);
+      secondaryPageController!.addListener(_syncPrimary);
     }
 
     timer = PeriodicTimer(
       duration: 3.s,
-      onTick: () {
+      onTick: () async {
+        if (!pageController.hasClients) return;
+
+        // Lock the sync mechanism before animating
+        setState(() {
+          _isSyncing = true;
+        });
+
         final currentPage = pageController.page!.toInt();
-        pageController.animateToPage(
-          currentPage == widget.itemCount - 1 ? 0 : currentPage + 1,
-          duration: 500.ms,
-          curve: Curves.fastOutSlowIn,
-        );
+
+        await Future.wait([
+          pageController.animateToPage(
+            currentPage == widget.itemCount - 1 ? 0 : currentPage + 1,
+            duration: 500.ms,
+            curve: Curves.fastOutSlowIn,
+          ),
+          if (secondaryPageController != null)
+            secondaryPageController!.animateToPage(
+              currentPage == widget.itemCount - 1 ? 0 : currentPage + 1,
+              duration: 500.ms,
+              curve: Curves.fastOutSlowIn,
+            )
+        ]);
+
+        setState(() {
+          _isSyncing = false;
+        });
       },
     );
-    timer.start();
 
-    super.initState();
+    timer.start();
   }
 
   @override
   void dispose() {
-    pageController.removeListener(_syncPageViews);
+    // Remove both listeners
+    pageController.removeListener(_syncSecondary);
+    secondaryPageController?.removeListener(_syncPrimary);
+
     pageController.dispose();
     secondaryPageController?.dispose();
     timer.cancel();

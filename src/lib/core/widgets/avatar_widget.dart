@@ -107,6 +107,7 @@ class AvatarWidget extends StatelessWidget {
                     return AppNetworkImage(
                       imageUrl: '$serverUrl$avatarEndpoint',
                       borderRadius: BorderRadius.circular(360),
+                      cacheDuration: const Duration(minutes: 5),
                       errorBuilder: (_) {
                         if (userData == null) return fallbackAvatar;
 

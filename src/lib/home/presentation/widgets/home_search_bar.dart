@@ -60,7 +60,6 @@ class HomeSearchBar extends StatelessWidget {
             color: AppColors.primaryText,
             fontSize: 15,
           ),
-          unFocusOnTapOutside: true,
           onTap: () => toggleMenu(true),
           onFieldSubmitted: (query) => searchProjects(
             context: context,

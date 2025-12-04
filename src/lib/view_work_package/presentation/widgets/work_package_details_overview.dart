@@ -76,13 +76,6 @@ class WorkPackageDetailsOverview extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        Text(
-          'Description still in development...',
-          style: AppTextStyles.small.copyWith(
-            color: AppColors.primaryText,
-          ),
-        ),
         const SizedBox(height: 20),
         Builder(
           builder: (context) {
@@ -163,7 +156,7 @@ class _InfoTile extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(6),
-            color: HexColor(colorHex),
+            color: HexColor(colorHex).getReadableColor(),
           ),
           child: Text(
             value,

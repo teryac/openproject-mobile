@@ -67,7 +67,6 @@ class WorkPackagesSearchBar extends StatelessWidget {
             context: context,
             query: query,
           ),
-          unFocusOnTapOutside: true,
           onTap: () => toggleMenu(true),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(

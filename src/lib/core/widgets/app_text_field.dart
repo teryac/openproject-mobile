@@ -165,14 +165,28 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       onTapOutside: (event) {
         if (!widget.unFocusOnTapOutside) return;
 
-        // This will un-focus ONLY if the tap was outside this specific widget
-        // AND the keyboard is currently looking at this specific widget.
-        if (widget.focusNode?.hasFocus ?? false) {
-          widget.focusNode?.unfocus();
-        } else {
-          // If you aren't using a custom focusNode, we use the primary focus
-          FocusManager.instance.primaryFocus?.unfocus();
+        // ------------------------------------------------------------------
+        // 🔒 FIX: Manually check if the tap was actually inside the bounds.
+        // This prevents the Android "flicker" where tapping the active
+        // text field triggers a false-positive 'onTapOutside'.
+        // ------------------------------------------------------------------
+        final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          final localOffset = renderBox.globalToLocal(event.position);
+          if (renderBox.paintBounds.contains(localOffset)) {
+            // The tap was actually INSIDE this widget.
+            // Ignore the event and do not unfocus.
+            return;
+          }
         }
+
+        // If we passed the check, it was truly outside. Unfocus.
+        if (widget.focusNode != null) {
+          widget.focusNode?.unfocus();
+          return;
+        }
+
+        FocusScope.of(context).unfocus();
       },
       child: TextFormField(
         initialValue: widget.initialValue,

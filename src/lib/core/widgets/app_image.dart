@@ -13,6 +13,7 @@ class AppNetworkImage extends StatefulWidget {
   final Alignment alignment;
   final bool disableCaching;
   final bool ignoreHttpCachingRules;
+  final Duration? cacheDuration;
   final Widget Function(BuildContext context)? errorBuilder;
 
   const AppNetworkImage({
@@ -26,6 +27,7 @@ class AppNetworkImage extends StatefulWidget {
     this.errorBuilder,
     this.disableCaching = false,
     this.ignoreHttpCachingRules = false,
+    this.cacheDuration,
   }) : _shimmer = true;
 
   const AppNetworkImage.noShimmer({
@@ -39,6 +41,7 @@ class AppNetworkImage extends StatefulWidget {
     this.errorBuilder,
     this.disableCaching = false,
     this.ignoreHttpCachingRules = false,
+    this.cacheDuration,
   }) : _shimmer = false;
 
   @override
@@ -73,11 +76,13 @@ class _AppNetworkImageState extends State<AppNetworkImage> {
       child: CachedNetworkImage(
         key: imageKey,
         imageUrl: widget.imageUrl,
-        cacheManager: widget.ignoreHttpCachingRules
+        // If one of the conditions is met, a custom cache manager is applied
+        cacheManager: (widget.ignoreHttpCachingRules ||
+                widget.cacheDuration != null)
             ? CacheManager(
                 Config(
-                  'avatarCache',
-                  stalePeriod: Duration(days: 30),
+                  'openProjectImageCache',
+                  stalePeriod: widget.cacheDuration ?? Duration(days: 7),
                   maxNrOfCacheObjects: 200,
                   repo: JsonCacheInfoRepository(databaseName: 'avatarCache'),
                   fileService: HttpFileService(),

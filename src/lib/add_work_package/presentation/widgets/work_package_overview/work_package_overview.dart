@@ -28,7 +28,6 @@ class WorkPackageOverview extends StatelessWidget {
             Expanded(
               child: AppTextFormField(
                 hint: 'Work Package title',
-                unFocusOnTapOutside: true,
                 initialValue: context.select<WorkPackagePayloadCubit, String>(
                   (cubit) => cubit.state!.subject,
                 ),
