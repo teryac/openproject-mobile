@@ -32,55 +32,77 @@ class _HomeImageCarouselState extends State<AppGalleryWidget> {
   PageController? secondaryPageController;
   late PeriodicTimer timer;
 
-  // A guard flag to prevent infinite loops
-  bool _isSyncing = false;
+  String? _driver; // "primary", "secondary", or null
+  bool _isFromTimer = false;
 
-// Syncs Primary -> Secondary
-  void _syncSecondary() {
-    // If we are already syncing or controllers aren't ready, stop.
-    if (_isSyncing || secondaryPageController == null) return;
+  void _handlePrimaryScroll() {
+    if (_isFromTimer) return;
     if (!pageController.hasClients || !secondaryPageController!.hasClients) {
       return;
     }
 
-    // Lock sync
-    setState(() {
-      _isSyncing = true;
-    });
+    // If user is dragging primary, it becomes driver.
+    if (pageController.position.isScrollingNotifier.value) {
+      _driver = 'primary';
+    }
 
-    // Calculate the matching position based on the "Page" index
-    final double currentPage = pageController.page ?? 0;
-    final double secondaryOffset =
-        currentPage * secondaryPageController!.position.viewportDimension;
+    if (_driver == 'primary') {
+      final target = pageController.position.pixels *
+          secondaryPageController!.position.viewportDimension /
+          pageController.position.viewportDimension;
 
-    secondaryPageController!.jumpTo(secondaryOffset);
-
-    // Unlock sync
-    setState(() {
-      _isSyncing = false;
-    });
+      if ((secondaryPageController!.position.pixels - target).abs() > 0.5) {
+        secondaryPageController!.jumpTo(target);
+      }
+    }
   }
 
-  // Syncs Secondary -> Primary
-  void _syncPrimary() {
-    if (_isSyncing || secondaryPageController == null) return;
+  void _handleSecondaryScroll() {
+    if (_isFromTimer) return;
     if (!pageController.hasClients || !secondaryPageController!.hasClients) {
       return;
     }
 
-    setState(() {
-      _isSyncing = true;
-    });
+    if (secondaryPageController!.position.isScrollingNotifier.value) {
+      _driver = 'secondary';
+    }
 
-    final double currentPage = secondaryPageController!.page ?? 0;
-    final double primaryOffset =
-        currentPage * pageController.position.viewportDimension;
+    if (_driver == 'secondary') {
+      final target = secondaryPageController!.position.pixels *
+          pageController.position.viewportDimension /
+          secondaryPageController!.position.viewportDimension;
 
-    pageController.jumpTo(primaryOffset);
+      if ((pageController.position.pixels - target).abs() > 0.5) {
+        pageController.jumpTo(target);
+      }
+    }
+  }
 
-    setState(() {
-      _isSyncing = false;
-    });
+  void _setupAutoScrollTimer() {
+    timer = PeriodicTimer(
+      duration: const Duration(seconds: 3),
+      onTick: () async {
+        if (!pageController.hasClients) return;
+
+        _isFromTimer = true;
+        _driver = null;
+
+        final current = pageController.page!.round();
+        final next = (current + 1) % widget.itemCount;
+
+        await Future.wait([
+          pageController.animateToPage(next,
+              duration: 500.ms, curve: Curves.fastOutSlowIn),
+          if (secondaryPageController != null)
+            secondaryPageController!.animateToPage(next,
+                duration: 500.ms, curve: Curves.fastOutSlowIn),
+        ]);
+
+        _isFromTimer = false;
+      },
+    );
+
+    timer.start();
   }
 
   @override
@@ -91,50 +113,18 @@ class _HomeImageCarouselState extends State<AppGalleryWidget> {
       secondaryPageController = PageController();
 
       // Attach listeners to both controllers
-      pageController.addListener(_syncSecondary);
-      secondaryPageController!.addListener(_syncPrimary);
+      pageController.addListener(_handlePrimaryScroll);
+      secondaryPageController!.addListener(_handleSecondaryScroll);
     }
 
-    timer = PeriodicTimer(
-      duration: 3.s,
-      onTick: () async {
-        if (!pageController.hasClients) return;
-
-        // Lock the sync mechanism before animating
-        setState(() {
-          _isSyncing = true;
-        });
-
-        final currentPage = pageController.page!.toInt();
-
-        await Future.wait([
-          pageController.animateToPage(
-            currentPage == widget.itemCount - 1 ? 0 : currentPage + 1,
-            duration: 500.ms,
-            curve: Curves.fastOutSlowIn,
-          ),
-          if (secondaryPageController != null)
-            secondaryPageController!.animateToPage(
-              currentPage == widget.itemCount - 1 ? 0 : currentPage + 1,
-              duration: 500.ms,
-              curve: Curves.fastOutSlowIn,
-            )
-        ]);
-
-        setState(() {
-          _isSyncing = false;
-        });
-      },
-    );
-
-    timer.start();
+    _setupAutoScrollTimer();
   }
 
   @override
   void dispose() {
     // Remove both listeners
-    pageController.removeListener(_syncSecondary);
-    secondaryPageController?.removeListener(_syncPrimary);
+    pageController.removeListener(_handlePrimaryScroll);
+    secondaryPageController?.removeListener(_handleSecondaryScroll);
 
     pageController.dispose();
     secondaryPageController?.dispose();
