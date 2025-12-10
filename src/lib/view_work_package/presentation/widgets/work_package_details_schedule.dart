@@ -5,7 +5,7 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/date_format.dart';
 import 'package:open_project/core/util/duration_extension.dart';
-import 'package:open_project/core/widgets/date_picker/date_picker_widget.dart';
+import 'package:open_project/core/widgets/date_picker/date_range_picker_widget.dart';
 import 'package:open_project/view_work_package/presentation/widgets/work_package_info_tile.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 
@@ -26,12 +26,18 @@ class WorkPackageDetailsSchedule extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        DatePickerWidget(
-          startDate: workPackage.startDate,
-          finishDate: workPackage.dueDate,
-          onChanged: (startDate, finishDate) {},
-          enabled: false,
-        ),
+        workPackage.usingDateRange
+            ? DateRangePickerWidget(
+                startDate: workPackage.startDate,
+                finishDate: workPackage.dueDate,
+                onChanged: (_, __) {},
+                enabled: false,
+              )
+            : DatePickerWidget(
+                date: workPackage.date,
+                onChanged: (_) {},
+                enabled: false,
+              ),
         const SizedBox(height: 12),
         Center(
           child: Builder(

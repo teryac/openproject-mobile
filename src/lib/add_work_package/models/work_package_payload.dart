@@ -13,6 +13,9 @@ class WorkPackagePayload {
   final WPPriority priority;
   final WPUser? responsible;
   final WPUser? assignee;
+  // Provided in `Milestone` types
+  final DateTime? date;
+  // `startDate` & `dueDate` are provided in types other than `Milestone`
   final DateTime? startDate;
   final DateTime? dueDate;
   final Duration? estimatedTime;
@@ -29,6 +32,7 @@ class WorkPackagePayload {
     required this.status,
     this.responsible,
     this.assignee,
+    this.date,
     this.startDate,
     this.dueDate,
     this.estimatedTime,
@@ -138,6 +142,9 @@ class WorkPackagePayload {
       priority: getPriority(),
       responsible: getResponsible(),
       assignee: getAssignee(),
+      date: payloadJson['date'] == null
+          ? null
+          : DateTime.parse(payloadJson['date']),
       startDate: payloadJson['startDate'] == null
           ? null
           : DateTime.parse(payloadJson['startDate']),
@@ -160,6 +167,7 @@ class WorkPackagePayload {
       if (lockVersion != null) 'lockVersion': lockVersion,
       'subject': subject,
       'description': description.toJson(),
+      if (date != null) 'date': date?.toIso8601String(),
       if (startDate != null) 'startDate': startDate?.toIso8601String(),
       if (dueDate != null) 'dueDate': dueDate?.toIso8601String(),
       if (estimatedTime != null) 'estimatedTime': estimatedTime?.toIso8601(),
@@ -186,6 +194,7 @@ class WorkPackagePayload {
     Value<WPPriority> priority = const Value.absent(),
     Value<WPUser?> responsible = const Value.absent(),
     Value<WPUser?> assignee = const Value.absent(),
+    Value<DateTime?> date = const Value.absent(),
     Value<DateTime?> startDate = const Value.absent(),
     Value<DateTime?> dueDate = const Value.absent(),
     Value<Duration?> estimatedTime = const Value.absent(),
@@ -202,6 +211,7 @@ class WorkPackagePayload {
       priority: priority.hasValue ? priority.value! : this.priority,
       responsible: responsible.hasValue ? responsible.value : this.responsible,
       assignee: assignee.hasValue ? assignee.value : this.assignee,
+      date: date.hasValue ? date.value : this.date,
       startDate: startDate.hasValue ? startDate.value : this.startDate,
       dueDate: dueDate.hasValue ? dueDate.value : this.dueDate,
       estimatedTime:

@@ -6,13 +6,13 @@ import 'package:open_project/core/util/date_range.dart';
 import './date_picker_dialog.dart' as custom_date_picker;
 import 'package:open_project/core/util/date_format.dart';
 
-class DatePickerWidget extends StatelessWidget {
+class DateRangePickerWidget extends StatelessWidget {
   final DateTime? startDate;
   final DateTime? finishDate;
   final void Function(DateTime? startDate, DateTime? finishDate) onChanged;
   final bool enabled;
   final List<WeekDay>? weekDays;
-  const DatePickerWidget({
+  const DateRangePickerWidget({
     super.key,
     required this.startDate,
     required this.finishDate,
@@ -171,6 +171,45 @@ class DatePickerWidget extends StatelessWidget {
   }
 }
 
+class DatePickerWidget extends StatelessWidget {
+  final DateTime? date;
+  final void Function(DateTime? date) onChanged;
+  final bool enabled;
+  final List<WeekDay>? weekDays;
+  const DatePickerWidget({
+    super.key,
+    this.date,
+    required this.onChanged,
+    this.enabled = true,
+    this.weekDays,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: enabled
+          ? () async {
+              final result = await _showDatePicker(
+                context: context,
+                date: date,
+                weekDays: weekDays,
+              );
+
+              onChanged(result);
+            }
+          : null,
+      child: Container(
+        padding: const EdgeInsets.all(40),
+        child: Center(
+          child: Text(date != null
+              ? getFormattedDate(date).toString()
+              : 'No date selected'),
+        ),
+      ),
+    );
+  }
+}
+
 Future<({DateTime? startDate, DateTime? finishDate})> _showDateRangePicker({
   required BuildContext context,
   required DateTime? startDate,
@@ -195,6 +234,31 @@ Future<({DateTime? startDate, DateTime? finishDate})> _showDateRangePicker({
   }
 
   return (startDate: result.startDate, finishDate: result.endDate);
+}
+
+Future<DateTime?> _showDatePicker({
+  required BuildContext context,
+  required DateTime? date,
+  required final List<WeekDay>? weekDays,
+}) async {
+  final result = await custom_date_picker.showDatePicker(
+    context: context,
+    firstDate: DateTime(DateTime.now().year - 100),
+    lastDate: DateTime(DateTime.now().year + 100),
+    initialDate: date,
+    selectableDayPredicate: weekDays == null
+        ? null
+        : (day) {
+            return _isAWorkingDay(day, weekDays);
+          },
+    helpText: 'Choose date',
+  );
+
+  if (result == null) {
+    return date;
+  }
+
+  return result;
 }
 
 /// Checks if the given date is configured as a working day.

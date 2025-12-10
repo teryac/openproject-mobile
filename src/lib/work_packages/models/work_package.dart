@@ -7,6 +7,7 @@ class WorkPackage {
   final User author;
   final User? accountable;
   final User? assignee;
+  final DateTime? date;
   final DateTime? startDate;
   final DateTime? dueDate;
   final Duration? estimatedTime;
@@ -16,6 +17,11 @@ class WorkPackage {
   final int percentageDone;
   final String? versionName;
   final String? categoryName;
+
+  /// If the work package depends on a single date (that's the case
+  /// in `Milestone` types), this will be false, other than that, a
+  /// date range is used (`startDate` & `dueDate`)
+  final bool usingDateRange;
 
   const WorkPackage({
     required this.id,
@@ -28,10 +34,12 @@ class WorkPackage {
     this.estimatedTime,
     this.accountable,
     this.assignee,
+    this.date,
     this.startDate,
     this.dueDate,
     this.versionName,
     this.categoryName,
+    required this.usingDateRange,
   });
 
   /// Creates a WorkPackage instance from a JSON map.
@@ -66,8 +74,12 @@ class WorkPackage {
         : links['category'] as Map<String, dynamic>?;
 
     // Handle nullable date field.
+    final dateString = json['date'] as String?;
     final startDateString = json['startDate'] as String?;
     final dueDateString = json['dueDate'] as String?;
+
+    // This object is lost in work package types other than `Milestones`
+    final dateObjectExists = json.containsKey('date');
 
     return WorkPackage(
       id: json['id'] as int,
@@ -80,6 +92,7 @@ class WorkPackage {
       accountable:
           accountableJson != null ? User.fromJson(accountableJson) : null,
       assignee: assigneeJson != null ? User.fromJson(assigneeJson) : null,
+      date: dateString != null ? DateTime.parse(dateString) : null,
       startDate:
           startDateString != null ? DateTime.parse(startDateString) : null,
       dueDate: dueDateString != null ? DateTime.parse(dueDateString) : null,
@@ -88,6 +101,7 @@ class WorkPackage {
       priorityId: priorityId,
       versionName: versionJson != null ? versionJson['title'] : null,
       categoryName: categoryJson != null ? categoryJson['title'] : null,
+      usingDateRange: !dateObjectExists,
     );
   }
 
@@ -95,6 +109,11 @@ class WorkPackage {
     return {
       'id': id,
       'subject': subject,
+      // This check is important to show the `date` entry even if null,
+      // because {"date": null} is different from {}
+      // and the `fromJson` function depends on finding the "date" key
+      // in the json map to idenify using date ranges from a single date
+      if (date != null || !usingDateRange) 'date': date?.toIso8601String(),
       if (startDate != null) 'startDate': startDate!.toIso8601String(),
       if (dueDate != null) 'dueDate': dueDate!.toIso8601String(),
       'percentageDone': percentageDone,
