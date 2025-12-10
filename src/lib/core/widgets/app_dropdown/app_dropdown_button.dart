@@ -5,6 +5,7 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
+import 'package:open_project/core/widgets/shimmer.dart';
 
 class AppDropdownButton extends StatefulWidget {
   final List<dynamic> values;
@@ -200,11 +201,28 @@ class _AppDropdownMenuState extends State<_AppDropdownMenu> {
         child: Builder(
           builder: (context) {
             if (widget.loading) {
-              return const Align(
+              return Align(
                 heightFactor: 1,
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
-                  child: CircularProgressIndicator(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(
+                      2,
+                      (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 12,
+                          ),
+                          child: ShimmerBox(
+                            width: double.infinity,
+                            height: 40,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               );
             }

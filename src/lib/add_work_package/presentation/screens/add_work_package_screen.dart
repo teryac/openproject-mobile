@@ -9,6 +9,7 @@ import 'package:open_project/add_work_package/presentation/cubits/add_work_packa
 import 'package:open_project/add_work_package/presentation/cubits/week_days_data_cubit.dart';
 import 'package:open_project/add_work_package/presentation/cubits/work_package_form_data/work_package_form_data_cubit.dart';
 import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
+import 'package:open_project/add_work_package/presentation/widgets/add_work_package_loading_view.dart';
 import 'package:open_project/add_work_package/presentation/widgets/work_package_overview/work_package_overview.dart';
 import 'package:open_project/add_work_package/presentation/widgets/work_package_people/work_package_people.dart';
 import 'package:open_project/add_work_package/presentation/widgets/work_package_priority/work_package_priority.dart';
@@ -109,9 +110,7 @@ class AddWorkPackageScreen extends StatelessWidget {
                     weekDaysState.isInitial ||
                     workPackageFormState.value.isInitial ||
                     workPackageFormState.value.isLoading) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return AddWorkPackageLoadingView();
                 }
 
                 // Passing the cubit is important for seamless widget rebuilds

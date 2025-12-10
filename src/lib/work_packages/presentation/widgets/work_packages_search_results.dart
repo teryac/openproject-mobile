@@ -8,6 +8,7 @@ import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
 import 'package:open_project/core/widgets/search_result_occurrence_highlighter.dart';
+import 'package:open_project/core/widgets/shimmer.dart';
 import 'package:open_project/work_packages/application/work_packages_controller.dart';
 import 'package:open_project/work_packages/models/work_package_filters.dart';
 import 'package:open_project/work_packages/presentation/cubits/work_package_filters_cubit.dart';
@@ -74,11 +75,28 @@ class WorkPackagesSearchResults extends StatelessWidget {
           // Loading...
           if (workPackagesAsyncValue.isFirstLoading ||
               workPackageTypesAsyncValue.isLoading) {
-            return const Align(
+            return Align(
               heightFactor: 1,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
-                child: CircularProgressIndicator(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    2,
+                    (index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 16,
+                        ),
+                        child: ShimmerBox(
+                          width: double.infinity,
+                          height: 50,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             );
           }
