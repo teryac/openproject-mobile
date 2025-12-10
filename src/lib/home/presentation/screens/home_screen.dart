@@ -95,7 +95,8 @@ class HomeScreen extends StatelessWidget {
                                     height: remainingScreenHeight,
                                     child: Center(
                                       child: EmptyStateWidget(
-                                          message: 'No projects found'),
+                                        message: 'No projects found',
+                                      ),
                                     ),
                                   ),
                                 );

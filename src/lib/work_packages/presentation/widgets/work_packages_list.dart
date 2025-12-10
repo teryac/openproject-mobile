@@ -35,27 +35,37 @@ class WorkPackagesList extends StatelessWidget {
         // Failure...
         if (workPackagesAsyncValue.isError ||
             workPackageDependenciesAsyncValue.isError) {
-          return AsyncRetryWidget(
-            // If the first doesn't have an error, the last must do so
-            message: workPackagesAsyncValue.error?.errorMessage ??
-                workPackageDependenciesAsyncValue.error!.errorMessage,
-            onPressed: () {
-              if (workPackagesAsyncValue.error != null) {
-                context.read<WorkPackagesController>().getWorkPackages();
-              }
+          const approximateHeightOfScreenHeader = 350;
+          final remainingScreenHeight = MediaQuery.sizeOf(context).height -
+              safeArea.top -
+              safeArea.bottom -
+              approximateHeightOfScreenHeader;
+          return SizedBox(
+            height: remainingScreenHeight,
+            child: Center(
+              child: AsyncRetryWidget(
+                // If the first doesn't have an error, the last must do so
+                message: workPackagesAsyncValue.error?.errorMessage ??
+                    workPackageDependenciesAsyncValue.error!.errorMessage,
+                onPressed: () {
+                  if (workPackagesAsyncValue.error != null) {
+                    context.read<WorkPackagesController>().getWorkPackages();
+                  }
 
-              if (workPackageDependenciesAsyncValue.error != null) {
-                final projectId = int.parse(
-                  GoRouterState.of(context).pathParameters['project_id']!,
-                );
-                context
-                    .read<WorkPackageDependenciesDataCubit>()
-                    .getWorkPackageDependencies(
-                      context: context,
-                      projectId: projectId,
+                  if (workPackageDependenciesAsyncValue.error != null) {
+                    final projectId = int.parse(
+                      GoRouterState.of(context).pathParameters['project_id']!,
                     );
-              }
-            },
+                    context
+                        .read<WorkPackageDependenciesDataCubit>()
+                        .getWorkPackageDependencies(
+                          context: context,
+                          projectId: projectId,
+                        );
+                  }
+                },
+              ),
+            ),
           );
         }
 
@@ -88,7 +98,17 @@ class WorkPackagesList extends StatelessWidget {
         });
         if (workPackages.isEmpty ||
             (totalDeletedWorkPackages == workPackages.length)) {
-          return EmptyStateWidget(message: 'No work packages found');
+          const approximateHeightOfScreenHeader = 350;
+          final remainingScreenHeight = MediaQuery.sizeOf(context).height -
+              safeArea.top -
+              safeArea.bottom -
+              approximateHeightOfScreenHeader;
+          return SizedBox(
+            height: remainingScreenHeight,
+            child: Center(
+              child: EmptyStateWidget(message: 'No work packages found'),
+            ),
+          );
         }
 
         return Column(
