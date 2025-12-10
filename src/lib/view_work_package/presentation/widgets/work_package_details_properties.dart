@@ -55,7 +55,9 @@ class WorkPackageDetailsProperties extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        AppProgressBar(value: (workPackage.percentageDone / 100).toDouble()),
+        AppProgressBar(
+          value: (workPackage.percentageDone / 100).toDouble(),
+        ),
       ],
     );
   }

@@ -19,6 +19,8 @@ class AppDropdownButton extends StatefulWidget {
   // Not shown when null
   final Widget Function(BuildContext context)? errorBuilder;
   final String emptyListMessage;
+  final bool enabled;
+  final void Function()? onTap;
   const AppDropdownButton({
     super.key,
     required this.title,
@@ -31,6 +33,8 @@ class AppDropdownButton extends StatefulWidget {
     this.loading = false,
     this.errorBuilder,
     this.emptyListMessage = 'No items found',
+    this.enabled = true,
+    this.onTap,
   });
 
   @override
@@ -43,6 +47,8 @@ class _AppDropdownButtonState extends State<AppDropdownButton> {
   @override
   Widget build(BuildContext context) {
     return AppPopupMenu(
+      enabled: widget.enabled,
+      onTap: widget.onTap,
       onMenuToggled: (visible) {
         setState(() {
           isMenuVisible = visible;

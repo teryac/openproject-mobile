@@ -59,47 +59,79 @@ class WorkPackagesScreen extends StatelessWidget {
                 return SizedBox.shrink();
               }
 
-              return AppButton(
-                text: 'Work package',
-                wrapContent: true,
-                prefixIcon: SvgPicture.asset(
-                  AppIcons.addSquare,
-                  width: 24,
-                  height: 24,
-                  // ignore: deprecated_member_use
-                  color: Colors.white,
+              return Container(
+                decoration: BoxDecoration(
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 14,
+                      offset: Offset(0, 49),
+                      color: Color(0x00363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 12,
+                      offset: Offset(0, 31),
+                      color: Color(0x03363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 11,
+                      offset: Offset(0, 18),
+                      color: Color(0x0A363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 8,
+                      offset: Offset(0, 8),
+                      color: Color(0x12363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                      color: Color(0x14363636),
+                    ),
+                  ],
                 ),
-                onPressed: () async {
-                  final result = await context.pushNamed<bool>(
-                    AppRoutes.addWorkPackage.name,
-                    pathParameters: {
-                      'work_package_id': 'null',
-                    },
-                    queryParameters: {
-                      'edit_mode': 'false',
-                      'project_id': projectId.toString(),
-                    },
-                  );
+                child: AppButton(
+                  text: 'Work package',
+                  wrapContent: true,
+                  prefixIcon: SvgPicture.asset(
+                    AppIcons.addSquare,
+                    width: 24,
+                    height: 24,
+                    // ignore: deprecated_member_use
+                    color: Colors.white,
+                  ),
+                  onPressed: () async {
+                    final result = await context.pushNamed<bool>(
+                      AppRoutes.addWorkPackage.name,
+                      pathParameters: {
+                        'work_package_id': 'null',
+                      },
+                      queryParameters: {
+                        'edit_mode': 'false',
+                        'project_id': projectId.toString(),
+                      },
+                    );
 
-                  if (result != null && result && context.mounted) {
-                    context.read<WorkPackagesListCubit>().getWorkPackages(
-                          context: context,
-                          projectId: projectId,
-                          workPackagesFilters:
-                              // This avoids changing the filters
-                              context.read<WorkPackagesFiltersCubit>().state,
-                          // Reset to avoid requesting next page instead of first page
-                          resetPages: true,
-                        );
-                  }
-                },
+                    if (result != null && result && context.mounted) {
+                      context.read<WorkPackagesListCubit>().getWorkPackages(
+                            context: context,
+                            projectId: projectId,
+                            workPackagesFilters:
+                                // This avoids changing the filters
+                                context.read<WorkPackagesFiltersCubit>().state,
+                            // Reset to avoid requesting next page instead of first page
+                            resetPages: true,
+                          );
+                    }
+                  },
+                ),
               );
             },
           ),
           body: GestureDetector(
             onTap: unFocusTextField,
             child: SingleChildScrollView(
-              controller: context.read<WorkPackagesController>().scrollController,
+              controller:
+                  context.read<WorkPackagesController>().scrollController,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Column(
                 children: [

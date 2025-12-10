@@ -7,6 +7,7 @@ import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/widgets/popup_menu/popup_menu.dart';
 
 class WorkPackageTypePicker extends StatelessWidget {
@@ -22,6 +23,12 @@ class WorkPackageTypePicker extends StatelessWidget {
 
     return AppPopupMenu(
       dropdownAlignment: true,
+      enabled: options.isTypeWritable,
+      onTap: options.isTypeWritable
+          ? null
+          : () {
+              showWarningSnackBar(context, 'Type can\'t be changed');
+            },
       menu: (toggleMenu) {
         return Container(
           margin: const EdgeInsets.only(top: 4),
@@ -69,8 +76,8 @@ class WorkPackageTypePicker extends StatelessWidget {
                   children: List.generate(
                     types.length,
                     (index) {
-                      final typeColor = HexColor(types[index].colorHex)
-                          .getReadableColor();
+                      final typeColor =
+                          HexColor(types[index].colorHex).getReadableColor();
                       final content = Material(
                         color: typeColor.withAlpha(38),
                         borderRadius: BorderRadius.circular(360),
@@ -142,8 +149,7 @@ class WorkPackageTypePicker extends StatelessWidget {
         );
       },
       child: (toggleMenu) {
-        final typeColor =
-            HexColor(selectedType.colorHex).getReadableColor();
+        final typeColor = HexColor(selectedType.colorHex).getReadableColor();
         return Material(
           color: typeColor.withAlpha(38),
           borderRadius: BorderRadius.circular(360),

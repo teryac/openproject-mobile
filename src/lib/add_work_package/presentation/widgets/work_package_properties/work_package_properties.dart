@@ -6,6 +6,7 @@ import 'package:open_project/add_work_package/presentation/cubits/work_package_p
 import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/widgets/app_dropdown/app_dropdown_button.dart';
 
 class WorkPackageProperties extends StatelessWidget {
@@ -13,23 +14,15 @@ class WorkPackageProperties extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final versions = context
-        .read<WorkPackageFormDataCubit>()
-        .state
-        .value
-        .data!
-        .options
-        .versions;
+    final options =
+        context.read<WorkPackageFormDataCubit>().state.value.data!.options;
+
+    final versions = options.versions;
     final selectedVersion = context.select<WorkPackagePayloadCubit, WPVersion?>(
       (cubit) => cubit.state!.version,
     );
-    final categories = context
-        .read<WorkPackageFormDataCubit>()
-        .state
-        .value
-        .data!
-        .options
-        .categories;
+
+    final categories = options.categories;
     final selectedCategory =
         context.select<WorkPackagePayloadCubit, WPCategory?>(
       (cubit) => cubit.state!.category,
@@ -53,6 +46,12 @@ class WorkPackageProperties extends StatelessWidget {
               value: selectedVersion,
               titles: versions.map((version) => version.name).toList(),
               title: selectedVersion?.name,
+              enabled: options.isVersionWritable,
+              onTap: () {
+                if (!options.isVersionWritable) {
+                  showWarningSnackBar(context, 'Version can\'t be changed');
+                }
+              },
               onChanged: (value) {
                 final payloadCubit = context.read<WorkPackagePayloadCubit>();
                 payloadCubit.updatePayload(
@@ -73,6 +72,12 @@ class WorkPackageProperties extends StatelessWidget {
               value: selectedCategory,
               titles: categories.map((category) => category.name).toList(),
               title: selectedCategory?.name,
+              enabled: options.isCategoryWritable,
+              onTap: () {
+                if (!options.isCategoryWritable) {
+                  showWarningSnackBar(context, 'Category can\'t be changed');
+                }
+              },
               onChanged: (value) {
                 final payloadCubit = context.read<WorkPackagePayloadCubit>();
                 payloadCubit.updatePayload(

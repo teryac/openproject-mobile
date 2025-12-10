@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:open_project/add_work_package/models/work_package_properties.dart';
 import 'package:open_project/add_work_package/presentation/cubits/work_package_form_data/work_package_form_data_cubit.dart';
 import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
+import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/padding_util.dart';
 
 class WorkPackageStatusPicker extends StatelessWidget {
@@ -60,10 +63,17 @@ class _WorkPackageStatusItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final options =
+        context.read<WorkPackageFormDataCubit>().state.value.data!.options;
     final color = HexColor(status.colorHex).getReadableColor();
 
     return InkWell(
       onTap: () {
+        if (!options.isStatusWritable) {
+          showWarningSnackBar(context, 'Status can\'t be changed');
+          return;
+        }
+
         final payloadCubit = context.read<WorkPackagePayloadCubit>();
 
         payloadCubit.updatePayload(
@@ -74,40 +84,40 @@ class _WorkPackageStatusItem extends StatelessWidget {
       },
       splashColor: color.withAlpha(75),
       highlightColor: Colors.transparent, // Removes gray overlay
-      borderRadius: BorderRadius.circular(8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.fastOutSlowIn,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withAlpha(38),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? color : Colors.transparent,
-            width: 2,
+      borderRadius: BorderRadius.circular(12),
+      child: Opacity(
+        opacity: options.isStatusWritable || isSelected ? 1.0 : 0.5,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.fastOutSlowIn,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isSelected ? color : color.withAlpha(38),
+            borderRadius: BorderRadius.circular(12),
           ),
-        ),
-        child: Row(
-          children: [
-            if (isSelected) ...[
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color,
+          child: Row(
+            children: [
+              if (isSelected) ...[
+                SvgPicture.asset(
+                  AppIcons.status,
+                  width: 16,
+                  height: 16,
+                  colorFilter: ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                status.name,
+                style: AppTextStyles.small.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: isSelected ? Colors.white : color,
                 ),
               ),
-              const SizedBox(width: 8),
             ],
-            Text(
-              status.name,
-              style: AppTextStyles.small.copyWith(
-                fontWeight: FontWeight.w500,
-                color: color,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

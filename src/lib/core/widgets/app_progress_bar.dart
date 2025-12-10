@@ -15,7 +15,7 @@ class AppProgressBar extends StatelessWidget {
     super.key,
     required this.value,
     this.onChanged,
-    this.showDivisions = true,
+    this.showDivisions = false,
   });
 
   @override

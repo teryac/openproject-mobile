@@ -69,94 +69,117 @@ class DateRangePickerWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Material(
-                    color: AppColors.projectBackground,
+                  InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: enabled
-                          ? () async {
-                              final result = await _showDateRangePicker(
-                                context: context,
-                                startDate: startDate,
-                                finishDate: finishDate,
-                                weekDays: weekDays,
-                              );
+                    onTap: enabled
+                        ? () async {
+                            final result = await _showDateRangePicker(
+                              context: context,
+                              startDate: startDate,
+                              finishDate: finishDate,
+                              weekDays: weekDays,
+                            );
 
-                              onChanged(result.startDate, result.finishDate);
-                            }
-                          : null,
-                      child: Container(
-                        height: MediaQuery.textScalerOf(context).scale(132),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
+                            onChanged(result.startDate, result.finishDate);
+                          }
+                        : null,
+                    child: Ink(
+                      height: MediaQuery.textScalerOf(context).scale(132),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.projectBackground,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: enabled ? AppColors.blue100 : AppColors.border,
+                          width: 1.5,
                         ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color:
-                                enabled ? AppColors.blue100 : AppColors.border,
-                            width: 1.5,
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 14,
+                            offset: Offset(0, 49),
+                            color: Color(0x00363636),
                           ),
-                        ),
-                        child: Center(
-                          child: Builder(
-                            builder: (context) {
-                              final formattedDate = getFormattedDate(
-                                index == 0 ? startDate : finishDate,
-                              );
+                          BoxShadow(
+                            blurRadius: 12,
+                            offset: Offset(0, 31),
+                            color: Color(0x03363636),
+                          ),
+                          BoxShadow(
+                            blurRadius: 11,
+                            offset: Offset(0, 18),
+                            color: Color(0x0A363636),
+                          ),
+                          BoxShadow(
+                            blurRadius: 8,
+                            offset: Offset(0, 8),
+                            color: Color(0x12363636),
+                          ),
+                          BoxShadow(
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                            color: Color(0x14363636),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Builder(
+                          builder: (context) {
+                            final formattedDate = getFormattedDate(
+                              index == 0 ? startDate : finishDate,
+                            );
 
-                              if (formattedDate == null) {
-                                final text = () {
-                                  if (!enabled) {
-                                    if (index == 0) {
-                                      return 'No start date';
-                                    } else {
-                                      return 'No finish date';
-                                    }
+                            if (formattedDate == null) {
+                              final text = () {
+                                if (!enabled) {
+                                  if (index == 0) {
+                                    return 'No start date';
+                                  } else {
+                                    return 'No finish date';
                                   }
-                                  return 'Pick a date';
-                                }();
+                                }
+                                return 'Pick a date';
+                              }();
 
-                                return Text(
-                                  text,
-                                  textAlign: TextAlign.center,
-                                  style: AppTextStyles.small.copyWith(
-                                    color: enabled
-                                        ? AppColors.blue100
-                                        : AppColors.descriptiveText,
-                                  ),
-                                );
-                              }
-
-                              return Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: formattedDate.day,
-                                      style: AppTextStyles.large.copyWith(
-                                        color: AppColors.primaryText,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '${formattedDate.daySuffix} ',
-                                      style: AppTextStyles.small.copyWith(
-                                        color: AppColors.descriptiveText,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          '${formattedDate.month}, ${formattedDate.year}',
-                                      style: AppTextStyles.large.copyWith(
-                                        color: AppColors.primaryText,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              return Text(
+                                text,
                                 textAlign: TextAlign.center,
+                                style: AppTextStyles.small.copyWith(
+                                  color: enabled
+                                      ? AppColors.blue100
+                                      : AppColors.descriptiveText,
+                                ),
                               );
-                            },
-                          ),
+                            }
+
+                            return Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: formattedDate.day,
+                                    style: AppTextStyles.large.copyWith(
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: '${formattedDate.daySuffix} ',
+                                    style: AppTextStyles.small.copyWith(
+                                      color: AppColors.descriptiveText,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        '${formattedDate.month}, ${formattedDate.year}',
+                                    style: AppTextStyles.large.copyWith(
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              textAlign: TextAlign.center,
+                            );
+                          },
                         ),
                       ),
                     ),

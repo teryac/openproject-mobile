@@ -162,6 +162,9 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TapRegion(
+      onTapInside: (event) {
+        widget.onTap?.call();
+      },
       onTapOutside: (event) {
         if (!widget.unFocusOnTapOutside) return;
 
@@ -200,7 +203,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
             _triggerDebounce(value);
           }
         },
-        onTap: widget.onTap,
+        // onTap: widget.onTap,
         style: widget.textStyle ??
             (_filled
                 ? AppTextStyles.small.copyWith(
@@ -212,6 +215,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         focusNode: widget.focusNode,
         obscureText: widget.obscure,
         maxLines: widget.maxLines,
+        enabled: !widget.readOnly,
         readOnly: widget.readOnly,
         autofocus: widget.autofocus,
         textInputAction: widget.textInputAction,

@@ -25,6 +25,7 @@ class AppPopupMenu extends StatefulWidget {
   /// from the bottom of the widget when there is space left on
   /// the screen, and the opposite when there's no enough space
   final bool dropdownAlignment;
+  final void Function()? onTap;
   final bool enabled;
   const AppPopupMenu({
     super.key,
@@ -34,6 +35,7 @@ class AppPopupMenu extends StatefulWidget {
     this.dropdownAlignment = false,
     this.toggleOnChildTap = true,
     this.enabled = true,
+    this.onTap,
   });
 
   @override
@@ -72,6 +74,7 @@ class _AppPopupMenuState extends State<AppPopupMenu>
   }
 
   void _toggleMenu(bool visible) {
+    widget.onTap?.call();
     if (!widget.enabled) return;
     // If the child asks to open (visible == true),
     // but we are ALREADY open, we treat this as a request to close.

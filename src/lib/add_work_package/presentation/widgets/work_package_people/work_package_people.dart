@@ -4,10 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_project/add_work_package/models/work_package_mode.dart';
 import 'package:open_project/add_work_package/models/work_package_properties.dart';
 import 'package:open_project/add_work_package/presentation/cubits/project_users_data_cubit.dart';
+import 'package:open_project/add_work_package/presentation/cubits/work_package_form_data/work_package_form_data_cubit.dart';
 import 'package:open_project/add_work_package/presentation/cubits/work_package_payload_cubit.dart';
 import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/core/util/app_snackbar.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/widgets/app_dropdown/app_dropdown_button.dart';
 import 'package:open_project/core/widgets/async_retry.dart';
@@ -17,6 +19,9 @@ class WorkPackagePeople extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final options =
+        context.read<WorkPackageFormDataCubit>().state.value.data!.options;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -51,6 +56,12 @@ class WorkPackagePeople extends StatelessWidget {
                     responsible: Value.present(value),
                   ),
                 );
+              },
+              enabled: options.isAccountableWritable,
+              onTap: () {
+                if (!options.isAccountableWritable) {
+                  showWarningSnackBar(context, 'Accountable can\'t be changed');
+                }
               },
               onMenuToggled: () {
                 if (state.isInitial) {
@@ -105,6 +116,12 @@ class WorkPackagePeople extends StatelessWidget {
                     assignee: Value.present(value),
                   ),
                 );
+              },
+              enabled: options.isAssigneeWritable,
+              onTap: () {
+                if (!options.isAssigneeWritable) {
+                  showWarningSnackBar(context, 'Assignee can\'t be changed');
+                }
               },
               onMenuToggled: () {
                 if (state.isInitial) {
