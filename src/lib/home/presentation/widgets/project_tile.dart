@@ -139,7 +139,7 @@ class ProjectTile extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "See tasks",
+                            "See work packages",
                             style: AppTextStyles.small
                                 .copyWith(color: AppColors.descriptiveText),
                           ),

@@ -342,7 +342,7 @@ class _WorkPackageTileState extends State<WorkPackageTile>
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
-                                            'Task assigned to ${widget.workPackage.assignee!.name}.',
+                                            'Assigned to ${widget.workPackage.assignee!.name}.',
                                             style: AppTextStyles.small.copyWith(
                                               color: AppColors.descriptiveText,
                                             ),
