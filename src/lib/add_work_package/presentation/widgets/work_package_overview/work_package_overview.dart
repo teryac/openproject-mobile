@@ -25,7 +25,7 @@ class WorkPackageOverview extends StatelessWidget {
             color: AppColors.primaryText,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         Row(
           children: [
             WorkPackageTypePicker(),

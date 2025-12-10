@@ -127,8 +127,8 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: 100,
+        Expanded(
+          flex: 4,
           child: Row(
             children: [
               SvgPicture.asset(
@@ -141,28 +141,33 @@ class _InfoTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                name,
-                style: AppTextStyles.small.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.descriptiveText,
+              Expanded(
+                child: Text(
+                  name,
+                  style: AppTextStyles.small.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.descriptiveText,
+                  ),
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(width: 24),
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            color: HexColor(colorHex).getReadableColor(),
-          ),
-          child: Text(
-            value,
-            style: AppTextStyles.small.copyWith(
-              fontWeight: FontWeight.w500,
-              color: AppColors.buttonText,
+        Flexible(
+          flex: 6,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: HexColor(colorHex).getReadableColor(),
+            ),
+            child: Text(
+              value,
+              style: AppTextStyles.small.copyWith(
+                fontWeight: FontWeight.w500,
+                color: AppColors.buttonText,
+              ),
             ),
           ),
         ),

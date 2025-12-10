@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:expandable_page_view/expandable_page_view.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide CalendarDatePicker;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:open_project/core/models/value.dart';
+import 'calendar_date_picker.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
@@ -14,9 +16,9 @@ import 'package:open_project/core/widgets/app_button.dart';
 
 // The M3 sizes are coming from the tokens, but are hand coded,
 // as the current token DB does not contain landscape versions.
-const Size _calendarPortraitDialogSizeM2 = Size(330.0, 518.0);
-const Size _calendarPortraitDialogSizeM3 = Size(328.0, 512.0);
-const Size _calendarLandscapeDialogSize = Size(496.0, 346.0);
+const Size _calendarPortraitDialogSizeM2 = Size(330.0, 656);
+const Size _calendarPortraitDialogSizeM3 = Size(328.0, 656);
+const Size _calendarLandscapeDialogSize = Size(496.0, 656);
 const Size _inputPortraitDialogSizeM2 = Size(330.0, 270.0);
 const Size _inputPortraitDialogSizeM3 = Size(328.0, 270.0);
 const Size _inputLandscapeDialogSize = Size(496, 160.0);
@@ -36,14 +38,14 @@ const double _kMaxRangeTextScaleFactor = 1.3;
 
 // The max text scale factor for the header. This is lower than the default as
 // the title text already starts at a large size.
-const double _kMaxHeaderTextScaleFactor = 1.6;
+// const double _kMaxHeaderTextScaleFactor = 1.6;
 
 // The entry button shares a line with the header text, so there is less room to
 // scale up.
-const double _kMaxHeaderWithEntryTextScaleFactor = 1.4;
+// const double _kMaxHeaderWithEntryTextScaleFactor = 1.4;
 
-const double _kMaxHelpPortraitTextScaleFactor = 1.6;
-const double _kMaxHelpLandscapeTextScaleFactor = 1.4;
+// const double _kMaxHelpPortraitTextScaleFactor = 1.6;
+// const double _kMaxHelpLandscapeTextScaleFactor = 1.4;
 
 // 14 is a common font size used to compute the effective text scale.
 const double _fontSizeToScale = 14.0;
@@ -163,7 +165,7 @@ const double _fontSizeToScale = 14.0;
 ///  * [DisplayFeatureSubScreen], which documents the specifics of how
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * [showTimePicker], which shows a dialog that contains a Material Design time picker.
-Future<DateTime?> showDatePicker({
+Future<Value<DateTime>?> showDatePicker({
   required BuildContext context,
   DateTime? initialDate,
   required DateTime firstDate,
@@ -255,7 +257,7 @@ Future<DateTime?> showDatePicker({
     }
   }
 
-  return showDialog<DateTime>(
+  return showDialog<Value<DateTime>>(
     context: context,
     barrierDismissible: barrierDismissible,
     barrierColor: barrierColor,
@@ -477,12 +479,15 @@ class _DatePickerDialogState extends State<DatePickerDialog>
       }
       form.save();
     }
-    Navigator.pop(context, _selectedDate.value);
+    Navigator.pop(
+      context,
+      Value.present(_selectedDate.value),
+    );
   }
 
-  void _handleCancel() {
-    Navigator.pop(context);
-  }
+  // void _handleCancel() {
+  //   Navigator.pop(context);
+  // }
 
   void _handleOnDatePickerModeChange() {
     widget.onDatePickerModeChange?.call(_entryMode.value);
@@ -530,11 +535,11 @@ class _DatePickerDialogState extends State<DatePickerDialog>
     };
   }
 
-  static const Map<ShortcutActivator, Intent> _formShortcutMap =
-      <ShortcutActivator, Intent>{
-    // Pressing enter on the field will move focus to the next field or control.
-    SingleActivator(LogicalKeyboardKey.enter): NextFocusIntent(),
-  };
+  // static const Map<ShortcutActivator, Intent> _formShortcutMap =
+  //     <ShortcutActivator, Intent>{
+  //   // Pressing enter on the field will move focus to the next field or control.
+  //   SingleActivator(LogicalKeyboardKey.enter): NextFocusIntent(),
+  // };
 
   @override
   Widget build(BuildContext context) {
@@ -575,41 +580,50 @@ class _DatePickerDialogState extends State<DatePickerDialog>
         datePickerTheme.headerForegroundColor ?? defaults.headerForegroundColor;
     headlineStyle = headlineStyle?.copyWith(color: headerForegroundColor);
 
-    final Widget actions = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 52.0),
-      child: MediaQuery.withClampedTextScaling(
-        maxScaleFactor: isLandscapeOrientation ? 1.6 : _kMaxTextScaleFactor,
+    final Widget actions = MediaQuery.withNoTextScaling(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: OverflowBar(
-              spacing: 8,
-              children: <Widget>[
-                TextButton(
-                  style: datePickerTheme.cancelButtonStyle ??
-                      defaults.cancelButtonStyle,
-                  onPressed: _handleCancel,
-                  child: Text(
-                    widget.cancelText ??
-                        (useMaterial3
-                            ? localizations.cancelButtonLabel
-                            : localizations.cancelButtonLabel.toUpperCase()),
-                  ),
+      padding: const EdgeInsets.only(
+        right: 16,
+        left: 16,
+        bottom: 16,
+        top: 12,
+      ),
+      child: SizedBox(
+        height: 37,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: AppButton.outlined(
+                text: 'Reset',
+                textStyle: AppTextStyles.extraSmall.copyWith(
+                  color: AppColors.button,
+                  fontWeight: FontWeight.w500,
                 ),
-                TextButton(
-                  style: datePickerTheme.confirmButtonStyle ??
-                      defaults.confirmButtonStyle,
-                  onPressed: _handleOk,
-                  child:
-                      Text(widget.confirmText ?? localizations.okButtonLabel),
-                ),
-              ],
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    Value<DateTime>.absent(),
+                  );
+                },
+              ),
             ),
-          ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: AppButton(
+                text: 'Set timeline',
+                textStyle: AppTextStyles.extraSmall.copyWith(
+                  color: AppColors.buttonText,
+                  fontWeight: FontWeight.w500,
+                ),
+                onPressed: _handleOk,
+              ),
+            ),
+          ],
         ),
       ),
-    );
+    ));
 
     CalendarDatePicker calendarDatePicker() {
       return CalendarDatePicker(
@@ -624,53 +638,51 @@ class _DatePickerDialogState extends State<DatePickerDialog>
       );
     }
 
-    Form inputDatePicker() {
-      return Form(
-        key: _formKey,
-        autovalidateMode: _autovalidateMode.value,
-        child: SizedBox(
-          height: orientation == Orientation.portrait
-              ? _inputFormPortraitHeight
-              : _inputFormLandscapeHeight,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Shortcuts(
-              shortcuts: _formShortcutMap,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    child: MediaQuery.withClampedTextScaling(
-                      maxScaleFactor: 2.0,
-                      child: InputDatePickerFormField(
-                        initialDate: _selectedDate.value,
-                        firstDate: widget.firstDate,
-                        lastDate: widget.lastDate,
-                        onDateSubmitted: _handleDateChanged,
-                        onDateSaved: _handleDateChanged,
-                        selectableDayPredicate: widget.selectableDayPredicate,
-                        errorFormatText: widget.errorFormatText,
-                        errorInvalidText: widget.errorInvalidText,
-                        fieldHintText: widget.fieldHintText,
-                        fieldLabelText: widget.fieldLabelText,
-                        keyboardType: widget.keyboardType,
-                        autofocus: true,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+    // Form inputDatePicker() {
+    //   return Form(
+    //     key: _formKey,
+    //     autovalidateMode: _autovalidateMode.value,
+    //     child: SizedBox(
+    //       height: orientation == Orientation.portrait
+    //           ? _inputFormPortraitHeight
+    //           : _inputFormLandscapeHeight,
+    //       child: Padding(
+    //         padding: const EdgeInsets.symmetric(horizontal: 24),
+    //         child: Shortcuts(
+    //           shortcuts: _formShortcutMap,
+    //           child: Column(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: <Widget>[
+    //               Flexible(
+    //                 child: MediaQuery.withClampedTextScaling(
+    //                   maxScaleFactor: 2.0,
+    //                   child: InputDatePickerFormField(
+    //                     initialDate: _selectedDate.value,
+    //                     firstDate: widget.firstDate,
+    //                     lastDate: widget.lastDate,
+    //                     onDateSubmitted: _handleDateChanged,
+    //                     onDateSaved: _handleDateChanged,
+    //                     selectableDayPredicate: widget.selectableDayPredicate,
+    //                     errorFormatText: widget.errorFormatText,
+    //                     errorInvalidText: widget.errorInvalidText,
+    //                     fieldHintText: widget.fieldHintText,
+    //                     fieldLabelText: widget.fieldLabelText,
+    //                     keyboardType: widget.keyboardType,
+    //                     autofocus: true,
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
 
-    final Widget picker;
     final Widget? entryModeButton;
     switch (_entryMode.value) {
       case DatePickerEntryMode.calendar:
-        picker = calendarDatePicker();
         entryModeButton = IconButton(
           icon: widget.switchToInputEntryModeIcon ??
               Icon(useMaterial3 ? Icons.edit_outlined : Icons.edit),
@@ -680,11 +692,9 @@ class _DatePickerDialogState extends State<DatePickerDialog>
         );
 
       case DatePickerEntryMode.calendarOnly:
-        picker = calendarDatePicker();
         entryModeButton = null;
 
       case DatePickerEntryMode.input:
-        picker = inputDatePicker();
         entryModeButton = IconButton(
           icon: widget.switchToCalendarEntryModeIcon ??
               const Icon(Icons.calendar_today),
@@ -694,7 +704,6 @@ class _DatePickerDialogState extends State<DatePickerDialog>
         );
 
       case DatePickerEntryMode.inputOnly:
-        picker = inputDatePicker();
         entryModeButton = null;
     }
 
@@ -703,6 +712,7 @@ class _DatePickerDialogState extends State<DatePickerDialog>
           (useMaterial3
               ? localizations.datePickerHelpText
               : localizations.datePickerHelpText.toUpperCase()),
+      selectedDate: _selectedDate.value,
       titleText: _selectedDate.value == null
           ? ''
           : localizations.formatMediumDate(_selectedDate.value!),
@@ -734,60 +744,72 @@ class _DatePickerDialogState extends State<DatePickerDialog>
           : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape,
       insetPadding: widget.insetPadding,
       clipBehavior: Clip.antiAlias,
-      child: AnimatedContainer(
-        width: dialogSize.width,
-        height: dialogSize.height,
-        duration: _dialogSizeAnimationDuration,
-        curve: Curves.easeIn,
-        child: MediaQuery.withClampedTextScaling(
-          // Constrain the textScaleFactor to the largest supported value to prevent
-          // layout issues.
-          maxScaleFactor: _kMaxTextScaleFactor,
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              final Size portraitDialogSize = useMaterial3
-                  ? _inputPortraitDialogSizeM3
-                  : _inputPortraitDialogSizeM2;
-              // Make sure the portrait dialog can fit the contents comfortably when
-              // resized from the landscape dialog.
-              final bool isFullyPortrait = constraints.maxHeight >=
-                  math.min(dialogSize.height, portraitDialogSize.height);
-
-              switch (orientation) {
-                case Orientation.portrait:
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      header,
-                      if (useMaterial3)
-                        Divider(height: 0, color: datePickerTheme.dividerColor),
-                      if (isFullyPortrait) ...<Widget>[
-                        Expanded(child: picker),
-                        actions
-                      ],
-                    ],
-                  );
-                case Orientation.landscape:
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      header,
-                      if (useMaterial3)
-                        VerticalDivider(
-                            width: 0, color: datePickerTheme.dividerColor),
-                      Flexible(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[Expanded(child: picker), actions],
-                        ),
-                      ),
-                    ],
-                  );
-              }
-            },
+      child: SingleChildScrollView(
+        child: AnimatedContainer(
+          width: dialogSize.width,
+          height: dialogSize.height,
+          duration: _dialogSizeAnimationDuration,
+          curve: Curves.easeIn,
+          child: MediaQuery.withClampedTextScaling(
+            // Constrain the textScaleFactor to the largest supported value to prevent
+            // layout issues.
+            maxScaleFactor: _kMaxTextScaleFactor,
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                // final Size portraitDialogSize = useMaterial3
+                //     ? _inputPortraitDialogSizeM3
+                //     : _inputPortraitDialogSizeM2;
+                // Make sure the portrait dialog can fit the contents comfortably when
+                // resized from the landscape dialog.
+                // final bool isFullyPortrait = constraints.maxHeight >=
+                //     math.min(dialogSize.height, portraitDialogSize.height);
+        
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    header,
+                    Expanded(
+                      child: calendarDatePicker(),
+                    ),
+                    actions,
+                  ],
+                );
+        
+                // switch (orientation) {
+                //   case Orientation.portrait:
+                //     return Column(
+                //       mainAxisSize: MainAxisSize.min,
+                //       crossAxisAlignment: CrossAxisAlignment.stretch,
+                //       children: <Widget>[
+                //         header,
+                //         if (isFullyPortrait) ...<Widget>[
+                //           Expanded(child: picker),
+                //           actions
+                //         ],
+                //       ],
+                //     );
+                //   case Orientation.landscape:
+                //     return Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       crossAxisAlignment: CrossAxisAlignment.stretch,
+                //       children: <Widget>[
+                //         header,
+                //         if (useMaterial3)
+                //           VerticalDivider(
+                //               width: 0, color: datePickerTheme.dividerColor),
+                //         Flexible(
+                //           child: Column(
+                //             mainAxisSize: MainAxisSize.min,
+                //             crossAxisAlignment: CrossAxisAlignment.stretch,
+                //             children: <Widget>[Expanded(child: picker), actions],
+                //           ),
+                //         ),
+                //       ],
+                //     );
+                // }
+              },
+            ),
           ),
         ),
       ),
@@ -860,6 +882,7 @@ class _DatePickerHeader extends StatelessWidget {
   /// Creates a header for use in a date picker dialog.
   const _DatePickerHeader({
     required this.helpText,
+    required this.selectedDate,
     required this.titleText,
     this.titleSemanticsLabel,
     required this.titleStyle,
@@ -868,9 +891,9 @@ class _DatePickerHeader extends StatelessWidget {
     this.entryModeButton,
   });
 
-  static const double _datePickerHeaderLandscapeWidth = 152.0;
-  static const double _datePickerHeaderPortraitHeight = 120.0;
-  static const double _headerPaddingLandscape = 16.0;
+  // static const double _datePickerHeaderLandscapeWidth = 152.0;
+  // static const double _datePickerHeaderPortraitHeight = 120.0;
+  // static const double _headerPaddingLandscape = 16.0;
 
   /// The text that is displayed at the top of the header.
   ///
@@ -879,6 +902,8 @@ class _DatePickerHeader extends StatelessWidget {
 
   /// The text that is displayed at the center of the header.
   final String titleText;
+
+  final DateTime? selectedDate;
 
   /// The semantic label associated with the [titleText].
   final String? titleSemanticsLabel;
@@ -903,139 +928,278 @@ class _DatePickerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
-    final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
-    final Color? backgroundColor =
-        datePickerTheme.headerBackgroundColor ?? defaults.headerBackgroundColor;
-    final Color? foregroundColor =
-        datePickerTheme.headerForegroundColor ?? defaults.headerForegroundColor;
-    final TextStyle? helpStyle =
-        (datePickerTheme.headerHelpStyle ?? defaults.headerHelpStyle)
-            ?.copyWith(color: foregroundColor);
-    final double currentScale =
-        MediaQuery.textScalerOf(context).scale(_fontSizeToScale) /
-            _fontSizeToScale;
-    final double maxHeaderTextScaleFactor = math.min(
-      currentScale,
-      entryModeButton != null
-          ? _kMaxHeaderWithEntryTextScaleFactor
-          : _kMaxHeaderTextScaleFactor,
-    );
-    final double textScaleFactor = MediaQuery.textScalerOf(
-          context,
-        )
-            .clamp(maxScaleFactor: maxHeaderTextScaleFactor)
-            .scale(_fontSizeToScale) /
-        _fontSizeToScale;
-    final double scaledFontSize = MediaQuery.textScalerOf(
-      context,
-    ).scale(titleStyle?.fontSize ?? 32);
-    final double headerScaleFactor =
-        textScaleFactor > 1 ? textScaleFactor : 1.0;
+    // final ThemeData theme = Theme.of(context);
+    // final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
+    // final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
+    // final Color? backgroundColor =
+    //     datePickerTheme.headerBackgroundColor ?? defaults.headerBackgroundColor;
+    // final Color? foregroundColor =
+    //     datePickerTheme.headerForegroundColor ?? defaults.headerForegroundColor;
+    // final TextStyle? helpStyle =
+    //     (datePickerTheme.headerHelpStyle ?? defaults.headerHelpStyle)
+    //         ?.copyWith(color: foregroundColor);
+    // final double currentScale =
+    //     MediaQuery.textScalerOf(context).scale(_fontSizeToScale) /
+    //         _fontSizeToScale;
+    // final double maxHeaderTextScaleFactor = math.min(
+    //   currentScale,
+    //   entryModeButton != null
+    //       ? _kMaxHeaderWithEntryTextScaleFactor
+    //       : _kMaxHeaderTextScaleFactor,
+    // );
+    // final double textScaleFactor = MediaQuery.textScalerOf(
+    //       context,
+    //     )
+    //         .clamp(maxScaleFactor: maxHeaderTextScaleFactor)
+    //         .scale(_fontSizeToScale) /
+    //     _fontSizeToScale;
+    // final double scaledFontSize = MediaQuery.textScalerOf(
+    //   context,
+    // ).scale(titleStyle?.fontSize ?? 32);
+    // final double headerScaleFactor =
+    //     textScaleFactor > 1 ? textScaleFactor : 1.0;
 
-    final Text help = Text(
-      helpText,
-      style: helpStyle,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      textScaler: MediaQuery.textScalerOf(context).clamp(
-        maxScaleFactor: math.min(
-          textScaleFactor,
-          orientation == Orientation.portrait
-              ? _kMaxHelpPortraitTextScaleFactor
-              : _kMaxHelpLandscapeTextScaleFactor,
-        ),
+    // final Text help = Text(
+    //   helpText,
+    //   style: helpStyle,
+    //   maxLines: 1,
+    //   overflow: TextOverflow.ellipsis,
+    //   textScaler: MediaQuery.textScalerOf(context).clamp(
+    //     maxScaleFactor: math.min(
+    //       textScaleFactor,
+    //       orientation == Orientation.portrait
+    //           ? _kMaxHelpPortraitTextScaleFactor
+    //           : _kMaxHelpLandscapeTextScaleFactor,
+    //     ),
+    //   ),
+    // );
+    // final Text title = Text(
+    //   titleText,
+    //   semanticsLabel: titleSemanticsLabel ?? titleText,
+    //   style: titleStyle,
+    //   maxLines: orientation == Orientation.portrait
+    //       ? (scaledFontSize > 70 ? 2 : 1)
+    //       : scaledFontSize > 40
+    //           ? 3
+    //           : 2,
+    //   overflow: TextOverflow.ellipsis,
+    //   textScaler: MediaQuery.textScalerOf(context)
+    //       .clamp(maxScaleFactor: textScaleFactor),
+    // );
+
+    // final double fontScaleAdjustedHeaderHeight =
+    //     headerScaleFactor > 1.3 ? headerScaleFactor - 0.2 : 1.0;
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 24,
+        top: 16,
+        right: 16,
+        left: 16,
       ),
-    );
-    final Text title = Text(
-      titleText,
-      semanticsLabel: titleSemanticsLabel ?? titleText,
-      style: titleStyle,
-      maxLines: orientation == Orientation.portrait
-          ? (scaledFontSize > 70 ? 2 : 1)
-          : scaledFontSize > 40
-              ? 3
-              : 2,
-      overflow: TextOverflow.ellipsis,
-      textScaler: MediaQuery.textScalerOf(context)
-          .clamp(maxScaleFactor: textScaleFactor),
-    );
-
-    final double fontScaleAdjustedHeaderHeight =
-        headerScaleFactor > 1.3 ? headerScaleFactor - 0.2 : 1.0;
-
-    switch (orientation) {
-      case Orientation.portrait:
-        return Semantics(
-          container: true,
-          child: SizedBox(
-            height:
-                _datePickerHeaderPortraitHeight * fontScaleAdjustedHeaderHeight,
-            child: Material(
-              color: backgroundColor,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(
-                    start: 24, end: 12, bottom: 12),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 4,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const SizedBox(height: 16),
-                    help,
-                    const Flexible(child: SizedBox(height: 38)),
-                    Row(
-                      children: <Widget>[
-                        Expanded(child: title),
-                        if (entryModeButton != null)
-                          Semantics(container: true, child: entryModeButton),
-                      ],
+                  children: [
+                    Text(
+                      'Set date',
+                      style: AppTextStyles.large.copyWith(
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${getFormattedDate(DateTime.now())} (Today)',
+                      style: AppTextStyles.small.copyWith(
+                        color: AppColors.descriptiveText,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
+              Flexible(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: SvgPicture.asset(
+                      AppIcons.closeSquare,
+                      // ignore: deprecated_member_use
+                      color: AppColors.iconSecondary,
+                      width: 32,
+                      height: 32,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        );
-      case Orientation.landscape:
-        return Semantics(
-          container: true,
-          child: SizedBox(
-            width: _datePickerHeaderLandscapeWidth,
-            child: Material(
-              color: backgroundColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: _headerPaddingLandscape),
-                    child: help,
-                  ),
-                  SizedBox(height: isShort ? 16 : 56),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: _headerPaddingLandscape),
-                      child: title,
-                    ),
-                  ),
-                  if (entryModeButton != null)
-                    Padding(
-                      padding: theme.useMaterial3
-                          // from https://m3.material.io/components/date-pickers/specs#c16c142b-4706-47f3-9400-3cde654b9aa8.
-                          // Update this value to use tokens when available.
-                          ? const EdgeInsetsDirectional.only(
-                              start: 8.0, end: 4.0, bottom: 6.0)
-                          : const EdgeInsets.symmetric(horizontal: 4),
-                      child: Semantics(container: true, child: entryModeButton),
-                    ),
-                ],
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0),
+            child: Ink(
+              height: MediaQuery.textScalerOf(context).scale(140),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 6,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.projectBackground,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.border,
+                  width: 1.5,
+                ),
+              ),
+              child: Center(
+                child: Builder(
+                  builder: (context) {
+                    final formattedDate = getFormattedDate(selectedDate);
+
+                    if (formattedDate == null) {
+                      return Text(
+                        '-',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.large.copyWith(
+                          color: AppColors.primaryText,
+                        ),
+                      );
+                    }
+
+                    return Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: formattedDate.day,
+                            style: AppTextStyles.large.copyWith(
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${formattedDate.daySuffix} ',
+                            style: AppTextStyles.small.copyWith(
+                              color: AppColors.descriptiveText,
+                            ),
+                          ),
+                          TextSpan(
+                            text:
+                                '${formattedDate.month}, ${formattedDate.year}',
+                            style: AppTextStyles.large.copyWith(
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        );
-    }
+        ],
+      ),
+    );
+
+    // // switch (orientation) {
+    // //   case Orientation.portrait:
+    // //     return Semantics(
+    // //       container: true,
+    // //       child: Padding(
+    // //         padding: const EdgeInsets.only(
+    // //           bottom: 24,
+    // //           top: 16,
+    // //           right: 16,
+    // //           left: 16,
+    // //         ),
+    // //         child: Row(
+    // //           children: [
+    // //             Expanded(
+    // //               flex: 4,
+    // //               child: Column(
+    // //                 crossAxisAlignment: CrossAxisAlignment.start,
+    // //                 children: [
+    // //                   Text(
+    // //                     'Set your timeline',
+    // //                     style: AppTextStyles.large.copyWith(
+    // //                       color: AppColors.primaryText,
+    // //                     ),
+    // //                   ),
+    // //                   const SizedBox(height: 8),
+    // //                   Text(
+    // //                     '${getFormattedDate(DateTime.now())} (Today)',
+    // //                     style: AppTextStyles.small.copyWith(
+    // //                       color: AppColors.descriptiveText,
+    // //                     ),
+    // //                   ),
+    // //                 ],
+    // //               ),
+    // //             ),
+    // //             Flexible(
+    // //               flex: 1,
+    // //               child: Align(
+    // //                 alignment: Alignment.centerRight,
+    // //                 child: GestureDetector(
+    // //                   onTap: () => Navigator.pop(context),
+    // //                   child: SvgPicture.asset(
+    // //                     AppIcons.closeSquare,
+    // //                     // ignore: deprecated_member_use
+    // //                     color: AppColors.iconSecondary,
+    // //                     width: 32,
+    // //                     height: 32,
+    // //                   ),
+    // //                 ),
+    // //               ),
+    // //             ),
+    // //           ],
+    // //         ),
+    // //       ),
+    // //     );
+    // //   case Orientation.landscape:
+    // //     return Semantics(
+    // //       container: true,
+    // //       child: SizedBox(
+    // //         width: _datePickerHeaderLandscapeWidth,
+    // //         child: Material(
+    // //           color: backgroundColor,
+    // //           child: Column(
+    // //             crossAxisAlignment: CrossAxisAlignment.start,
+    // //             children: <Widget>[
+    // //               const SizedBox(height: 16),
+    // //               Padding(
+    // //                 padding: const EdgeInsets.symmetric(
+    // //                     horizontal: _headerPaddingLandscape),
+    // //                 child: help,
+    // //               ),
+    // //               SizedBox(height: isShort ? 16 : 56),
+    // //               Expanded(
+    // //                 child: Padding(
+    // //                   padding: const EdgeInsets.symmetric(
+    // //                       horizontal: _headerPaddingLandscape),
+    // //                   child: title,
+    // //                 ),
+    // //               ),
+    // //               if (entryModeButton != null)
+    // //                 Padding(
+    // //                   padding: theme.useMaterial3
+    // //                       // from https://m3.material.io/components/date-pickers/specs#c16c142b-4706-47f3-9400-3cde654b9aa8.
+    // //                       // Update this value to use tokens when available.
+    // //                       ? const EdgeInsetsDirectional.only(
+    // //                           start: 8.0, end: 4.0, bottom: 6.0)
+    // //                       : const EdgeInsets.symmetric(horizontal: 4),
+    // //                   child: Semantics(container: true, child: entryModeButton),
+    // //                 ),
+    // //             ],
+    // //           ),
+    // //         ),
+    // //       ),
+    // //     );
+    // }
   }
 }
 
@@ -3541,6 +3705,9 @@ class _InputDateRangePickerDialog extends StatelessWidget {
           (useMaterial3
               ? localizations.dateRangePickerHelpText
               : localizations.dateRangePickerHelpText.toUpperCase()),
+
+      /// This is not important in this case
+      selectedDate: null,
       titleText: dateText,
       titleSemanticsLabel: semanticDateText,
       titleStyle: headlineStyle,

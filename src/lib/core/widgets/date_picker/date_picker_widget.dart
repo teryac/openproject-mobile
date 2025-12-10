@@ -199,34 +199,139 @@ class DatePickerWidget extends StatelessWidget {
   final void Function(DateTime? date) onChanged;
   final bool enabled;
   final List<WeekDay>? weekDays;
+  final Alignment alignment;
   const DatePickerWidget({
     super.key,
     this.date,
     required this.onChanged,
     this.enabled = true,
     this.weekDays,
+    this.alignment = Alignment.center,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: enabled
-          ? () async {
-              final result = await _showDatePicker(
-                context: context,
-                date: date,
-                weekDays: weekDays,
-              );
+    return Align(
+      alignment: alignment,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 400,
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Date',
+              style: AppTextStyles.extraSmall.copyWith(
+                color: AppColors.descriptiveText,
+              ),
+            ),
+            const SizedBox(height: 4),
+            InkWell(
+              onTap: enabled
+                  ? () async {
+                      final result = await _showDatePicker(
+                        context: context,
+                        date: date,
+                        weekDays: weekDays,
+                      );
 
-              onChanged(result);
-            }
-          : null,
-      child: Container(
-        padding: const EdgeInsets.all(40),
-        child: Center(
-          child: Text(date != null
-              ? getFormattedDate(date).toString()
-              : 'No date selected'),
+                      onChanged(result);
+                    }
+                  : null,
+              borderRadius: BorderRadius.circular(16),
+              child: Ink(
+                height: MediaQuery.textScalerOf(context).scale(132),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.projectBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: enabled ? AppColors.blue100 : AppColors.border,
+                    width: 1.5,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 14,
+                      offset: Offset(0, 49),
+                      color: Color(0x00363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 12,
+                      offset: Offset(0, 31),
+                      color: Color(0x03363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 11,
+                      offset: Offset(0, 18),
+                      color: Color(0x0A363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 8,
+                      offset: Offset(0, 8),
+                      color: Color(0x12363636),
+                    ),
+                    BoxShadow(
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                      color: Color(0x14363636),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Builder(
+                    builder: (context) {
+                      final formattedDate = getFormattedDate(date);
+
+                      if (formattedDate == null) {
+                        final text = () {
+                          return enabled ? 'Pick a date' : 'No date selected';
+                        }();
+
+                        return Text(
+                          text,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.small.copyWith(
+                            color: enabled
+                                ? AppColors.blue100
+                                : AppColors.descriptiveText,
+                          ),
+                        );
+                      }
+
+                      return Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: formattedDate.day,
+                              style: AppTextStyles.large.copyWith(
+                                color: AppColors.primaryText,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '${formattedDate.daySuffix} ',
+                              style: AppTextStyles.small.copyWith(
+                                color: AppColors.descriptiveText,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '${formattedDate.month}, ${formattedDate.year}',
+                              style: AppTextStyles.large.copyWith(
+                                color: AppColors.primaryText,
+                              ),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -274,14 +379,20 @@ Future<DateTime?> _showDatePicker({
         : (day) {
             return _isAWorkingDay(day, weekDays);
           },
-    helpText: 'Choose date',
   );
 
   if (result == null) {
+    // Case: Dialog was dismissed
     return date;
+  } else if (!result.hasValue) {
+    // Case: Intentional null value was passed ('Reset' button)
+    return null;
   }
 
-  return result;
+  // Fallback case: dialog was not dismissed, and 'Reset' button was not pressed,
+  // meaning the 'Set' button was pressed and a new value exists, i.e. Result is not
+  // null, and does have a value
+  return result.value;
 }
 
 /// Checks if the given date is configured as a working day.

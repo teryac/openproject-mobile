@@ -70,11 +70,13 @@ class _UserInfoWidget extends StatelessWidget {
           radius: 12,
         ),
         const SizedBox(width: 12),
-        Text(
-          value,
-          style: AppTextStyles.small.copyWith(
-            color: AppColors.primaryText,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            value,
+            style: AppTextStyles.small.copyWith(
+              color: AppColors.primaryText,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

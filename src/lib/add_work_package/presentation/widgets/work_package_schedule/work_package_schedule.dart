@@ -8,7 +8,7 @@ import 'package:open_project/core/models/value.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/util/app_snackbar.dart';
-import 'package:open_project/core/widgets/date_picker/date_range_picker_widget.dart';
+import 'package:open_project/core/widgets/date_picker/date_picker_widget.dart';
 import 'package:open_project/core/widgets/duration_text_form_field.dart';
 
 class WorkPackageSchedule extends StatelessWidget {
@@ -88,18 +88,22 @@ class WorkPackageSchedule extends StatelessWidget {
                   },
                 ),
               )
-            : DatePickerWidget(
-                date: data.date,
-                weekDays: context.read<WeekDaysDataCubit>().state.data!,
-                enabled: options.isDateWritable,
-                onChanged: (date) {
-                  final payloadCubit = context.read<WorkPackagePayloadCubit>();
-                  payloadCubit.updatePayload(
-                    payloadCubit.state!.copyWith(
-                      date: Value.present(date),
-                    ),
-                  );
-                },
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: DatePickerWidget(
+                  date: data.date,
+                  weekDays: context.read<WeekDaysDataCubit>().state.data!,
+                  enabled: options.isDateWritable,
+                  onChanged: (date) {
+                    final payloadCubit =
+                        context.read<WorkPackagePayloadCubit>();
+                    payloadCubit.updatePayload(
+                      payloadCubit.state!.copyWith(
+                        date: Value.present(date),
+                      ),
+                    );
+                  },
+                ),
               ),
         const SizedBox(height: 16),
         DurationTextFormField(

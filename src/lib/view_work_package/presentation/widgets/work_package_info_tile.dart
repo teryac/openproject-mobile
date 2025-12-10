@@ -37,10 +37,13 @@ class WorkPackageInfoTile extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                 ),
-              Text(
-                hint,
-                style: AppTextStyles.small.copyWith(
-                  color: AppColors.descriptiveText,
+              Expanded(
+                child: Text(
+                  hint,
+                  maxLines: 2,
+                  style: AppTextStyles.small.copyWith(
+                    color: AppColors.descriptiveText,
+                  ),
                 ),
               ),
             ],

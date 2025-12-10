@@ -138,7 +138,7 @@ class AddWorkPackageScreen extends StatelessWidget {
                                   padding: screenPadding,
                                   child: WorkPackageOverview(),
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 24),
                                 // Status
                                 WorkPackageStatus(screenPadding: screenPadding),
                                 // SizedBox(height: 20),
