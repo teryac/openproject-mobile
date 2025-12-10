@@ -1,6 +1,5 @@
-import 'dart:ui'; // Required for ImageFilter
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:open_project/core/styles/colors.dart';
 
 Future<T?> showBlurredDialog<T>({
   required BuildContext context,
@@ -61,62 +60,34 @@ Future<T?> showBlurredBottomSheet<T>({
   required WidgetBuilder builder,
   double blurSigma = 6.0,
   Color overlayColor = const Color(0x80505558),
+  // The color of the modal sheet itself. Must be transparent for the blur to work.
+  Color modalSheetColor = Colors.transparent,
+  // Whether the content of the sheet should occupy the full screen height (like your old code).
+  bool expand = false,
 }) {
-  return showGeneralDialog<T>(
+  return showModalBottomSheet<T>(
     context: context,
-    barrierDismissible: true,
-    barrierLabel: 'Dismiss',
-    barrierColor: Colors.transparent,
-    transitionDuration: const Duration(milliseconds: 300),
-    // IMPORTANT: We remove the SafeArea from the pageBuilder context here
-    // to allow the blur to cover the system bars.
-    pageBuilder: (context, animation, secondaryAnimation) => builder(context),
-    transitionBuilder: (context, animation, secondaryAnimation, child) {
-      final slideAnimation = Tween<Offset>(
-        begin: const Offset(0, 1),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOutCubic,
-      ));
-
-      return Stack(
-        children: [
-          // 1. Full Screen Blur (Ignores Safe Area)
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: FadeTransition(
-                opacity: animation,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: blurSigma,
-                    sigmaY: blurSigma,
+    isScrollControlled:
+        expand, // Use isScrollControlled to allow full screen height
+    backgroundColor: modalSheetColor,
+    barrierColor: overlayColor, // Use barrierColor for the overlay tint
+    builder: (ctx) {
+      // Wrap the content with BackdropFilter to blur the widgets *behind* it.
+      return BackdropFilter(
+        // The blur is applied here, using the passed sigma value.
+        filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+        child: expand
+            ? Column(
+                // When expanded, the column pushes the content to the bottom
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // The actual content wrapped in a flexible container
+                  Flexible(
+                    child: builder(ctx),
                   ),
-                  child: Container(
-                    color: overlayColor, // This now covers the WHOLE screen
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // 2. The Sheet Content
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SlideTransition(
-              position: slideAnimation,
-              child: MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: Material(
-                  color: AppColors.background,
-                  child: child,
-                ),
-              ),
-            ),
-          ),
-        ],
+                ],
+              )
+            : builder(ctx),
       );
     },
   );
