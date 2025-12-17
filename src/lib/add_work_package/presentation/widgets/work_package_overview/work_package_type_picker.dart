@@ -86,9 +86,9 @@ class WorkPackageTypePicker extends StatelessWidget {
 
                   return Material(
                     color: typeColor.withAlpha(38),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       highlightColor:
                           Colors.transparent, // Removes gray overlay
                       splashColor: typeColor.withAlpha(75),
