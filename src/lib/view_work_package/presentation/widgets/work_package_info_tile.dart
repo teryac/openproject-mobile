@@ -7,6 +7,7 @@ class WorkPackageInfoTile extends StatelessWidget {
   final String? svgIconAsset;
   final String hint;
   final String? value;
+  final Color? valueTileColor;
 
   /// Custom build when `value` is not null
   final Widget Function(BuildContext context, String value)? valueBuilder;
@@ -16,6 +17,7 @@ class WorkPackageInfoTile extends StatelessWidget {
     required this.hint,
     required this.value,
     this.valueBuilder,
+    this.valueTileColor,
   });
 
   @override
@@ -42,6 +44,7 @@ class WorkPackageInfoTile extends StatelessWidget {
                   hint,
                   maxLines: 2,
                   style: AppTextStyles.small.copyWith(
+                    fontWeight: FontWeight.w500,
                     color: AppColors.descriptiveText,
                   ),
                 ),
@@ -49,26 +52,44 @@ class WorkPackageInfoTile extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(width: 12),
         Flexible(
           flex: 6,
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.searchBarBackground,
-              borderRadius: BorderRadius.circular(8),
+              color: valueTileColor ?? AppColors.searchBarBackground,
+              borderRadius: BorderRadius.circular(360),
             ),
             child: (value != null && valueBuilder != null)
                 ? valueBuilder!.call(context, value!)
-                : Text(
-                    value ?? 'Not selected',
-                    style: AppTextStyles.small.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: value == null
-                          ? AppColors.descriptiveText
-                          : AppColors.primaryText,
+                : ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 24,
+                      minWidth: 48,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          value ?? 'Not selected',
+                          style: AppTextStyles.small.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: () {
+                              if (valueTileColor != null) {
+                                return Colors.white;
+                              }
+
+                              if (value != null) {
+                                return AppColors.primaryText;
+                              }
+
+                              return AppColors.descriptiveText;
+                            }(),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
           ),

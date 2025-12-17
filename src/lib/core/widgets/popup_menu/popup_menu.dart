@@ -25,6 +25,11 @@ class AppPopupMenu extends StatefulWidget {
   /// from the bottom of the widget when there is space left on
   /// the screen, and the opposite when there's no enough space
   final bool dropdownAlignment;
+
+  // If `dropdownAlignment` is set to true, assigning a menu alignment
+  // will throw an exception
+  final ({Alignment follower, Alignment target})? menuAlignment;
+
   final void Function()? onTap;
   final bool enabled;
   const AppPopupMenu({
@@ -36,7 +41,12 @@ class AppPopupMenu extends StatefulWidget {
     this.toggleOnChildTap = true,
     this.enabled = true,
     this.onTap,
-  });
+    this.menuAlignment,
+  }) : assert(
+          !(menuAlignment != null && dropdownAlignment),
+          """Assigning a menu alignment when `dropdownAlignment` is set to true is not possible
+          since `dropdownAlignment` forces a special predefined menuAlignment""",
+        );
 
   @override
   State<AppPopupMenu> createState() => _AppPopupMenuState();
@@ -64,6 +74,12 @@ class _AppPopupMenuState extends State<AppPopupMenu>
     super.initState();
 
     _animationController = PopupMenuAnimation(vsync: this);
+
+    if (widget.menuAlignment != null) {
+      setState(() {
+        menuAlignment = widget.menuAlignment!;
+      });
+    }
   }
 
   @override
@@ -86,7 +102,9 @@ class _AppPopupMenuState extends State<AppPopupMenu>
 
     // Measure menu alignment based on scroll position
     setState(() {
-      menuAlignment = _getMenuAlignment();
+      if (widget.menuAlignment == null) {
+        menuAlignment = _getMenuAlignment();
+      }
     });
 
     if (visible) {

@@ -29,7 +29,7 @@ class WorkPackageOverview extends StatelessWidget {
         Row(
           children: [
             WorkPackageTypePicker(),
-            SizedBox(width: 12),
+            SizedBox(width: 20),
             Expanded(
               child: AppTextFormField(
                 hint: 'Work Package title',

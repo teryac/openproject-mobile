@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:open_project/core/constants/app_assets.dart';
 import 'package:open_project/core/styles/colors.dart';
 import 'package:open_project/core/styles/text_styles.dart';
+import 'package:open_project/view_work_package/presentation/widgets/work_package_info_tile.dart';
 import 'package:open_project/work_packages/models/work_package.dart';
 import 'package:open_project/work_packages/models/work_package_dependencies.dart';
 
@@ -83,11 +83,11 @@ class WorkPackageDetailsOverview extends StatelessWidget {
               (element) => element.id == workPackage.priorityId,
             );
 
-            return _InfoTile(
-              name: 'Priority',
+            return WorkPackageInfoTile(
+              hint: 'Priority',
               value: priority.name,
-              svgAsset: AppIcons.flag,
-              colorHex: priority.colorHex,
+              svgIconAsset: AppIcons.flag,
+              valueTileColor: HexColor(priority.colorHex).getReadableColor(),
             );
           },
         ),
@@ -98,78 +98,13 @@ class WorkPackageDetailsOverview extends StatelessWidget {
               (element) => element.id == workPackage.statusId,
             );
 
-            return _InfoTile(
-              name: 'Status',
+            return WorkPackageInfoTile(
+              hint: 'Status',
               value: status.name,
-              svgAsset: AppIcons.status,
-              colorHex: status.colorHex,
+              svgIconAsset: AppIcons.status,
+              valueTileColor: HexColor(status.colorHex).getReadableColor(),
             );
           },
-        ),
-      ],
-    );
-  }
-}
-
-class _InfoTile extends StatelessWidget {
-  final String name;
-  final String value;
-  final String svgAsset;
-  final String colorHex;
-  const _InfoTile({
-    required this.name,
-    required this.value,
-    required this.svgAsset,
-    required this.colorHex,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                svgAsset,
-                width: 16,
-                height: 16,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.iconSecondary,
-                  BlendMode.srcIn,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  name,
-                  style: AppTextStyles.small.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.descriptiveText,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 24),
-        Flexible(
-          flex: 6,
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: HexColor(colorHex).getReadableColor(),
-            ),
-            child: Text(
-              value,
-              style: AppTextStyles.small.copyWith(
-                fontWeight: FontWeight.w500,
-                color: AppColors.buttonText,
-              ),
-            ),
-          ),
         ),
       ],
     );

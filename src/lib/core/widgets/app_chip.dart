@@ -18,6 +18,10 @@ class AppChip extends StatelessWidget {
     required this.onPressed,
   });
 
+  static TextStyle get chipTextStyle => AppTextStyles.extraSmall.copyWith(
+        fontWeight: FontWeight.w600,
+      );
+
   @override
   Widget build(BuildContext context) {
     const selectedChipColor = AppColors.button;
@@ -76,10 +80,7 @@ class AppChip extends StatelessWidget {
                   child: AnimatedDefaultTextStyle(
                     duration: animationDuration,
                     curve: animationCurve,
-                    style: AppTextStyles.extraSmall.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                    style: chipTextStyle.copyWith(color: textColor),
                     child: Text(
                       text,
                       overflow: TextOverflow.ellipsis,

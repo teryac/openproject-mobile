@@ -248,19 +248,19 @@ class WorkPackagesSearchResults extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: Builder(
                                 builder: (context) {
-                                  final types = context
+                                  final statuss = context
                                       .read<WorkPackageDependenciesDataCubit>()
                                       .state
                                       .data!
-                                      .workPackageTypes;
+                                      .workPackageStatuses;
 
-                                  final type = types.firstWhere(
+                                  final status = statuss.firstWhere(
                                     (element) =>
                                         element.id ==
-                                        workPackages[index].typeId,
+                                        workPackages[index].statusId,
                                   );
 
-                                  final typeColor = HexColor(type.colorHex)
+                                  final statusColor = HexColor(status.colorHex)
                                       .getReadableColor();
 
                                   return Container(
@@ -269,14 +269,18 @@ class WorkPackagesSearchResults extends StatelessWidget {
                                       vertical: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: typeColor.withAlpha(38),
+                                      color: statusColor.withAlpha(38),
                                       borderRadius: BorderRadius.circular(360),
                                     ),
-                                    child: Text(
-                                      type.name,
-                                      style: AppTextStyles.extraSmall.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                        color: typeColor,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(minWidth: 28),
+                                      child: Text(
+                                        status.name,
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyles.extraSmall.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          color: statusColor,
+                                        ),
                                       ),
                                     ),
                                   );

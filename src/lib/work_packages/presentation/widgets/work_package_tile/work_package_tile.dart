@@ -289,7 +289,7 @@ class _WorkPackageTileState extends State<WorkPackageTile>
                                                   color:
                                                       statusColor.withAlpha(38),
                                                   borderRadius:
-                                                      BorderRadius.circular(4),
+                                                      BorderRadius.circular(360),
                                                 ),
                                                 child: Text(
                                                   status.name,

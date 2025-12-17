@@ -1,4 +1,4 @@
-// import 'package:device_preview/device_preview.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -10,8 +10,8 @@ import 'package:open_project/core/util/bloc_observer.dart';
 
 void main() {
   _attachBlocObserver();
-  runApp(const MyApp()); // Use for release mode
-  // runApp(DevicePreview(builder: (_) => const MyApp())); // Use for debug mode
+  // runApp(const MyApp()); // Use for release mode
+  runApp(DevicePreview(builder: (_) => const MyApp())); // Use for debug mode
 }
 
 class MyApp extends StatelessWidget {

@@ -4,7 +4,7 @@ import 'package:open_project/core/util/duration_extension.dart';
 class PopupMenuAnimation {
   late final AnimationController controller;
   late final Animation<double> scale;
-  final duration = 400.ms;
+  final duration = 500.ms;
 
   PopupMenuAnimation({required TickerProvider vsync}) {
     controller = AnimationController(
@@ -15,7 +15,7 @@ class PopupMenuAnimation {
     scale = Tween<double>(begin: 0, end: 1.0).animate(
       CurvedAnimation(
         parent: controller,
-        curve: Curves.easeOutCubic,
+        curve: Curves.easeInOutCubic,
       ),
     );
   }

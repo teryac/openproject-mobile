@@ -232,7 +232,7 @@ class HomeSearchResults extends StatelessWidget {
                                                   const EdgeInsets.all(8.0),
                                               decoration: BoxDecoration(
                                                 color:
-                                                    statusColor.withAlpha(15),
+                                                    statusColor.withAlpha(38),
                                                 borderRadius:
                                                     BorderRadius.circular(360),
                                               ),

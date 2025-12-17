@@ -22,7 +22,10 @@ class WorkPackageTypePicker extends StatelessWidget {
     types.remove(selectedType);
 
     return AppPopupMenu(
-      dropdownAlignment: true,
+      menuAlignment: (
+        follower: Alignment.topLeft,
+        target: Alignment.bottomLeft,
+      ),
       enabled: options.isTypeWritable,
       onTap: options.isTypeWritable
           ? null
@@ -31,11 +34,11 @@ class WorkPackageTypePicker extends StatelessWidget {
             },
       menu: (toggleMenu) {
         return Container(
-          margin: const EdgeInsets.only(top: 4),
-          padding: const EdgeInsets.all(8),
+          margin: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.background,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: AppColors.border,
               width: 1,
@@ -69,80 +72,65 @@ class WorkPackageTypePicker extends StatelessWidget {
             ],
           ),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 150),
-            child: SingleChildScrollView(
-              child: IntrinsicWidth(
-                child: Column(
-                  children: List.generate(
-                    types.length,
-                    (index) {
-                      final typeColor =
-                          HexColor(types[index].colorHex).getReadableColor();
-                      final content = Material(
-                        color: typeColor.withAlpha(38),
-                        borderRadius: BorderRadius.circular(360),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(360),
-                          highlightColor:
-                              Colors.transparent, // Removes gray overlay
-                          splashColor: typeColor.withAlpha(75),
-                          onTap: () {
-                            final formCubit =
-                                context.read<WorkPackageFormDataCubit>();
-                            final payloadCubit =
-                                context.read<WorkPackagePayloadCubit>();
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.widthOf(context) - 60,
+            ),
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: List.generate(
+                types.length,
+                (index) {
+                  final typeColor =
+                      HexColor(types[index].colorHex).getReadableColor();
 
-                            payloadCubit
-                                .updatePayload(payloadCubit.state!.copyWith(
-                              type: Value.present(
-                                types[index],
-                              ),
-                            ));
-                            formCubit.getWorkPackageForm(
-                              context: context,
-                              workPackageType: types[index],
-                            );
+                  return Material(
+                    color: typeColor.withAlpha(38),
+                    borderRadius: BorderRadius.circular(8),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      highlightColor:
+                          Colors.transparent, // Removes gray overlay
+                      splashColor: typeColor.withAlpha(75),
+                      onTap: () {
+                        final formCubit =
+                            context.read<WorkPackageFormDataCubit>();
+                        final payloadCubit =
+                            context.read<WorkPackagePayloadCubit>();
 
-                            toggleMenu(false);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 12,
-                            ),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(360),
-                            ),
-                            child: Text(
-                              types[index].name,
-                              style: AppTextStyles.small.copyWith(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 11,
-                                color: typeColor,
-                              ),
+                        payloadCubit.updatePayload(
+                          payloadCubit.state!.copyWith(
+                            type: Value.present(
+                              types[index],
                             ),
                           ),
+                        );
+                        formCubit.getWorkPackageForm(
+                          context: context,
+                          workPackageType: types[index],
+                        );
+
+                        toggleMenu(false);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 12,
                         ),
-                      );
-
-                      const divider = Divider(
-                        height: 16,
-                        color: AppColors.border,
-                        thickness: 1,
-                      );
-
-                      // If last widget, don't put a divider at the end
-                      if (index == types.length - 1) {
-                        return content;
-                      }
-
-                      return Column(
-                        children: [content, divider],
-                      );
-                    },
-                  ),
-                ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(360),
+                        ),
+                        child: Text(
+                          types[index].name,
+                          style: AppTextStyles.small.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: typeColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -152,9 +140,9 @@ class WorkPackageTypePicker extends StatelessWidget {
         final typeColor = HexColor(selectedType.colorHex).getReadableColor();
         return Material(
           color: typeColor.withAlpha(38),
-          borderRadius: BorderRadius.circular(360),
+          borderRadius: BorderRadius.circular(12),
           child: InkWell(
-            borderRadius: BorderRadius.circular(360),
+            borderRadius: BorderRadius.circular(12),
             highlightColor: Colors.transparent, // Removes gray overlay
             splashColor: typeColor.withAlpha(75),
             onTap: () {
