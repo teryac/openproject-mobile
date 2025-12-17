@@ -54,7 +54,7 @@ class WorkPackagesSearchBar extends StatelessWidget {
         return AppTextFormField.filled(
           controller:
               context.read<WorkPackagesController>().searchTextController,
-          hint: 'Search for tasks in this project..',
+          hint: 'Search for work packages..',
           textStyle: AppTextStyles.small.copyWith(
             color: AppColors.primaryText,
             fontSize: 15,

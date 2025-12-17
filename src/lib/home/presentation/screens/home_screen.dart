@@ -12,6 +12,7 @@ import 'package:open_project/core/widgets/empty_state_widget.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/widgets/home_search_bar.dart';
+import 'package:open_project/home/presentation/widgets/private_projects_forbidden_widget.dart';
 import 'package:open_project/home/presentation/widgets/projects_list_error_widget.dart';
 import 'package:open_project/home/presentation/widgets/projects_list_widget.dart';
 import 'package:open_project/core/constants/app_assets.dart';
@@ -30,9 +31,12 @@ class HomeScreen extends StatelessWidget {
     const expansionAnimationDuration = Duration(milliseconds: 700);
     const expansionAnimationCurve = Curves.easeInOut;
 
+    final cache = context.read<CacheCubit>().state;
+    final isAuthenticated = cache[AppConstants.apiTokenCacheKey] != null;
+
     return MultiBlocListener(
       listeners: [
-        BlocListener<HomeProjectsListCubit,
+        BlocListener<HomePublicProjectsCubit,
             PaginatedAsyncValue<PaginatedProjects, NetworkFailure>>(
           listener: (context, state) {
             // If requesting more items failed, show an error snackbar.
@@ -44,6 +48,16 @@ class HomeScreen extends StatelessWidget {
             }
           },
         ),
+        // Only authenticated members can access private projects
+        if (isAuthenticated)
+          BlocListener<HomePublicProjectsCubit,
+              PaginatedAsyncValue<PaginatedProjects, NetworkFailure>>(
+            listener: (context, state) {
+              if (state.hasPageError) {
+                showErrorSnackBar(context, state.error!.errorMessage);
+              }
+            },
+          ),
       ],
       child: Portal(
         child: Scaffold(
@@ -66,14 +80,10 @@ class HomeScreen extends StatelessWidget {
                           child: HomeSearchBar(),
                         ),
                         const SliverIndent(height: 20),
-                        BlocBuilder<
-                            HomeProjectsListCubit,
-                            PaginatedAsyncValue<PaginatedProjects,
-                                NetworkFailure>>(
-                          builder: (context, state) {
-                            final cache = context.read<CacheCubit>().state;
-                            final isAuthenticated =
-                                cache[AppConstants.apiTokenCacheKey] != null;
+                        Builder(
+                          builder: (context) {
+                            final publicProjects =
+                                context.watch<HomePublicProjectsCubit>().state;
 
                             // Checking if the user is authenticated makes the error widget
                             // visible only once -for both public and private projects-.
@@ -82,6 +92,12 @@ class HomeScreen extends StatelessWidget {
                             // and that last widget should be shown regardless of whther the public
                             // projects loaded, are still loading, or failed to load.
                             if (isAuthenticated) {
+                              final privateProjects = context
+                                  .watch<HomePrivateProjectsCubit>()
+                                  .state;
+
+                              // These calculations allow the error/empty state widget to
+                              // be centered
                               final safeArea = MediaQuery.paddingOf(context);
                               const approximateHeightOfScreenHeader = 300;
                               final remainingScreenHeight =
@@ -89,7 +105,13 @@ class HomeScreen extends StatelessWidget {
                                       safeArea.top -
                                       safeArea.bottom -
                                       approximateHeightOfScreenHeader;
-                              if (state.data?.projects.isEmpty ?? false) {
+
+                              // When neither public nor private projects exist, an empty
+                              // state widget is shown
+                              if ((privateProjects.data?.projects.isEmpty ??
+                                      false) &&
+                                  (publicProjects.data?.projects.isEmpty ??
+                                      false)) {
                                 return SliverToBoxAdapter(
                                   child: SizedBox(
                                     height: remainingScreenHeight,
@@ -102,16 +124,27 @@ class HomeScreen extends StatelessWidget {
                                 );
                               }
 
-                              if (state.isError) {
+                              // An error is shown when
+                              if (privateProjects.isError &&
+                                  publicProjects.isError) {
                                 return SliverToBoxAdapter(
                                   child: SizedBox(
                                     height: remainingScreenHeight,
                                     child: Center(
                                       child: ProjectsListErrorWidget(
-                                        errorMessage: state.error!.errorMessage,
+                                        errorMessage:
+                                            publicProjects.error!.errorMessage,
                                         retryTrigger: () {
                                           context
-                                              .read<HomeProjectsListCubit>()
+                                              .read<HomePublicProjectsCubit>()
+                                              .getProjects(
+                                                context: context,
+                                                projectsFilters:
+                                                    const ProjectsFilters
+                                                        .noFilters(),
+                                              );
+                                          context
+                                              .read<HomePrivateProjectsCubit>()
                                               .getProjects(
                                                 context: context,
                                                 projectsFilters:
@@ -183,7 +216,8 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SliverIndent(height: 16),
-                                const ProjectsListWidget(
+                                ProjectsListWidget(
+                                  projectsAsyncValue: publicProjects,
                                   expansionAnimationDuration:
                                       expansionAnimationDuration,
                                   expansionAnimationCurve:
@@ -205,13 +239,20 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SliverIndent(height: 20.0),
-                                const ProjectsListWidget(
-                                  expansionAnimationDuration:
-                                      expansionAnimationDuration,
-                                  expansionAnimationCurve:
-                                      expansionAnimationCurve,
-                                  public: false,
-                                ),
+                                isAuthenticated
+                                    ? ProjectsListWidget(
+                                        projectsAsyncValue: context
+                                            .watch<HomePrivateProjectsCubit>()
+                                            .state,
+                                        expansionAnimationDuration:
+                                            expansionAnimationDuration,
+                                        expansionAnimationCurve:
+                                            expansionAnimationCurve,
+                                        public: false,
+                                      )
+                                    : SliverToBoxAdapter(
+                                        child: PrivateProjectsForbiddenWidget(),
+                                      ),
                                 const SliverIndent(height: 12),
                               ],
                             );

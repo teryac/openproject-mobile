@@ -19,6 +19,7 @@ import 'package:open_project/auth/presentation/cubits/auth_page_view_cubit.dart'
 import 'package:open_project/auth/presentation/cubits/auth_ping_server_cubit.dart';
 import 'package:open_project/auth/presentation/screens/auth_screen.dart';
 import 'package:open_project/auth/presentation/screens/update_api_token_screen.dart';
+import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/cache/cache_repo.dart';
 import 'package:open_project/home/application/home_controller.dart';
@@ -186,6 +187,10 @@ GoRouter getAppRouter() => GoRouter(
           path: AppRoutes.home.path,
           name: AppRoutes.home.name,
           builder: (context, state) {
+            final cache = context.read<CacheCubit>().state;
+            final isAuthenticated =
+                cache[AppConstants.apiTokenCacheKey] != null;
+
             return MultiBlocProvider(
               providers: [
                 RepositoryProvider(
@@ -196,12 +201,21 @@ GoRouter getAppRouter() => GoRouter(
                 ),
                 BlocProvider(
                   create: (context) {
-                    return HomeProjectsListCubit(
+                    return HomePublicProjectsCubit(
                       context: context,
                       homeRepo: context.read<HomeRepo>(),
                     );
                   },
                 ),
+                if (isAuthenticated)
+                  BlocProvider(
+                    create: (context) {
+                      return HomePrivateProjectsCubit(
+                        context: context,
+                        homeRepo: context.read<HomeRepo>(),
+                      );
+                    },
+                  ),
                 BlocProvider(
                   create: (context) {
                     return SearchDialogProjectsCubit(

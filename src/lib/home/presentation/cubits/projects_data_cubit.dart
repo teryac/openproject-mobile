@@ -10,13 +10,24 @@ import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/models/project.dart';
 
-/// This class is used for the projects list in the home screen
-class HomeProjectsListCubit extends _ProjectsDataCubit {
-  HomeProjectsListCubit(
+/// This class is used for public projects list in the home screen
+class HomePublicProjectsCubit extends _ProjectsDataCubit {
+  HomePublicProjectsCubit(
       {required super.homeRepo, required BuildContext context}) {
     super.getProjects(
       context: context,
-      projectsFilters: const ProjectsFilters.noFilters(),
+      projectsFilters: const ProjectsFilters(public: true),
+    );
+  }
+}
+
+/// This class is used for private projects list in the home screen
+class HomePrivateProjectsCubit extends _ProjectsDataCubit {
+  HomePrivateProjectsCubit(
+      {required super.homeRepo, required BuildContext context}) {
+    super.getProjects(
+      context: context,
+      projectsFilters: const ProjectsFilters(public: false),
     );
   }
 }

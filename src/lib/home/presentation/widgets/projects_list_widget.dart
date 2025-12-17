@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async_value/flutter_async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_project/core/cache/cache_cubit.dart';
-import 'package:open_project/core/constants/app_constants.dart';
 import 'package:open_project/core/util/failure.dart';
 import 'package:open_project/core/util/pagination.dart';
 import 'package:open_project/core/widgets/empty_state_widget.dart';
@@ -12,18 +10,20 @@ import 'package:open_project/home/data/home_repo.dart';
 import 'package:open_project/home/models/paginated_projects.dart';
 import 'package:open_project/home/presentation/cubits/projects_data_cubit.dart';
 import 'package:open_project/home/presentation/cubits/projects_list_expansion_cubit.dart';
-import 'package:open_project/home/presentation/widgets/private_projects_forbidden_widget.dart';
 import 'package:open_project/home/presentation/widgets/project_tile.dart';
 import 'package:open_project/home/presentation/widgets/project_tile_loading_view.dart';
 import 'package:open_project/home/presentation/widgets/projects_list_error_widget.dart';
 import 'package:sliver_expandable/sliver_expandable.dart';
 
 class ProjectsListWidget extends StatelessWidget {
+  final PaginatedAsyncValue<PaginatedProjects, NetworkFailure>
+      projectsAsyncValue;
   final bool public;
   final Duration expansionAnimationDuration;
   final Curve expansionAnimationCurve;
   const ProjectsListWidget({
     super.key,
+    required this.projectsAsyncValue,
     required this.expansionAnimationDuration,
     required this.expansionAnimationCurve,
     this.public = true,
@@ -31,19 +31,8 @@ class ProjectsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cache = context.read<CacheCubit>().state;
-    final isAuthenticated = cache[AppConstants.apiTokenCacheKey] != null;
-
-    // Unauthenticated users can't access private projects
-    if (!public && !isAuthenticated) {
-      return SliverToBoxAdapter(
-        child: PrivateProjectsForbiddenWidget(),
-      );
-    }
-
-    return BlocBuilder<HomeProjectsListCubit,
-        PaginatedAsyncValue<PaginatedProjects, NetworkFailure>>(
-      builder: (context, projectsState) {
+    return Builder(
+      builder: (context) {
         return BlocBuilder<ProjectsListExpansionCubit, bool>(
           // Only build when the widget is for public projects because
           // private projects do not expand/collapse
@@ -54,7 +43,7 @@ class ProjectsListWidget extends StatelessWidget {
               duration: expansionAnimationDuration,
               curve: expansionAnimationCurve,
               sliver: AsyncValueBuilder(
-                value: projectsState,
+                value: projectsAsyncValue,
                 loading: (context) {
                   return SliverPadding(
                     padding: const EdgeInsets.all(8),
@@ -70,7 +59,16 @@ class ProjectsListWidget extends StatelessWidget {
                     child: ProjectsListErrorWidget(
                       errorMessage: error.errorMessage,
                       retryTrigger: () {
-                        context.read<HomeProjectsListCubit>().getProjects(
+                        if (public) {
+                          context.read<HomePublicProjectsCubit>().getProjects(
+                                context: context,
+                                projectsFilters:
+                                    const ProjectsFilters.noFilters(),
+                              );
+                          return;
+                        }
+
+                        context.read<HomePrivateProjectsCubit>().getProjects(
                               context: context,
                               projectsFilters:
                                   const ProjectsFilters.noFilters(),
@@ -135,10 +133,21 @@ class ProjectsListWidget extends StatelessWidget {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: LoadNextPageButton(
-                                  loading: projectsState.isLoadingPage,
+                                  loading: projectsAsyncValue.isLoadingPage,
                                   onTap: () {
+                                    if (public) {
+                                      context
+                                          .read<HomePublicProjectsCubit>()
+                                          .getProjects(
+                                            context: context,
+                                            projectsFilters:
+                                                const ProjectsFilters
+                                                    .noFilters(),
+                                          );
+                                      return;
+                                    }
                                     context
-                                        .read<HomeProjectsListCubit>()
+                                        .read<HomePrivateProjectsCubit>()
                                         .getProjects(
                                           context: context,
                                           projectsFilters:

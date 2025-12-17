@@ -55,7 +55,7 @@ class HomeSearchBar extends StatelessWidget {
       child: (toggleMenu) {
         return AppTextFormField.filled(
           controller: context.read<HomeController>().searchTextController,
-          hint: 'Search for Projects..',
+          hint: 'Search for projects..',
           textStyle: AppTextStyles.small.copyWith(
             color: AppColors.primaryText,
             fontSize: 15,

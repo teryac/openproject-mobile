@@ -60,34 +60,42 @@ Future<T?> showBlurredBottomSheet<T>({
   required WidgetBuilder builder,
   double blurSigma = 6.0,
   Color overlayColor = const Color(0x80505558),
-  // The color of the modal sheet itself. Must be transparent for the blur to work.
-  Color modalSheetColor = Colors.transparent,
-  // Whether the content of the sheet should occupy the full screen height (like your old code).
+  Color sheetBackgroundColor = Colors.white, // The actual color of your sheet
   bool expand = false,
 }) {
   return showModalBottomSheet<T>(
     context: context,
-    isScrollControlled:
-        expand, // Use isScrollControlled to allow full screen height
-    backgroundColor: modalSheetColor,
-    barrierColor: overlayColor, // Use barrierColor for the overlay tint
+    isScrollControlled: expand,
+    backgroundColor: Colors.transparent,
+    barrierColor: overlayColor,
     builder: (ctx) {
-      // Wrap the content with BackdropFilter to blur the widgets *behind* it.
       return BackdropFilter(
-        // The blur is applied here, using the passed sigma value.
         filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-        child: expand
-            ? Column(
-                // When expanded, the column pushes the content to the bottom
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // The actual content wrapped in a flexible container
-                  Flexible(
+        child: Container(
+          // Apply the background color here
+          decoration: BoxDecoration(
+            color: sheetBackgroundColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          child: SafeArea(
+            // bottom: true ensures content stays above the nav bar,
+            // but the Container's color will still fill the safe area.
+            bottom: true,
+            child: expand
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height *
+                        0.9, // Adjust as needed
                     child: builder(ctx),
+                  )
+                : Column(
+                    mainAxisSize:
+                        MainAxisSize.min, // Sheet wraps content height
+                    children: [builder(ctx)],
                   ),
-                ],
-              )
-            : builder(ctx),
+          ),
+        ),
       );
     },
   );
