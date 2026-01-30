@@ -69,9 +69,9 @@ class _SplashScreenState extends State<SplashScreen>
                 child: FadeTransition(
                   opacity: _animationHandler.fadeInAnimation,
                   child: SvgPicture.asset(
-                    AppIcons.logo,
-                    width: 40,
-                    height: 40,
+                    AppIcons.clientLogo,
+                    width: 57,
+                    height: 57,
                   ),
                 ),
               ),

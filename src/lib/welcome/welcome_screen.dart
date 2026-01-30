@@ -12,28 +12,9 @@ import 'package:open_project/core/styles/text_styles.dart';
 import 'package:open_project/core/widgets/app_button.dart';
 import 'package:open_project/core/widgets/app_image.dart';
 
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  @override
-  State<WelcomeScreen> createState() => Start();
-}
-
-ButtonStyle button() {
-  ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: const Color.fromARGB(255, 243, 233, 233),
-    elevation: 10,
-    minimumSize: const Size(360, 50),
-    padding: const EdgeInsets.symmetric(horizontal: 35),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(15)),
-    ),
-  );
-
-  return raisedButtonStyle;
-}
-
-class Start extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,20 +37,49 @@ class Start extends State<WelcomeScreen> {
                 left: 0,
                 child: Align(
                   alignment: Alignment.center,
-                  child: ClipRRect(
-                    clipBehavior: Clip.antiAlias,
-                    borderRadius: BorderRadius.circular(360),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                      child: Container(
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(360),
-                          color: const Color(0x99262B2C),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 64),
+                      const Spacer(),
+                      ClipRRect(
+                        clipBehavior: Clip.antiAlias,
+                        borderRadius: BorderRadius.circular(360),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          child: Container(
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(360),
+                              color: const Color(0x99262B2C),
+                            ),
+                            child: SvgPicture.asset(AppIcons.logoWithName),
+                          ),
                         ),
-                        child: SvgPicture.asset(AppIcons.logoWithName),
                       ),
-                    ),
+                      const Spacer(),
+                      ClipRRect(
+                        clipBehavior: Clip.antiAlias,
+                        borderRadius: BorderRadius.circular(360),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          child: InkWell(
+                            onTap: () {
+                              context.pushNamed(AppRoutes.about.name);
+                            },
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(360),
+                                color: const Color(0x99262B2C),
+                              ),
+                              child: SvgPicture.asset(AppIcons.info),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                    ],
                   ),
                 ),
               ),

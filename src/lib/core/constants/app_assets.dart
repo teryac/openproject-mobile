@@ -3,6 +3,7 @@ class AppIcons {
   static const _fileType = '.svg';
 
   static const logo = '${_directory}logo$_fileType';
+  static const clientLogo = '${_directory}client_logo$_fileType';
   static const appNamePreview = '${_directory}app_name_preview$_fileType';
   static const task = '${_directory}task$_fileType';
   static const trash = '${_directory}trash$_fileType';
@@ -24,6 +25,7 @@ class AppIcons {
   static const category = '${_directory}category$_fileType';
   static const login = '${_directory}login$_fileType';
   static const addSquare = '${_directory}add-square$_fileType';
+  static const info = '${_directory}info$_fileType';
 }
 
 class AppImages {
@@ -41,6 +43,7 @@ class AppImages {
   static const globe = '${_directory}globe$_fileType';
   static const overview = '${_directory}overview$_fileType';
   static const team = '${_directory}team$_fileType';
+  static const clientLogo = '${_directory}client_logo$_fileType';
   static const emptyStateIllustration =
       '${_directory}empty_state_illustration$_fileType';
   static const errorStateIllustration =

@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_project/about/application/about_controller.dart';
+import 'package:open_project/about/data/about_repo.dart';
+import 'package:open_project/about/presentation/cubits/changelog_version_expansion_cubit.dart';
+import 'package:open_project/about/presentation/screens/about_screen.dart';
 import 'package:open_project/add_work_package/application/add_work_package_controller.dart';
 import 'package:open_project/add_work_package/data/add_work_package_repo.dart';
 import 'package:open_project/add_work_package/models/work_package_mode.dart';
@@ -56,7 +60,8 @@ enum AppRoutes {
   addWorkPackage(
       name: 'addWorkPackage', path: '/addWorkPackage/:work_package_id'),
   viewWorkPackage(name: 'viewWorkPackage', path: '/viewWorkPackage'),
-  welcome(name: 'welcome', path: '/welcome');
+  welcome(name: 'welcome', path: '/welcome'),
+  about(name: 'about', path: '/about');
 
   const AppRoutes({required this.name, required this.path});
   final String name;
@@ -86,6 +91,7 @@ GoRouter getAppRouter() => GoRouter(
         // List of auth-related screens
         final isAuthRoute = [
           AppRoutes.welcome.path,
+          AppRoutes.about.path,
           AppRoutes.auth.path,
         ].any((path) => state.uri.path == path);
 
@@ -120,6 +126,28 @@ GoRouter getAppRouter() => GoRouter(
           path: AppRoutes.welcome.path,
           name: AppRoutes.welcome.name,
           builder: (context, state) => const WelcomeScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.about.path,
+          name: AppRoutes.about.name,
+          builder: (context, state) {
+            return MultiBlocProvider(
+              providers: [
+                RepositoryProvider(
+                  create: (_) => AboutRepo(),
+                ),
+                RepositoryProvider(
+                  create: (context) => AboutController(
+                    aboutRepo: context.read<AboutRepo>(),
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => ChangelogVersionExpansionCubit(),
+                ),
+              ],
+              child: const AboutScreen(),
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.auth.path,
