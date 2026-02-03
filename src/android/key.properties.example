@@ -1,0 +1,4 @@
+storePassword=KEYSTORE_PASSWORD_HERE
+keyPassword=KEYSTORE_PASSWORD_HERE
+keyAlias=upload
+storeFile=PATH_TO_UPLOAD_KEYSTORE_JKS_FILE
