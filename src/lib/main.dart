@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_project/core/cache/cache_cubit.dart';
 import 'package:open_project/core/cache/cache_repo.dart';
@@ -13,9 +14,8 @@ import 'package:open_project/core/util/bloc_observer.dart';
 
 void main() async {
   _attachBlocObserver();
-
   WidgetsFlutterBinding.ensureInitialized();
-
+  await _loadEnvFile();
   await _initializeFirebaseCrashlytics();
 
   runApp(const MyApp()); // Use for release mode
@@ -54,6 +54,10 @@ class MyApp extends StatelessWidget {
 
 void _attachBlocObserver() {
   Bloc.observer = AppBlocObserver();
+}
+
+Future<void> _loadEnvFile() async {
+  await dotenv.load(fileName: ".env");
 }
 
 Future<void> _initializeFirebaseCrashlytics() async {
