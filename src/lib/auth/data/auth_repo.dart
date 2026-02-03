@@ -46,11 +46,11 @@ class AuthRepo {
       return AsyncResult.error(
         error: NetworkFailure(errorMessage: 'Timed out'),
       );
-    } on SocketException catch (_) {
-      return AsyncResult.error(
-        error: NetworkFailure(errorMessage: 'No internet connection'),
-      );
-    } catch (exception) {
+    }
+    // `SocketException` is not handled because Flutter can't
+    // differentiate between an invalid URL and a missing internet
+    // connection (Apparently)
+    catch (exception) {
       return const AsyncResult.error(
         error: NetworkFailure(
           errorMessage: 'An error occurred',

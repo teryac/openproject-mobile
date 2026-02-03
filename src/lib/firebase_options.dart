@@ -17,17 +17,29 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for iOS - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macOS - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,49 +52,11 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDPDlnUbmSguloSQ5fJLKZOeUbv94kToKc',
-    appId: '1:171947294057:web:013295d6c3ace611d511f8',
-    messagingSenderId: '171947294057',
-    projectId: 'trello-2-f85a2',
-    authDomain: 'trello-2-f85a2.firebaseapp.com',
-    storageBucket: 'trello-2-f85a2.appspot.com',
-    measurementId: 'G-C7LZLL52F8',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBdHz0foR-6WQT0iv8wVzIu7IExILOibWs',
-    appId: '1:171947294057:android:19705b93721dd51ed511f8',
-    messagingSenderId: '171947294057',
-    projectId: 'trello-2-f85a2',
-    storageBucket: 'trello-2-f85a2.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyByH-PZRjdisMK0HJM-fFIrn9UygAzYGgU',
-    appId: '1:171947294057:ios:d27cdc5ed7589a5fd511f8',
-    messagingSenderId: '171947294057',
-    projectId: 'trello-2-f85a2',
-    storageBucket: 'trello-2-f85a2.appspot.com',
-    iosBundleId: 'com.tryc.openproject',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyByH-PZRjdisMK0HJM-fFIrn9UygAzYGgU',
-    appId: '1:171947294057:ios:0fa6fb380a1f6c71d511f8',
-    messagingSenderId: '171947294057',
-    projectId: 'trello-2-f85a2',
-    storageBucket: 'trello-2-f85a2.appspot.com',
-    iosBundleId: 'com.example.openProject',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDPDlnUbmSguloSQ5fJLKZOeUbv94kToKc',
-    appId: '1:171947294057:web:57525b1be87194c0d511f8',
-    messagingSenderId: '171947294057',
-    projectId: 'trello-2-f85a2',
-    authDomain: 'trello-2-f85a2.firebaseapp.com',
-    storageBucket: 'trello-2-f85a2.appspot.com',
-    measurementId: 'G-WRC656KS0L',
+    apiKey: 'AIzaSyA4zMhEvzHurhDo1773CA1XajgzNy1dues',
+    appId: '1:211202283774:android:9b8e1423aa6ddd32ecadaf',
+    messagingSenderId: '211202283774',
+    projectId: 'openproject-60c46',
+    storageBucket: 'openproject-60c46.firebasestorage.app',
   );
 }

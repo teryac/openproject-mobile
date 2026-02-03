@@ -80,29 +80,34 @@ class _ServerInputScreenState extends State<ServerInputScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              AppTextFormField(
-                hint: 'URL Link',
-                controller:
-                    context.read<AuthController>().serverUrlTextController,
-                disableLabel: true,
-                contentPadding: const EdgeInsets.only(top: 18, bottom: 18),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 8,
-                    bottom: 8,
-                    right: 8,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: AppColors.border,
+              Form(
+                key: context.read<AuthController>().serverFormKey,
+                child: AppTextFormField(
+                  hint: 'URL Link',
+                  controller:
+                      context.read<AuthController>().serverUrlTextController,
+                  disableLabel: true,
+                  validator: context.read<AuthController>().urlValidator,
+                  autovalidateMode: AutovalidateMode.onUnfocus,
+                  contentPadding: const EdgeInsets.only(top: 18, bottom: 18),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                      bottom: 8,
+                      right: 8,
                     ),
-                    child: Text(
-                      'https://',
-                      style: AppTextStyles.small.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.highContrastCursor,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.border,
+                      ),
+                      child: Text(
+                        'https://',
+                        style: AppTextStyles.small.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.highContrastCursor,
+                        ),
                       ),
                     ),
                   ),

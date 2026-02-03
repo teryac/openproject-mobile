@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "171947294057",
-    "project_id": "trello-2-f85a2",
-    "storage_bucket": "trello-2-f85a2.appspot.com"
+    "project_number": "211202283774",
+    "project_id": "openproject-60c46",
+    "storage_bucket": "openproject-60c46.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:171947294057:android:140c00b043a95f67d511f8",
-        "android_client_info": {
-          "package_name": "com.bracktix.trello2"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBdHz0foR-6WQT0iv8wVzIu7IExILOibWs"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:171947294057:android:19705b93721dd51ed511f8",
+        "mobilesdk_app_id": "1:211202283774:android:9b8e1423aa6ddd32ecadaf",
         "android_client_info": {
           "package_name": "com.tryc.openproject"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBdHz0foR-6WQT0iv8wVzIu7IExILOibWs"
+          "current_key": "AIzaSyA4zMhEvzHurhDo1773CA1XajgzNy1dues"
         }
       ],
       "services": {

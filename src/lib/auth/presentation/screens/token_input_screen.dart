@@ -76,10 +76,15 @@ class TokenInputScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              AppTextFormField(
-                hint: 'API Token',
-                controller: context.read<AuthController>().tokenTextController,
-                obscure: true,
+              Form(
+                key: context.read<AuthController>().tokenFormKey,
+                child: AppTextFormField(
+                  hint: 'API Token',
+                  controller: context.read<AuthController>().tokenTextController,
+                  obscure: true,
+                  validator: context.read<AuthController>().tokenValidator,
+                  autovalidateMode: AutovalidateMode.onUnfocus,
+                ),
               ),
               const SizedBox(height: 8),
               Align(

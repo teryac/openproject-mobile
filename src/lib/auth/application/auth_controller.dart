@@ -105,20 +105,44 @@ class AuthController {
       _authScreenPageViewController;
 
   // `Server Input` screen text field controller
+  final serverFormKey = GlobalKey<FormState>();
   final serverUrlTextController = TextEditingController();
+  String? urlValidator(String? value) {
+    final uri = Uri.tryParse('https://$value');
+
+    if (uri != null && uri.host.isNotEmpty) {
+      return null;
+    }
+
+    return 'Invalid URL';
+  }
+
   void pingServer() {
-    // 'https://' is explicitly added because it's handled
-    // in the text field (Check UI)
-    if (serverUrlTextController.text.isNotEmpty) {
+    final isValid = serverFormKey.currentState?.validate() ?? false;
+
+    if (isValid) {
+      // 'https://' is explicitly added here because it's handled
+      // in the text field (Check UI)
       authPingServerCubit
           ?.pingServer('https://${serverUrlTextController.text}');
     }
   }
 
   // `Token Input` screen text field controller
+  final tokenFormKey = GlobalKey<FormState>();
   final tokenTextController = TextEditingController();
+  String? tokenValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      return null;
+    }
+
+    return 'Invalid token';
+  }
+
   void getUserData() async {
-    if (tokenTextController.text.isNotEmpty) {
+    final isValid = tokenFormKey.currentState?.validate() ?? false;
+
+    if (isValid) {
       final cachedServerUrl = await context
           .read<CacheRepo>()
           .getData(AppConstants.serverUrlCacheKey);

@@ -42,6 +42,7 @@ class AppTextFormField extends StatefulWidget {
   // Optional debounce duration (default to 500ms)
   final Duration debounceDuration;
   final _TextFieldStyle _style;
+  final AutovalidateMode autovalidateMode;
 
   const AppTextFormField({
     this.initialValue,
@@ -70,6 +71,7 @@ class AppTextFormField extends StatefulWidget {
     this.textStyle,
     this.onDebounceSubmitted,
     this.debounceDuration = const Duration(milliseconds: 500),
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   })  : borderRadius = null,
         _style = _TextFieldStyle.normal;
 
@@ -101,6 +103,7 @@ class AppTextFormField extends StatefulWidget {
     this.textStyle,
     this.onDebounceSubmitted,
     this.debounceDuration = const Duration(milliseconds: 500),
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   }) : _style = _TextFieldStyle.outlined;
 
   const AppTextFormField.filled({
@@ -131,6 +134,7 @@ class AppTextFormField extends StatefulWidget {
     this.textStyle,
     this.onDebounceSubmitted,
     this.debounceDuration = const Duration(milliseconds: 500),
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   }) : _style = _TextFieldStyle.filled;
 
   @override
@@ -220,7 +224,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         autofocus: widget.autofocus,
         textInputAction: widget.textInputAction,
         onFieldSubmitted: widget.onFieldSubmitted,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: widget.autovalidateMode,
         keyboardType: widget.keyboardType,
         cursorColor: AppColors.primaryText,
         decoration: InputDecoration(
