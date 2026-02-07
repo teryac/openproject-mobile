@@ -16,7 +16,12 @@ void main() async {
   _attachBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await _loadEnvFile();
-  await _initializeFirebaseCrashlytics();
+  await _initializeFirebaseCrashlytics().timeout(
+    const Duration(seconds: 5),
+    onTimeout: () {
+      // Firebase initialization timed out, proceeding anyway.
+    },
+  );
 
   runApp(const MyApp()); // Use for release mode
   // runApp(DevicePreview(builder: (_) => const MyApp())); // Use for debug mode
