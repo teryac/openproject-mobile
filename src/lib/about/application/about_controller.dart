@@ -6,7 +6,7 @@ class AboutController {
 
   AboutController({required AboutRepo aboutRepo}) : _aboutRepo = aboutRepo;
 
-  String getCopyRights() => _aboutRepo.getCopyRights();
+  String getProjectInfo() => _aboutRepo.getProjectInfo();
   String getDataSafety() => _aboutRepo.getDataSafety();
   String getFeedback() => _aboutRepo.getFeedback();
   List<Version> getVersions() => _aboutRepo.getVersions();

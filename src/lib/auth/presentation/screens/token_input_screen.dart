@@ -25,7 +25,7 @@ class TokenInputScreen extends StatelessWidget {
           padding:
               EdgeInsets.only(bottom: 32.0, left: 20.0, right: 20.0, top: 20.0),
           child: AppAssetImage(
-            assetPath: AppImages.overview,
+            assetPath: AppImages.appFeaturesOverview,
             height: 217.0,
             fit: BoxFit.fitHeight,
           ),

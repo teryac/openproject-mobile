@@ -30,15 +30,15 @@ class AboutScreen extends StatelessWidget {
                     SliverList.list(
                       children: [
                         _InfoTile(
-                          title: 'Copy rights',
-                          description: controller.getCopyRights(),
+                          title: 'Project Information',
+                          description: controller.getProjectInfo(),
                         ),
                         _InfoTile(
                           title: 'Data safety',
                           description: controller.getDataSafety(),
                         ),
                         _InfoTile(
-                          title: 'Report an issue',
+                          title: 'Support & Feedback',
                           description: controller.getFeedback(),
                         ),
                         const SizedBox(height: 16),
@@ -62,7 +62,7 @@ class AboutScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    SliverIndent(height: 200),
+                    SliverIndent(height: 160),
                   ],
                 ),
               ),

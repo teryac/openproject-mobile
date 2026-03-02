@@ -1,4 +1,4 @@
-// import 'package:device_preview/device_preview.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -16,15 +16,15 @@ void main() async {
   _attachBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await _loadEnvFile();
-  await _initializeFirebaseCrashlytics().timeout(
-    const Duration(seconds: 5),
-    onTimeout: () {
-      // Firebase initialization timed out, proceeding anyway.
-    },
-  );
+  // await _initializeFirebaseCrashlytics().timeout(
+  //   const Duration(seconds: 5),
+  //   onTimeout: () {
+  //     // Firebase initialization timed out, proceeding anyway.
+  //   },
+  // );
 
-  runApp(const MyApp()); // Use for release mode
-  // runApp(DevicePreview(builder: (_) => const MyApp())); // Use for debug mode
+  // runApp(const MyApp()); // Use for release mode
+  runApp(DevicePreview(builder: (_) => const MyApp())); // Use for debug mode
 }
 
 class MyApp extends StatelessWidget {

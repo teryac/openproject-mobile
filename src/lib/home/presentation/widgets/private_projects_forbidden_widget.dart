@@ -18,7 +18,7 @@ class PrivateProjectsForbiddenWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         AppAssetImage(
-          assetPath: AppImages.team,
+          assetPath: AppImages.teamIllustration,
         ),
         const SizedBox(height: 20),
         Text(

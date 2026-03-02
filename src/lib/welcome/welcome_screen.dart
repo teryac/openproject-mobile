@@ -27,7 +27,7 @@ class WelcomeScreen extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               AppAssetImage(
-                assetPath: AppImages.emp,
+                assetPath: AppImages.contractSigning,
                 clipBehavior: Clip.antiAlias,
                 borderRadius: BorderRadius.circular(24),
               ),

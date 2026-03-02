@@ -58,7 +58,7 @@ class _ConnectionStateWidgetState extends State<ConnectionStateWidget>
     return Row(
       children: [
         const _CustomCircularAvatar(
-          child: AppAssetImage(assetPath: AppImages.profile),
+          child: AppAssetImage(assetPath: AppImages.profileExample),
         ),
         Expanded(
           child: SizedBox(
@@ -104,7 +104,7 @@ class _ConnectionStateWidgetState extends State<ConnectionStateWidget>
         ),
         _CustomCircularAvatar(
           child: Align(
-            child: SvgPicture.asset(AppIcons.logo),
+            child: SvgPicture.asset(AppIcons.openProjectLogo),
           ),
         ),
       ],

@@ -2,9 +2,9 @@ class AppIcons {
   static const _directory = 'assets/icons/';
   static const _fileType = '.svg';
 
-  static const logo = '${_directory}logo$_fileType';
-  static const clientLogo = '${_directory}client_logo$_fileType';
-  static const appNamePreview = '${_directory}app_name_preview$_fileType';
+  static const openProjectLogo = '${_directory}open-project-logo$_fileType';
+  static const clientLogo = '${_directory}client-logo$_fileType';
+  static const appNamePreview = '${_directory}app-name-preview$_fileType';
   static const task = '${_directory}task$_fileType';
   static const trash = '${_directory}trash$_fileType';
   static const edit = '${_directory}edit$_fileType';
@@ -32,24 +32,19 @@ class AppImages {
   static const _directory = 'assets/images/';
   static const _fileType = '.png';
 
-  static const emp = '${_directory}emp$_fileType';
-  static const list = '${_directory}list$_fileType';
-  static const op = '${_directory}op$_fileType';
-  static const openProject = '${_directory}openproject$_fileType';
-  static const server = '${_directory}Server$_fileType';
-  static const token = '${_directory}token$_fileType';
-  static const user = '${_directory}user$_fileType';
-  static const profile = '${_directory}profile$_fileType';
-  static const globe = '${_directory}globe$_fileType';
-  static const overview = '${_directory}overview$_fileType';
-  static const team = '${_directory}team$_fileType';
   static const clientLogo = '${_directory}client_logo$_fileType';
+  static const contractSigning = '${_directory}contract_signing$_fileType';
+  static const profileExample = '${_directory}profile_example$_fileType';
+  static const globe = '${_directory}globe$_fileType';
+  static const appFeaturesOverview =
+      '${_directory}app_features_overview$_fileType';
+  static const teamIllustration = '${_directory}team_illustration$_fileType';
+
   static const emptyStateIllustration =
       '${_directory}empty_state_illustration$_fileType';
   static const errorStateIllustration =
       '${_directory}error_state_illustration$_fileType';
 
-  //logo-with-name.svg
   static String howToGetApiToken(int index) {
     return '${_directory}how_to_get_api_token_$index$_fileType';
   }
