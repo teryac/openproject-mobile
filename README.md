@@ -1,1 +1,1 @@
-# openproject-mobile
+# Client for OpenProject
