@@ -67,13 +67,18 @@ class WelcomeScreen extends StatelessWidget {
                               context.pushNamed(AppRoutes.about.name);
                             },
                             child: Container(
-                              width: 44,
+                              width: 56,
                               height: 44,
+                              alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(360),
                                 color: const Color(0x99262B2C),
                               ),
-                              child: SvgPicture.asset(AppIcons.info),
+                              child: SvgPicture.asset(
+                                AppIcons.about,
+                                height: 24,
+                                width: 24,
+                              ),
                             ),
                           ),
                         ),

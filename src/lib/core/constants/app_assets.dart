@@ -26,6 +26,7 @@ class AppIcons {
   static const login = '${_directory}login$_fileType';
   static const addSquare = '${_directory}add-square$_fileType';
   static const info = '${_directory}info$_fileType';
+  static const about = '${_directory}about$_fileType';
 }
 
 class AppImages {
