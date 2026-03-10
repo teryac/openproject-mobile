@@ -15,9 +15,9 @@
     <td align="center"><b>Token</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/Mobile/1. Splash.png"></td>
-    <td><img src="screenshots/Mobile/3. Server.png"></td>
-    <td><img src="screenshots/Mobile/4. Token.png"></td>
+    <td><img src="screenshots/Mobile/1. Splash.png" width="300"></td>
+    <td><img src="screenshots/Mobile/3. Server.png" width="300"></td>
+    <td><img src="screenshots/Mobile/4. Token.png" width="300"></td>
   </tr>
     <tr>
     <td align="center"><b>Home</b></td>
@@ -25,9 +25,9 @@
     <td align="center"><b>Add Work Package</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/Mobile/5. Home.png"></td>
-    <td><img src="screenshots/Mobile/6. Work Packages.png"></td>
-    <td><img src="screenshots/Mobile/7. Add Work Package.png"></td>
+    <td><img src="screenshots/Mobile/5. Home.png" width="300"></td>
+    <td><img src="screenshots/Mobile/6. Work Packages.png" width="300"></td>
+    <td><img src="screenshots/Mobile/7. Add Work Package.png" width="300"></td>
   </tr>
 </table>
 
@@ -167,12 +167,6 @@ Before you begin, ensure you have the following installed:
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/syk-yaman">
-        <img src="https://github.com/syk-yaman.png" width="50" style="border-radius:50%">
-        <br><b>Yaman Kalaji</b>
-      </a>
-    </td>
-    <td align="center">
       <a href="https://github.com/MajdHajHmidi">
         <img src="https://github.com/MajdHajHmidi.png" width="50" style="border-radius:50%">
         <br><b>Majd Haj Hmidi</b>
@@ -182,6 +176,12 @@ Before you begin, ensure you have the following installed:
       <a href="https://github.com/ShaabanShahin">
         <img src="https://github.com/ShaabanShahin.png" width="50" style="border-radius:50%">
         <br><b>Shaaban Shahin</b>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/syk-yaman">
+        <img src="https://github.com/syk-yaman.png" width="50" style="border-radius:50%">
+        <br><b>Yaman Kalaji</b>
       </a>
     </td>
   </tr>
